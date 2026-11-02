@@ -56,6 +56,25 @@
     user-select: none;
     letter-spacing: 0.5px;
   }
+  
+  /* دکمه خروج */
+  #logoutBtn {
+    margin-right: auto;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.5);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    display: none;
+    transition: background 0.2s;
+  }
+  #logoutBtn:hover {
+    background: rgba(255,255,255,0.35);
+  }
+
   main {
     flex: 1;
     max-width: 1100px;
@@ -205,6 +224,7 @@
          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
     <div class="logo-fallback" style="display:none;">🏛</div>
     <h1 id="siteTitle">نامه‌های دهیاری</h1>
+    <button id="logoutBtn" onclick="logout()">🚪 خروج</button>
   </div>
 </header>
 
@@ -251,8 +271,7 @@
   const SITE_PASSWORDS = {
     "123434": "2026-12-31",
     "112233": "2026-11-15",
-    "445566": "2026-10-20",
-    "000000": "2024-01-01"   // رمز تست منقضی‌شده
+    "445566": "2026-10-20"
   };
   const AUTH_KEY = 'site_auth_expire';
 
@@ -270,10 +289,12 @@
 
   async function checkAuthStatus() {
     const savedExpire = localStorage.getItem(AUTH_KEY);
+    const logoutBtn = document.getElementById('logoutBtn');
     
     // اگر localStorage خالی است، حتماً مدال ورود را نشان بده
     if (!savedExpire) {
       document.getElementById('loginOverlay').classList.add('active');
+      if (logoutBtn) logoutBtn.style.display = 'none';
       return;
     }
     
@@ -282,6 +303,7 @@
     if (isNaN(expireTime)) {
       localStorage.removeItem(AUTH_KEY);
       document.getElementById('loginOverlay').classList.add('active');
+      if (logoutBtn) logoutBtn.style.display = 'none';
       return;
     }
     
@@ -294,10 +316,12 @@
       document.getElementById('loginOverlay').classList.add('active');
       document.getElementById('loginError').style.color = '#c0394f';
       document.getElementById('loginError').textContent = '⏳ زمان دسترسی شما به پایان رسیده است.';
+      if (logoutBtn) logoutBtn.style.display = 'none';
       return;
     }
     
-    // در غیر این صورت، کاربر مجاز است (مدال نشان داده نمی‌شود)
+    // در غیر این صورت، کاربر مجاز است
+    if (logoutBtn) logoutBtn.style.display = 'block';
   }
 
   async function doLogin() {
@@ -325,6 +349,7 @@
     }
 
     localStorage.setItem(AUTH_KEY, expireTime);
+    document.getElementById('logoutBtn').style.display = 'block';
     
     err.style.color = '#1e8e4e';
     err.textContent = '✅ ورود موفق!';
@@ -333,9 +358,15 @@
     }, 500);
   }
 
+  function logout() {
+    if (!confirm('آیا می‌خواهید از سایت خارج شوید؟')) return;
+    localStorage.removeItem(AUTH_KEY);
+    location.reload();
+  }
+
   // شروع: بررسی وضعیت ورود
   checkAuthStatus();
-  setInterval(checkAuthStatus, 5000); // هر ۵ ثانیه چک کن
+  setInterval(checkAuthStatus, 5000);
 </script>
 </body>
 </html>
