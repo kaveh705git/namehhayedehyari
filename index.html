@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نامه‌های دهیاری</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+  :root {
+    --primary: #1e5fa8;
+    --primary-dark: #143f70;
+    --primary-light: #3b82d6;
+    --text: #1a2b45;
+    --shadow: 0 4px 20px rgba(30, 95, 168, 0.15);
+  }
+  body {
+    background: linear-gradient(135deg, #e8f1fc 0%, #f0f6ff 100%);
+    min-height: 100vh;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #fff;
+    padding: 18px 30px;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .logo {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: #fff;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.6);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+  .logo-fallback {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 24px; color: var(--primary); font-weight: bold;
+  }
+  #siteTitle {
+    font-size: 22px;
+    font-weight: 700;
+    user-select: none;
+    letter-spacing: 0.5px;
+  }
+  main {
+    flex: 1;
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 50px 20px;
+  }
+  .hero-title {
+    text-align: center;
+    color: var(--primary-dark);
+    margin-bottom: 10px;
+    font-size: 28px;
+  }
+  .hero-sub {
+    text-align: center;
+    color: #5a7292;
+    margin-bottom: 40px;
+    font-size: 15px;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 22px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 30px 25px;
+    box-shadow: var(--shadow);
+    border-top: 4px solid var(--primary-light);
+    transition: transform 0.25s, box-shadow 0.25s;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--text);
+    display: block;
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(30, 95, 168, 0.25);
+  }
+  .card-icon {
+    width: 54px; height: 54px;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    margin-bottom: 16px;
+    color: #fff;
+  }
+  .card h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: var(--primary-dark);
+  }
+  footer {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    color: #e6f0fb;
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+    margin-top: 40px;
+  }
+  footer span { color: #ff8fa3; }
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 35, 65, 0.65);
+    backdrop-filter: blur(5px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+  .overlay.active { display: flex; }
+  .modal {
+    background: #fff;
+    border-radius: 20px;
+    padding: 35px 30px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: popIn 0.3s ease;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .modal h2 {
+    color: var(--primary-dark);
+    text-align: center;
+    margin-bottom: 22px;
+    font-size: 20px;
+  }
+  .modal input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #d5e3f5;
+    border-radius: 10px;
+    font-size: 15px;
+    margin-bottom: 15px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+    background: #f7faff;
+  }
+  .modal input:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    background: #fff;
+  }
+  .modal label {
+    font-size: 13px;
+    color: #5a7292;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    color: #fff;
+  }
+  .btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+  .error-msg {
+    color: #c0394f;
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 10px;
+    min-height: 18px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <img src="logo.png" alt="لوگو" class="logo" 
+         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <div class="logo-fallback" style="display:none;">🏛</div>
+    <h1 id="siteTitle">نامه‌های دهیاری</h1>
+  </div>
+</header>
+
+<main>
+  <h2 class="hero-title">به سامانه نامه‌های دهیاری خوش آمدید</h2>
+  <p class="hero-sub">برای دسترسی به هر بخش، روی کارت مربوطه کلیک کنید</p>
+  
+  <div class="cards">
+    <a href="contract.html" class="card">
+      <div class="card-icon">📄</div>
+      <h3>قرارداد کار دهیاری</h3>
+    </a>
+    <a href="status.html" class="card">
+      <div class="card-icon">📋</div>
+      <h3>صورت وضعیت قرارداد</h3>
+    </a>
+    <a href="council.html" class="card">
+      <div class="card-icon">📑</div>
+      <h3>صورت جلسه شورا</h3>
+    </a>
+    <a href="letter.html" class="card">
+      <div class="card-icon">✉️</div>
+      <h3>نامه شورا به تطبیق</h3>
+    </a>
+  </div>
+</main>
+
+<footer>
+  تهیه شده با <span>❤</span> توسط کاوه - سال ۱۴۰۵
+</footer>
+
+<div class="overlay" id="loginOverlay">
+  <div class="modal">
+    <h2>ورود به سایت</h2>
+    <div class="error-msg" id="loginError"></div>
+    <label>رمز عبور</label>
+    <input type="password" id="loginPassword" placeholder="رمز عبور را وارد کنید" 
+           onkeydown="if(event.key==='Enter') doLogin()">
+    <button class="btn" onclick="doLogin()">ورود</button>
+  </div>
+</div>
+
+<script>
+  const SITE_PASSWORDS = {
+    "123434": "2026-12-31",
+    "112233": "2026-11-15",
+    "445566": "2026-10-20"
+  };
+  const AUTH_KEY = 'site_auth_expire';
+
+  async function getServerTime() {
+    try {
+      const res = await fetch('/time', { cache: 'no-store' });
+      const data = await res.json();
+      return data.serverTime;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async function checkAuthStatus() {
+    const savedExpire = localStorage.getItem(AUTH_KEY);
+    if (savedExpire) {
+      const now = await getServerTime();
+      if (now === null) return;
+      const expireTime = parseInt(savedExpire, 10);
+      if (now >= expireTime) {
+        localStorage.removeItem(AUTH_KEY);
+        document.getElementById('loginOverlay').classList.add('active');
+        document.getElementById('loginError').style.color = '#c0394f';
+        document.getElementById('loginError').textContent = '⏳ زمان دسترسی شما به پایان رسیده است.';
+      }
+    } else {
+      document.getElementById('loginOverlay').classList.add('active');
+    }
+  }
+
+  async function doLogin() {
+    const pass = document.getElementById('loginPassword').value;
+    const err = document.getElementById('loginError');
+    
+    if (!SITE_PASSWORDS[pass]) {
+      err.style.color = '#c0394f';
+      err.textContent = '❌ رمز عبور اشتباه است';
+      return;
+    }
+
+    err.style.color = '#5a7292';
+    err.textContent = 'در حال بررسی زمان...';
+    
+    const now = await getServerTime();
+    if (now === null) {
+      err.style.color = '#c0394f';
+      err.textContent = '❌ خطا در ارتباط با سرور. اینترنت خود را بررسی کنید.';
+      return;
+    }
+
+    const expireDateStr = SITE_PASSWORDS[pass];
+    const expireTime = new Date(expireDateStr + 'T23:59:59').getTime();
+
+    if (now > expireTime) {
+      err.style.color = '#c0394f';
+      err.textContent = '❌ این رمز منقضی شده است.';
+      return;
+    }
+
+    localStorage.setItem(AUTH_KEY, expireTime);
+    
+    err.style.color = '#1e8e4e';
+    err.textContent = '✅ ورود موفق!';
+    setTimeout(() => {
+      document.getElementById('loginOverlay').classList.remove('active');
+    }, 500);
+  }
+
+  checkAuthStatus();
+  setInterval(checkAuthStatus, 1000);
+</script>
+</body>
+</html>
