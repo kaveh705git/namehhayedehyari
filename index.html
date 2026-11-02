@@ -7,16 +7,13 @@
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Vazirmatn', Tahoma, sans-serif; }
-  
   :root {
     --primary: #1e5fa8;
     --primary-dark: #143f70;
     --primary-light: #3b82d6;
-    --bg: #f0f6ff;
     --text: #1a2b45;
     --shadow: 0 4px 20px rgba(30, 95, 168, 0.15);
   }
-
   body {
     background: linear-gradient(135deg, #e8f1fc 0%, #f0f6ff 100%);
     min-height: 100vh;
@@ -24,7 +21,6 @@
     display: flex;
     flex-direction: column;
   }
-
   header {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: #fff;
@@ -42,8 +38,7 @@
     gap: 15px;
   }
   .logo {
-    width: 52px;
-    height: 52px;
+    width: 52px; height: 52px;
     border-radius: 50%;
     background: #fff;
     object-fit: cover;
@@ -61,7 +56,6 @@
     user-select: none;
     letter-spacing: 0.5px;
   }
-
   main {
     flex: 1;
     max-width: 1100px;
@@ -116,12 +110,6 @@
     margin-bottom: 8px;
     color: var(--primary-dark);
   }
-  .card p {
-    font-size: 13.5px;
-    color: #5a7292;
-    line-height: 1.7;
-  }
-
   footer {
     background: linear-gradient(135deg, var(--primary-dark), var(--primary));
     color: #e6f0fb;
@@ -225,19 +213,19 @@
   <p class="hero-sub">برای دسترسی به هر بخش، روی کارت مربوطه کلیک کنید</p>
   
   <div class="cards">
-    <a href="#" class="card">
+    <a href="contract.html" class="card">
       <div class="card-icon">📄</div>
       <h3>قرارداد کار دهیاری</h3>
     </a>
-    <a href="#" class="card">
+    <a href="status.html" class="card">
       <div class="card-icon">📋</div>
       <h3>صورت وضعیت قرارداد</h3>
     </a>
-    <a href="#" class="card">
+    <a href="council.html" class="card">
       <div class="card-icon">📑</div>
       <h3>صورت جلسه شورا</h3>
     </a>
-    <a href="#" class="card">
+    <a href="letter.html" class="card">
       <div class="card-icon">✉️</div>
       <h3>نامه شورا به تطبیق</h3>
     </a>
@@ -260,53 +248,40 @@
 </div>
 
 <script>
-  // ---------------------------------------------------------
-  // رمزها و تاریخ انقضا
-  // فرمت تاریخ: YYYY-MM-DD (مثلاً "2026-12-31")
-  // ---------------------------------------------------------
   const SITE_PASSWORDS = {
     "123434": "2026-12-31",
     "112233": "2026-11-15",
     "445566": "2026-10-20"
   };
+  const AUTH_KEY = 'site_auth_expire';
 
-  // تابع دریافت زمان جهانی از Cloudflare (فایل functions/time.js)
   async function getServerTime() {
     try {
       const res = await fetch('/time', { cache: 'no-store' });
       const data = await res.json();
-      return data.serverTime; // زمان به میلی‌ثانیه
+      return data.serverTime;
     } catch (e) {
-      console.error('خطا در دریافت زمان سرور:', e);
       return null;
     }
   }
 
-  // بررسی وضعیت لاگین (به روز شدن تاریخ انقضا در localStorage)
   async function checkAuthStatus() {
-    const savedExpire = localStorage.getItem('site_auth_expire');
-    
-    // اگر قبلا وارد شده باشد
+    const savedExpire = localStorage.getItem(AUTH_KEY);
     if (savedExpire) {
       const now = await getServerTime();
-      if (now === null) return; // اگر اینترنت قطع بود، کاری نکن
-      
+      if (now === null) return;
       const expireTime = parseInt(savedExpire, 10);
       if (now >= expireTime) {
-        // زمان انقضا رسیده - خروج خودکار
-        localStorage.removeItem('site_auth_expire');
+        localStorage.removeItem(AUTH_KEY);
         document.getElementById('loginOverlay').classList.add('active');
         document.getElementById('loginError').style.color = '#c0394f';
         document.getElementById('loginError').textContent = '⏳ زمان دسترسی شما به پایان رسیده است.';
-        document.getElementById('loginPassword').value = '';
       }
     } else {
-      // کاربر وارد نشده
       document.getElementById('loginOverlay').classList.add('active');
     }
   }
 
-  // تابع ورود
   async function doLogin() {
     const pass = document.getElementById('loginPassword').value;
     const err = document.getElementById('loginError');
@@ -317,7 +292,6 @@
       return;
     }
 
-    // دریافت زمان دقیق از سرور Cloudflare
     err.style.color = '#5a7292';
     err.textContent = 'در حال بررسی زمان...';
     
@@ -328,7 +302,6 @@
       return;
     }
 
-    // بررسی تاریخ انقضای رمز
     const expireDateStr = SITE_PASSWORDS[pass];
     const expireTime = new Date(expireDateStr + 'T23:59:59').getTime();
 
@@ -338,8 +311,7 @@
       return;
     }
 
-    // ورود موفق - ذخیره زمان انقضا در localStorage
-    localStorage.setItem('site_auth_expire', expireTime);
+    localStorage.setItem(AUTH_KEY, expireTime);
     
     err.style.color = '#1e8e4e';
     err.textContent = '✅ ورود موفق!';
@@ -348,10 +320,7 @@
     }, 500);
   }
 
-  // شروع: بررسی وضعیت ورود
   checkAuthStatus();
-  
-  // بررسی مداوم هر ۱ ثانیه (برای خروج خودکار وقتی زمان تمام شد)
   setInterval(checkAuthStatus, 1000);
 </script>
 </body>
