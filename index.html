@@ -25,7 +25,6 @@
     flex-direction: column;
   }
 
-  /* ===== Header ===== */
   header {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: #fff;
@@ -63,7 +62,6 @@
     letter-spacing: 0.5px;
   }
 
-  /* ===== Main ===== */
   main {
     flex: 1;
     max-width: 1100px;
@@ -124,7 +122,6 @@
     line-height: 1.7;
   }
 
-  /* ===== Footer ===== */
   footer {
     background: linear-gradient(135deg, var(--primary-dark), var(--primary));
     color: #e6f0fb;
@@ -135,7 +132,6 @@
   }
   footer span { color: #ff8fa3; }
 
-  /* ===== Login Modal ===== */
   .overlay {
     position: fixed;
     inset: 0;
@@ -215,7 +211,6 @@
 </head>
 <body>
 
-<!-- ========== HEADER ========== -->
 <header>
   <div class="header-inner">
     <img src="logo.png" alt="لوگو" class="logo" 
@@ -225,42 +220,35 @@
   </div>
 </header>
 
-<!-- ========== MAIN ========== -->
 <main>
   <h2 class="hero-title">به سامانه نامه‌های دهیاری خوش آمدید</h2>
   <p class="hero-sub">برای دسترسی به هر بخش، روی کارت مربوطه کلیک کنید</p>
   
   <div class="cards">
-    <!-- منو 1 -->
-    <a href="https://kaveh705git.github.io/qaradadkardehyari/" class="card">
+    <a href="#" class="card">
       <div class="card-icon">📄</div>
       <h3>قرارداد کار دهیاری</h3>
     </a>
-    <!-- منو 2 -->
-    <a href="https://kaveh705git.github.io/souratwazyatdehyari/" class="card">
+    <a href="#" class="card">
       <div class="card-icon">📋</div>
       <h3>صورت وضعیت قرارداد</h3>
     </a>
-    <!-- منو 3 -->
-    <a href="https://kaveh705git.github.io/souratjalasehshoura/" class="card">
+    <a href="#" class="card">
       <div class="card-icon">📑</div>
       <h3>صورت جلسه شورا</h3>
     </a>
-    <!-- منو 4 -->
-    <a href="https://kaveh705git.github.io/namehshourabebakhshdarytatbiqh/" class="card">
+    <a href="#" class="card">
       <div class="card-icon">✉️</div>
       <h3>نامه شورا به تطبیق</h3>
     </a>
   </div>
 </main>
 
-<!-- ========== FOOTER ========== -->
 <footer>
   تهیه شده با <span>❤</span> توسط کاوه - سال ۱۴۰۵
 </footer>
 
-<!-- ========== LOGIN MODAL ========== -->
-<div class="overlay active" id="loginOverlay">
+<div class="overlay" id="loginOverlay">
   <div class="modal">
     <h2>ورود به سایت</h2>
     <div class="error-msg" id="loginError"></div>
@@ -272,25 +260,99 @@
 </div>
 
 <script>
-  // رمز ثابت سایت
-  const SITE_PASSWORD = "123434";
+  // ---------------------------------------------------------
+  // رمزها و تاریخ انقضا
+  // فرمت تاریخ: YYYY-MM-DD (مثلاً "2026-12-31")
+  // ---------------------------------------------------------
+  const SITE_PASSWORDS = {
+    "123434": "2026-12-31",
+    "112233": "2026-11-15",
+    "445566": "2026-10-20"
+  };
 
-  function doLogin() {
+  // تابع دریافت زمان جهانی از Cloudflare (فایل functions/time.js)
+  async function getServerTime() {
+    try {
+      const res = await fetch('/time', { cache: 'no-store' });
+      const data = await res.json();
+      return data.serverTime; // زمان به میلی‌ثانیه
+    } catch (e) {
+      console.error('خطا در دریافت زمان سرور:', e);
+      return null;
+    }
+  }
+
+  // بررسی وضعیت لاگین (به روز شدن تاریخ انقضا در localStorage)
+  async function checkAuthStatus() {
+    const savedExpire = localStorage.getItem('site_auth_expire');
+    
+    // اگر قبلا وارد شده باشد
+    if (savedExpire) {
+      const now = await getServerTime();
+      if (now === null) return; // اگر اینترنت قطع بود، کاری نکن
+      
+      const expireTime = parseInt(savedExpire, 10);
+      if (now >= expireTime) {
+        // زمان انقضا رسیده - خروج خودکار
+        localStorage.removeItem('site_auth_expire');
+        document.getElementById('loginOverlay').classList.add('active');
+        document.getElementById('loginError').style.color = '#c0394f';
+        document.getElementById('loginError').textContent = '⏳ زمان دسترسی شما به پایان رسیده است.';
+        document.getElementById('loginPassword').value = '';
+      }
+    } else {
+      // کاربر وارد نشده
+      document.getElementById('loginOverlay').classList.add('active');
+    }
+  }
+
+  // تابع ورود
+  async function doLogin() {
     const pass = document.getElementById('loginPassword').value;
     const err = document.getElementById('loginError');
     
-    if (pass === SITE_PASSWORD) {
-      err.style.color = '#1e8e4e';
-      err.textContent = '✅ ورود موفق!';
-      setTimeout(() => {
-        // مخفی کردن صفحه ورود
-        document.getElementById('loginOverlay').classList.remove('active');
-      }, 500);
-    } else {
+    if (!SITE_PASSWORDS[pass]) {
       err.style.color = '#c0394f';
       err.textContent = '❌ رمز عبور اشتباه است';
+      return;
     }
+
+    // دریافت زمان دقیق از سرور Cloudflare
+    err.style.color = '#5a7292';
+    err.textContent = 'در حال بررسی زمان...';
+    
+    const now = await getServerTime();
+    if (now === null) {
+      err.style.color = '#c0394f';
+      err.textContent = '❌ خطا در ارتباط با سرور. اینترنت خود را بررسی کنید.';
+      return;
+    }
+
+    // بررسی تاریخ انقضای رمز
+    const expireDateStr = SITE_PASSWORDS[pass];
+    const expireTime = new Date(expireDateStr + 'T23:59:59').getTime();
+
+    if (now > expireTime) {
+      err.style.color = '#c0394f';
+      err.textContent = '❌ این رمز منقضی شده است.';
+      return;
+    }
+
+    // ورود موفق - ذخیره زمان انقضا در localStorage
+    localStorage.setItem('site_auth_expire', expireTime);
+    
+    err.style.color = '#1e8e4e';
+    err.textContent = '✅ ورود موفق!';
+    setTimeout(() => {
+      document.getElementById('loginOverlay').classList.remove('active');
+    }, 500);
   }
+
+  // شروع: بررسی وضعیت ورود
+  checkAuthStatus();
+  
+  // بررسی مداوم هر ۱ ثانیه (برای خروج خودکار وقتی زمان تمام شد)
+  setInterval(checkAuthStatus, 1000);
 </script>
 </body>
 </html>
