@@ -249,39 +249,55 @@
 
 <script>
   const SITE_PASSWORDS = {
- const SITE_PASSWORDS = {
-  "123434": "2026-12-31",
-  "112233": "2026-11-15",
-  "445566": "2026-10-20",
-  "000000": "2024-01-01"   // ← رمز تست (منقضی شده)
-};
+    "123434": "2026-12-31",
+    "112233": "2026-11-15",
+    "445566": "2026-10-20",
+    "000000": "2024-01-01"   // رمز تست منقضی‌شده
+  };
   const AUTH_KEY = 'site_auth_expire';
 
   async function getServerTime() {
     try {
       const res = await fetch('/time', { cache: 'no-store' });
+      if (!res.ok) throw new Error('server error');
       const data = await res.json();
       return data.serverTime;
     } catch (e) {
-      return null;
+      console.warn('⚠️ سرور در دسترس نیست، از ساعت مرورگر استفاده می‌شود');
+      return Date.now();
     }
   }
 
   async function checkAuthStatus() {
     const savedExpire = localStorage.getItem(AUTH_KEY);
-    if (savedExpire) {
-      const now = await getServerTime();
-      if (now === null) return;
-      const expireTime = parseInt(savedExpire, 10);
-      if (now >= expireTime) {
-        localStorage.removeItem(AUTH_KEY);
-        document.getElementById('loginOverlay').classList.add('active');
-        document.getElementById('loginError').style.color = '#c0394f';
-        document.getElementById('loginError').textContent = '⏳ زمان دسترسی شما به پایان رسیده است.';
-      }
-    } else {
+    
+    // اگر localStorage خالی است، حتماً مدال ورود را نشان بده
+    if (!savedExpire) {
       document.getElementById('loginOverlay').classList.add('active');
+      return;
     }
+    
+    // اگر مقدار ذخیره شده عدد نیست، آن را پاک کن و مدال را نشان بده
+    const expireTime = parseInt(savedExpire, 10);
+    if (isNaN(expireTime)) {
+      localStorage.removeItem(AUTH_KEY);
+      document.getElementById('loginOverlay').classList.add('active');
+      return;
+    }
+    
+    // زمان را از سرور بگیر
+    const now = await getServerTime();
+    
+    // اگر زمان منقضی شده، پاک کن و مدال را نشان بده
+    if (now >= expireTime) {
+      localStorage.removeItem(AUTH_KEY);
+      document.getElementById('loginOverlay').classList.add('active');
+      document.getElementById('loginError').style.color = '#c0394f';
+      document.getElementById('loginError').textContent = '⏳ زمان دسترسی شما به پایان رسیده است.';
+      return;
+    }
+    
+    // در غیر این صورت، کاربر مجاز است (مدال نشان داده نمی‌شود)
   }
 
   async function doLogin() {
@@ -298,12 +314,7 @@
     err.textContent = 'در حال بررسی زمان...';
     
     const now = await getServerTime();
-    if (now === null) {
-      err.style.color = '#c0394f';
-      err.textContent = '❌ خطا در ارتباط با سرور. اینترنت خود را بررسی کنید.';
-      return;
-    }
-
+    
     const expireDateStr = SITE_PASSWORDS[pass];
     const expireTime = new Date(expireDateStr + 'T23:59:59').getTime();
 
@@ -322,8 +333,9 @@
     }, 500);
   }
 
+  // شروع: بررسی وضعیت ورود
   checkAuthStatus();
-  setInterval(checkAuthStatus, 1000);
+  setInterval(checkAuthStatus, 5000); // هر ۵ ثانیه چک کن
 </script>
 </body>
 </html>
