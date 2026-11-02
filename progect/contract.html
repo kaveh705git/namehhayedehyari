@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فرم قرارداد دهیاری</title>
+
+<script>
+  // محافظت از صفحه - بررسی وضعیت ورود
+  (function() {
+    const AUTH_KEY = 'site_auth_expire';
+    const savedExpire = localStorage.getItem(AUTH_KEY);
+    
+    if (!savedExpire) {
+      // کاربر وارد نشده
+      window.location.href = 'index.html';
+      return;
+    }
+    
+    const expireTime = parseInt(savedExpire, 10);
+    const now = Date.now();
+    
+    if (now >= expireTime) {
+      // زمان انقضا رسیده
+      localStorage.removeItem(AUTH_KEY);
+      window.location.href = 'index.html';
+    }
+  })();
+</script>
+
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Vazirmatn', 'Tahoma', sans-serif;
+            background: #f0f2f5; color: #333; padding: 20px;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px; width: 100%; background: #fff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-radius: 12px; padding: 30px; margin-bottom: 30px;
+        }
+
+        h1 {
+            text-align: center; color: #1e3a5f; margin-bottom: 25px; font-size: 24px;
+            border-bottom: 2px solid #1e3a5f; padding-bottom: 15px;
+        }
+
+        /* فرم ورودی */
+        .form-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px 25px;
+            margin-bottom: 30px; background: #f8f9fa; padding: 20px;
+            border-radius: 8px; border: 1px solid #e0e0e0;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        .form-group label { font-weight: 600; font-size: 14px; color: #555; }
+
+        .form-group input[type="text"], .form-group textarea, .form-group select {
+            padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px;
+            font-family: inherit; font-size: 14px; transition: border-color 0.2s, box-shadow 0.2s; background: #fff;
+        }
+
+        .form-group input[type="text"]:focus, .form-group textarea:focus, .form-group select:focus {
+            border-color: #1e3a5f; outline: none; box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+        }
+
+        .form-group textarea { resize: vertical; min-height: 60px; }
+
+        /* گروه تاریخ (ردیف افقی) */
+        .date-group {
+            display: flex; gap: 5px; align-items: center;
+        }
+        .date-group select {
+            padding: 10px 5px; text-align: center;
+        }
+
+        /* چک باکس */
+        .checkbox-group {
+            display: flex; align-items: center; gap: 10px; background: #fff;
+            padding: 15px; border: 1px solid #1e3a5f; border-radius: 8px; margin-top: 10px; cursor: pointer;
+        }
+
+        .checkbox-group input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; accent-color: #1e3a5f; }
+        .checkbox-group label { font-size: 15px; font-weight: 700; color: #1e3a5f; cursor: pointer; margin: 0; }
+
+        /* بخش ویرایش بندها */
+        .terms-edit-section {
+            display: none; margin-top: 15px; padding: 15px; background: #fff;
+            border: 1px dashed #1e3a5f; border-radius: 8px;
+        }
+        .terms-edit-section.show { display: block; }
+        .terms-edit-section h3 { font-size: 15px; color: #1e3a5f; margin-bottom: 15px; text-align: center; }
+        .term-input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+        .term-input-group textarea {
+            padding: 8px; border: 1px solid #ccc; border-radius: 6px;
+            font-family: inherit; font-size: 13px; resize: vertical; min-height: 40px;
+        }
+
+        /* دکمه‌ها */
+        .actions { display: flex; gap: 15px; justify-content: center; margin-bottom: 30px; }
+        .btn {
+            padding: 12px 30px; border: none; border-radius: 8px; font-family: inherit;
+            font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .btn-print { background: #1e3a5f; color: #fff; }
+        .btn-print:hover { background: #152a45; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(30, 58, 95, 0.3); }
+        .btn-reset { background: #e9ecef; color: #333; }
+        .btn-reset:hover { background: #d0d5da; }
+
+        /* کادر اصلی قرارداد */
+        .contract-preview {
+            border: 2px solid #1e3a5f; border-radius: 15px;
+            padding: 30px 40px 40px; background: #fff;
+            line-height: 1.9; font-size: 15px; position: relative; 
+            width: 100%; display: flex; flex-direction: column;
+        }
+
+        /* سربرگ */
+        .contract-header-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; position: relative; }
+        
+        .header-right-col { width: 32%; text-align: center; color: #1e3a5f; line-height: 1.5; }
+        .header-right-col p { margin-bottom: 4px; font-size: 13px; font-weight: 600; }
+        
+        .header-center-col { width: 36%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .logo-image { width: 90px; height: 90px; object-fit: contain; margin-bottom: 2px; }
+        .logo-caption { color: #1e3a5f; font-size: 13px; font-weight: 800; font-style: italic; }
+        
+        .header-left-col { width: 32%; text-align: right; color: #333; line-height: 1.5; }
+        .header-left-col p { margin-bottom: 6px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+        .dotted-val { flex-grow: 1; border-bottom: 2px dotted #555; min-width: 50px; height: 16px; display: inline-block; text-align: center; color: #1e3a5f; font-weight: bold; }
+
+        /* عنوان قرارداد */
+        .contract-title-area { display: flex; align-items: center; justify-content: center; margin: 15px 0 20px; position: relative; }
+        .contract-title-area .title-text { font-size: 20px; font-weight: 900; color: #111; padding: 0 15px; background: #fff; position: relative; z-index: 2; }
+        .contract-title-area .dashed-line { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; border-top: 2px dashed #555; z-index: 1; }
+
+        /* بدنه */
+        .contract-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: space-evenly; } 
+        .contract-body p { margin-bottom: 15px; text-align: justify; font-size: 14px; }
+        .contract-body .highlight { font-weight: 700; color: #1e3a5f; }
+        .contract-body .underline { border-bottom: 1px dashed #999; min-width: 80px; display: inline-block; padding: 0 5px; text-align: center; font-weight: bold; color: #000; }
+
+        /* شروط */
+        .extra-terms-section { display: none; margin-top: 15px; padding: 15px; background: #fdfdfd; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; }
+        .extra-terms-section.show { display: block; }
+        .extra-terms-section p { margin-bottom: 8px; text-align: justify; line-height: 1.8; }
+
+        /* امضا و فوتر */
+        .signature-section { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: auto; padding-top: 15px; page-break-inside: avoid; }
+        .signature-box { text-align: center; }
+        .signature-box .title { font-weight: 700; margin-bottom: 5px; color: #1e3a5f; font-size: 15px; }
+        .signature-box .name-display { font-weight: 800; font-size: 14px; color: #000; margin-bottom: 10px; min-height: 20px; }
+        .signature-box .line { border-bottom: 1px solid #999; height: 50px; margin-bottom: 5px; }
+        .signature-box .sub { font-size: 12px; color: #777; }
+        
+        .witnesses { margin-top: 20px; padding-top: 10px; page-break-inside: avoid; }
+        .witnesses .title { font-weight: 700; color: #1e3a5f; margin-bottom: 10px; font-size: 14px; }
+        .witnesses ul { list-style: none; display: flex; gap: 40px; flex-wrap: wrap; }
+        .witnesses li { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+        .witnesses li .num { font-weight: 700; color: #1e3a5f; }
+        .witnesses li .line { border-bottom: 1px solid #999; width: 150px; display: inline-block; }
+
+        /* ========================================= */
+        /* تنظیمات نهایی چاپ */
+        /* ========================================= */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0; 
+            }
+
+            body {
+                background: #fff !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 210mm !important;
+                height: 297mm !important;
+            }
+
+            .form-grid, .actions, h1, .checkbox-group, .terms-edit-section {
+                display: none !important;
+            }
+
+            .container {
+                box-shadow: none !important; border-radius: 0 !important; padding: 0 !important;
+                margin: 0 !important; width: 100% !important; max-width: 100% !important; background: transparent !important;
+                display: flex !important; justify-content: center !important; align-items: center !important;
+            }
+
+            .contract-preview {
+                border: 2px solid #1e3a5f !important;
+                border-radius: 12px !important; 
+                height: 270mm !important; 
+                width: 190mm !important;  
+                margin: 10mm auto !important; 
+                padding: 10px 15px !important; 
+                font-size: 12px !important; 
+                line-height: 1.8 !important; 
+                background: #fff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                page-break-inside: avoid;
+                page-break-after: avoid;
+                display: flex !important;
+                flex-direction: column !important;
+            }
+
+            .contract-header-grid {
+                display: flex !important;
+                flex-direction: row !important; 
+                justify-content: space-between !important;
+                align-items: center !important;
+                margin-bottom: 5px !important;
+            }
+
+            .header-right-col { width: 32% !important; text-align: center !important; }
+            .header-right-col p { margin-bottom: 2px !important; font-size: 10px !important; line-height: 1.3 !important; }
+            
+            .header-center-col { width: 36% !important; }
+            .logo-image { width: 65px !important; height: 65px !important; margin-bottom: 0 !important; }
+            .logo-caption { font-size: 10px !important; }
+            
+            .header-left-col { width: 32% !important; text-align: right !important; }
+            .header-left-col p { margin-bottom: 4px !important; font-size: 10px !important; line-height: 1.3 !important; }
+            
+            .dotted-val { min-width: 40px !important; max-width: 60px !important; height: 12px !important; }
+
+            .contract-title-area { margin: 5px 0 10px !important; }
+            .contract-title-area .title-text { font-size: 16px !important; }
+            
+            .contract-body { flex-grow: 1 !important; display: flex !important; flex-direction: column !important; justify-content: space-evenly !important; } 
+            .contract-body p { margin-bottom: 5px !important; line-height: 1.9 !important; font-size: 11.5px !important; }
+            .extra-terms-section { margin-top: 5px !important; padding: 8px !important; font-size: 11px !important; }
+            
+            .signature-section { margin-top: auto !important; padding-top: 10px !important; display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 20px !important; }
+            .signature-box .line { height: 35px !important; }
+            .witnesses { margin-top: 10px !important; padding-top: 5px !important; }
+
+            .contract-preview * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+
+        /* ریسپانسیو */
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .container { padding: 15px; }
+            .contract-preview { padding: 20px; }
+            .contract-header-grid { flex-direction: column; align-items: center; gap: 20px; }
+            .header-right-col, .header-left-col { width: 100%; text-align: center; }
+            .header-left-col p { justify-content: center; }
+            .signature-section { grid-template-columns: 1fr; }
+            .witnesses ul { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>📋 فرم تنظیم قرارداد دهیاری</h1>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="contractNumber">شماره قرارداد</label>
+                <input type="text" id="contractNumber" placeholder="مثال: ۱۲۳/۴۵" value="">
+            </div>
+            
+            <div class="form-group">
+                <label>تاریخ قرارداد</label>
+                <div class="date-group">
+                    <select id="contractDay" style="flex: 1;">
+                        <option value="">روز</option>
+                    </select>
+                    <select id="contractMonth" style="flex: 2;">
+                        <option value="">ماه</option>
+                    </select>
+                    <select id="contractYear" style="flex: 1.5;">
+                        <option value="">سال</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group full-width">
+                <label for="contractSubject">موضوع قرارداد (عنوان وسط سربرگ)</label>
+                <input type="text" id="contractSubject" placeholder="مثال: قرارداد بیل مکانیکی" value="قرارداد">
+            </div>
+
+            <div class="form-group">
+                <label for="villageName">نام دهیاری</label>
+                <input type="text" id="villageName" placeholder="مثال: دهیاری تموغه" value="دهیاری تموغه">
+            </div>
+            <div class="form-group">
+                <label for="employerName">نام و نام خانوادگی کارفرما</label>
+                <input type="text" id="employerName" placeholder="مثال: کاوه عبدی" value="">
+            </div>
+            <div class="form-group">
+                <label for="employerNationalId">شماره ملی کارفرما</label>
+                <input type="text" id="employerNationalId" placeholder="مثال: ۱۲۳۴۵۶۷۸۹۰" value="">
+            </div>
+            <div class="form-group">
+                <label for="employerJob">شغل کارفرما</label>
+                <input type="text" id="employerJob" placeholder="مثال: دهیار" value="">
+            </div>
+            <div class="form-group">
+                <label for="employerAddress">سکونت کارفرما</label>
+                <input type="text" id="employerAddress" placeholder="مثال: سقز، خیابان اصلی" value="">
+            </div>
+            <div class="form-group">
+                <label for="contractorName">نام و نام خانوادگی مجری / پیمانکار</label>
+                <input type="text" id="contractorName" placeholder="مثال: کاوه عبدی" value="">
+            </div>
+            <div class="form-group">
+                <label for="contractorNationalId">شماره ملی مجری</label>
+                <input type="text" id="contractorNationalId" placeholder="مثال: ۰۹۸۷۶۵۴۳۲۱" value="">
+            </div>
+            <div class="form-group">
+                <label for="contractorAddress">سکونت مجری / پیمانکار</label>
+                <input type="text" id="contractorAddress" placeholder="مثال: سقز، روستای سرسبز" value="">
+            </div>
+            <div class="form-group full-width">
+                <label for="jobDescription">شرح کار و وظایف</label>
+                <textarea id="jobDescription" placeholder="شرح خدمات و وظایف پیمانکار را وارد کنید...">انجام خدمات حمل و نقل و پشتیبانی پروژه‌ی دهیاری طبق ضوابط و مقررات جاری.</textarea>
+            </div>
+            <div class="form-group">
+                <label for="feeRial">مبلغ به ریال (با ممیز)</label>
+                <input type="text" id="feeRial" placeholder="مثال: 32,200,000" value="">
+            </div>
+            <div class="form-group">
+                <label for="feeAmount">مبلغ به حروف (تومان) - خودکار</label>
+                <input type="text" id="feeAmount" readonly placeholder="با وارد کردن ریال، اینجا پر می‌شود" style="background-color: #f8f9fa; cursor: not-allowed;">
+            </div>
+            <div class="form-group full-width">
+                <label for="feeDescription">توضیحات حق‌الزحمه (نحوه پرداخت)</label>
+                <input type="text" id="feeDescription" placeholder="مثال: برای هر ساعت / سرویس کار" value="">
+            </div>
+
+            <div class="form-group full-width">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="addTermsCheckbox">
+                    <label for="addTermsCheckbox">درج توضیحات و شروط اضافی در قرارداد (۷ بند)</label>
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <div class="terms-edit-section" id="termsEditSection">
+                    <h3>متن بندهای قرارداد را می‌توانید در اینجا ویرایش کنید:</h3>
+                    <div class="term-input-group">
+                        <label>بند ۱:</label>
+                        <textarea id="term1" rows="2">۱- تهیه و آماده کردن مصالح مصرفی اعم از سیمان و ماسه و آب بر عهده دهیاری می باشد.</textarea>
+                    </div>
+                    <div class="term-input-group">
+                        <label>بند ۲:</label>
+                        <textarea id="term2" rows="2">۲- هزینه کارگر برای جدولکاری برعهده پیمانکار / مجری می باشد.</textarea>
+                    </div>
+                    <div class="term-input-group">
+                        <label>بند ۳:</label>
+                        <textarea id="term3" rows="2">۳- کندن مسیر جدول با بیل مکانیکی و تسطیح آن برعهده دهیاری می باشد.</textarea>
+                    </div>
+                    <div class="term-input-group">
+                        <label>بند ۴:</label>
+                        <textarea id="term4" rows="2">۴- هرگونه خسارت جانی و مالی و بیمه ای و مالیات برعهده پیمانکار بوده و دهیاری هیچ تعهدی ندارد.</textarea>
+                    </div>
+                    <div class="term-input-group">
+                        <label>بند ۵:</label>
+                        <textarea id="term5" rows="2">۵- این کار تحت نظارت ناظر فنی دهیاری ها بوده و در پایان با تایید ناظر فنی دهیاری موظف است مبلغ مذکور را به پیمانکار تحویل نماید.</textarea>
+                    </div>
+                    <div class="term-input-group">
+                        <label>بند ۶:</label>
+                        <textarea id="term6" rows="2">۶- در هر مرحله از کار اگر ناظر فنی دهیاری ها قسمتی از کار را تایید نکرد پیمانکار موظف به رفع عیب و اصلاع آن بدون هیچ هزینه ای می باشد.</textarea>
+                    </div>
+                    <div class="term-input-group">
+                        <label>بند ۷:</label>
+                        <textarea id="term7" rows="2">۷- این قرارداد در سه نسخه با مفاد مشروحه فوق تهیه و تنظیم شده و هرکدام حکم واحد را دارد.</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-print" onclick="window.print()">
+                🖨️ چاپ قرارداد
+            </button>
+            <button class="btn btn-reset" onclick="resetForm()">
+                🔄 بازنشانی فرم
+            </button>
+        </div>
+
+        <div class="contract-preview" id="contractPreview">
+            
+            <div class="contract-header-grid">
+                <div class="header-right-col">
+                    <p>وزارت کشور</p>
+                    <p>استانداری استان کردستان</p>
+                    <p>فرمانداری ویژه شهرستان سقز</p>
+                    <p>بخشداری بخش مرکزی</p>
+                    <p id="previewVillageNameHeader">دهیاری تموغه</p>
+                </div>
+
+                <div class="header-center-col">
+                    <img src="logo.png" alt="لوگو" class="logo-image" onerror="this.style.display='none'">
+                    <div class="logo-caption" id="previewVillageNameLogo">دهیاری تموغه</div>
+                </div>
+
+                <div class="header-left-col">
+                    <p>شماره قرارداد : <span class="dotted-val" id="previewContractNumber"></span></p>
+                    <p>تاریخ قرارداد : <span class="dotted-val" id="previewContractDate"></span></p>
+                </div>
+            </div>
+
+            <div class="contract-title-area">
+                <div class="dashed-line"></div>
+                <div class="title-text" id="previewSubject">قرارداد</div>
+            </div>
+
+            <div class="contract-body">
+                <p>
+                    این قرارداد فی مابین آقای/خانم <span class="underline" id="previewEmployerNameIntro">—</span> 
+                    که از این پس (کارفرما) نامیده می‌شود و آقای/خانم <span class="underline" id="previewContractorNameIntro">—</span> 
+                    که از این پس (مجری / پیمانکار) نامیده می‌شود با توجه به صورت مجلس معاملات به شرح زیر منعقد گردید.
+                </p>
+
+                <p>
+                    <strong>مشخصات کارفرما:</strong>
+                    آقای <span class="underline" id="previewEmployerName">—</span>،
+                    شغل: <span class="underline" id="previewEmployerJob">—</span>،
+                    ساکن: <span class="underline" id="previewEmployerAddress">—</span>،
+                    به شماره ملی: <span class="underline" id="previewEmployerNationalId">—</span>.
+                </p>
+
+                <p>
+                    <strong>مشخصات مجری / پیمانکار:</strong>
+                    آقای <span class="underline" id="previewContractorName">—</span>،
+                    ساکن: <span class="underline" id="previewContractorAddress">—</span>،
+                    به شماره ملی: <span class="underline" id="previewContractorNationalId">—</span>.
+                </p>
+
+                <p>
+                    <strong>شرح کار و وظایف:</strong>
+                    <span id="previewJobDescription">—</span>
+                </p>
+
+                <p>
+                    <strong>حق‌الزحمه:</strong>
+                    مبلغ <span class="underline" id="previewFeeRial">—</span> ریال 
+                    (<span class="underline" id="previewFeeAmount">—</span> تومان) 
+                    <span id="previewFeeDescription">—</span> به ایشان پرداخت می‌گردد.
+                </p>
+
+                <p>
+                    هرگونه خسارت جانی و مالی و بیمه‌ای و مالیات برعهده <span class="highlight">مجری / پیمانکار</span> بوده و 
+                    <span class="highlight" id="previewVillageNameBody">دهیاری تموغه</span> هیچ تعهدی ندارد.
+                </p>
+
+                <div class="extra-terms-section" id="extraTermsSection">
+                    <p id="previewTerm1"></p>
+                    <p id="previewTerm2"></p>
+                    <p id="previewTerm3"></p>
+                    <p id="previewTerm4"></p>
+                    <p id="previewTerm5"></p>
+                    <p id="previewTerm6"></p>
+                    <p id="previewTerm7"></p>
+                </div>
+            </div>
+
+            <div class="signature-section">
+                <div class="signature-box">
+                    <div class="title">کارفرما</div>
+                    <div class="name-display" id="previewEmployerNameSign">علی محمدی</div>
+                    <div class="line"></div>
+                    <div class="sub">(شخصیت حقوقی <span id="previewVillageNameSign1">دهیاری تموغه</span>)</div>
+                </div>
+                <div class="signature-box">
+                    <div class="title">مجری / پیمانکار</div>
+                    <div class="name-display" id="previewContractorNameSign">رضا کریمی</div>
+                    <div class="line"></div>
+                    <div class="sub">(امضا و تاریخ)</div>
+                </div>
+            </div>
+
+            <div class="witnesses">
+                <div class="title">شهود:</div>
+                <ul>
+                    <li><span class="num">۱-</span> <span class="line"></span></li>
+                    <li><span class="num">۲-</span> <span class="line"></span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // توابع تبدیل اعداد
+        function toEnglishDigits(str) {
+            const persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
+            for (let i = 0; i < 10; i++) {
+                str = str.replace(persianNumbers[i], i);
+            }
+            return str;
+        }
+        
+        function toPersianDigits(str) {
+            const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+            return str.replace(/[0-9]/g, function(w) { return persianDigits[+w]; });
+        }
+
+        // تابع دقیق تبدیل عدد به حروف (فارسی)
+        function numberToWords(num) {
+            if (num === 0) return 'صفر';
+            const yekan = ['', 'یک', 'دو', 'سه', 'چهار', 'پنج', 'شش', 'هفت', 'هشت', 'نه'];
+            const dahgan = ['', '', 'بیست', 'سی', 'چهل', 'پنجاه', 'شصت', 'هفتاد', 'هشتاد', 'نود'];
+            const dahyek = ['ده', 'یازده', 'دوازده', 'سیزده', 'چهارده', 'پانزده', 'شانزده', 'هفده', 'هجده', 'نوزده'];
+            const sadgan = ['', 'صد', 'دویست', 'سیصد', 'چهارصد', 'پانصد', 'ششصد', 'هفتصد', 'هشتصد', 'نهصد'];
+            const scales = ['', ' هزار', ' میلیون', ' میلیارد', ' تریلیون'];
+
+            function threeDigitToWords(n) {
+                let str = [];
+                if (n >= 100) { str.push(sadgan[Math.floor(n / 100)]); n %= 100; }
+                if (n >= 20) { str.push(dahgan[Math.floor(n / 10)]); n %= 10; }
+                else if (n >= 10) { str.push(dahyek[n - 10]); n = 0; }
+                if (n > 0) { str.push(yekan[n]); }
+                return str.join(' و ');
+            }
+
+            let parts = [];
+            let scaleIndex = 0;
+            while (num > 0) {
+                let chunk = num % 1000;
+                if (chunk !== 0) {
+                    let words = threeDigitToWords(chunk);
+                    parts.unshift(words + scales[scaleIndex]);
+                }
+                num = Math.floor(num / 1000);
+                scaleIndex++;
+            }
+            return parts.join(' و ').trim();
+        }
+
+        // مقداردهی منوهای کشویی روز، ماه و سال
+        const daySelect = document.getElementById('contractDay');
+        const monthSelect = document.getElementById('contractMonth');
+        const yearSelect = document.getElementById('contractYear');
+
+        // ۱. روزها (۱ تا ۳۱)
+        for (let i = 1; i <= 31; i++) {
+            let option = document.createElement('option');
+            option.value = toPersianDigits(i.toString().padStart(2, '0'));
+            option.text = toPersianDigits(i.toString());
+            daySelect.appendChild(option);
+        }
+
+        // ۲. ماه‌ها با نام فارسی
+        const monthNames = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"];
+        for (let i = 0; i < 12; i++) {
+            let option = document.createElement('option');
+            option.value = toPersianDigits((i + 1).toString().padStart(2, '0'));
+            option.text = monthNames[i];
+            monthSelect.appendChild(option);
+        }
+
+        // ۳. سال‌ها (۱۴۰۰ تا ۱۴۲۰)
+        for (let i = 1400; i <= 1420; i++) {
+            let option = document.createElement('option');
+            option.value = toPersianDigits(i.toString());
+            option.text = toPersianDigits(i.toString());
+            yearSelect.appendChild(option);
+        }
+
+        // فرمت‌دهی خودکار مبلغ به ریال و تبدیل به حروف
+        const feeRialInput = document.getElementById('feeRial');
+        const feeAmountInput = document.getElementById('feeAmount');
+
+        feeRialInput.addEventListener('input', function() {
+            // جدا کردن کاما و تبدیل به عدد انگلیسی
+            let val = toEnglishDigits(this.value).replace(/,/g, '').replace(/\D/g, ''); 
+            
+            if (val) {
+                // ممیز هزارگان با استاندارد انگلیسی
+                let formatted = parseInt(val, 10).toLocaleString('en-US');
+                this.value = toPersianDigits(formatted);
+                
+                // تبدیل به حروف (تقسیم بر ۱۰ چون یکای پول ریال است و ما تومان می‌خواهیم)
+                let numForWords = Math.floor(parseInt(val, 10) / 10);
+                if (numForWords > 0) {
+                    feeAmountInput.value = numberToWords(numForWords) + ' تومان';
+                } else {
+                    feeAmountInput.value = 'کمتر از ۱۰ ریال';
+                }
+            } else {
+                this.value = '';
+                feeAmountInput.value = '';
+            }
+            updatePreview();
+        });
+
+        const fieldMap = {
+            'contractNumber': ['previewContractNumber'],
+            'contractSubject': ['previewSubject'],
+            'villageName': ['previewVillageNameHeader', 'previewVillageNameLogo', 'previewVillageNameBody', 'previewVillageNameSign1'],
+            'employerName': ['previewEmployerNameIntro', 'previewEmployerName', 'previewEmployerNameSign'],
+            'employerJob': ['previewEmployerJob'],
+            'employerAddress': ['previewEmployerAddress'],
+            'employerNationalId': ['previewEmployerNationalId'],
+            'contractorName': ['previewContractorNameIntro', 'previewContractorName', 'previewContractorNameSign'],
+            'contractorAddress': ['previewContractorAddress'],
+            'contractorNationalId': ['previewContractorNationalId'],
+            'jobDescription': ['previewJobDescription'],
+            'feeAmount': ['previewFeeAmount'],
+            'feeRial': ['previewFeeRial'],
+            'feeDescription': ['previewFeeDescription']
+        };
+
+        function updatePreview() {
+            for (const [inputId, previewIds] of Object.entries(fieldMap)) {
+                const input = document.getElementById(inputId);
+                if (!input) continue;
+                const value = input.value.trim() || (inputId === 'contractSubject' ? 'قرارداد' : '—');
+                previewIds.forEach(pid => {
+                    const el = document.getElementById(pid);
+                    if (el) el.textContent = value;
+                });
+            }
+
+            // ترکیب تاریخ (روز + نام ماه + سال)
+            let day = daySelect.value;
+            let monthText = monthSelect.options[monthSelect.selectedIndex].text;
+            let year = yearSelect.value;
+
+            let fullDate = '—';
+            if (day || monthText || year) {
+                let d = day || '—';
+                let m = (monthSelect.value !== "") ? monthText : '—';
+                let y = year || '—';
+                
+                fullDate = `${d} ${m} ${y}`;
+            }
+            document.getElementById('previewContractDate').textContent = fullDate;
+
+            // آپدیت بندها
+            for (let i = 1; i <= 7; i++) {
+                const termInput = document.getElementById(`term${i}`);
+                const termPreview = document.getElementById(`previewTerm${i}`);
+                if (termInput && termPreview) {
+                    termPreview.textContent = toPersianDigits(termInput.value.trim());
+                }
+            }
+        }
+
+        // اتصال رویدادها
+        document.querySelectorAll('.form-grid input[type="text"], .form-grid textarea').forEach(el => {
+            if (el.id !== 'contractDate' && el.id !== 'feeRial' && el.id !== 'feeAmount' && el.id !== 'contractYear') {
+                el.addEventListener('input', function() {
+                    if (/[0-9]/.test(this.value)) {
+                        const start = this.selectionStart;
+                        const end = this.selectionEnd;
+                        this.value = toPersianDigits(this.value);
+                        this.setSelectionRange(start, end);
+                    }
+                    updatePreview();
+                });
+            }
+        });
+
+        daySelect.addEventListener('change', updatePreview);
+        monthSelect.addEventListener('change', updatePreview);
+        yearSelect.addEventListener('change', updatePreview);
+
+        const termsCheckbox = document.getElementById('addTermsCheckbox');
+        const extraTermsSection = document.getElementById('extraTermsSection');
+        const termsEditSection = document.getElementById('termsEditSection');
+
+        termsCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                extraTermsSection.classList.add('show');
+                termsEditSection.classList.add('show');
+            } else {
+                extraTermsSection.classList.remove('show');
+                termsEditSection.classList.remove('show');
+            }
+        });
+
+        function resetForm() {
+            const defaults = {
+                'contractNumber': '', 'contractSubject': 'قرارداد', 'villageName': 'دهیاری تموغه',
+                'employerName': 'علی محمدی', 'employerNationalId': '۱۲۳۴۵۶۷۸۹۰', 'employerJob': 'دهیار', 'employerAddress': 'سقز، خیابان اصلی',
+                'contractorName': 'رضا کریمی', 'contractorNationalId': '۰۹۸۷۶۵۴۳۲۱', 'contractorAddress': 'سقز، روستای سرسبز',
+                'jobDescription': 'انجام خدمات حمل و نقل و پشتیبانی پروژه‌های دهیاری طبق ضوابط و مقررات جاری.',
+                'feeRial': '', 'feeAmount': '', 'feeDescription': 'برای هر ساعت / سرویس کار',
+                'term1': '۱- تهیه و آماده کردن مصالح مصرفی اعم از سیمان و ماسه و آب بر عهده دهیاری می باشد.',
+                'term2': '۲- هزینه کارگر برای جدولکاری برعهده پیمانکار / مجری می باشد.',
+                'term3': '۳- کندن مسیر جدول با بیل مکانیکی و تسطیح آن برعهده دهیاری می باشد.',
+                'term4': '۴- هرگونه خسارت جانی و مالی و بیمه ای و مالیات برعهده پیمانکار بوده و دهیاری هیچ تعهدی ندارد.',
+                'term5': '۵- این کار تحت نظارت ناظر فنی دهیاری ها بوده و در پایان با تایید ناظر فنی دهیاری موظف است مبلغ مذکور را به پیمانکار تحویل نماید.',
+                'term6': '۶- در هر مرحله از کار اگر ناظر فنی دهیاری ها قسمتی از کار را تایید نکرد پیمانکار موظف به رفع عیب و اصلاع آن بدون هیچ هزینه ای می باشد.',
+                'term7': '۷- این قرارداد در سه نسخه با مفاد مشروحه فوق تهیه و تنظیم شده و هرکدام حکم واحد را دارد.'
+            };
+
+            for (const [id, value] of Object.entries(defaults)) {
+                const el = document.getElementById(id);
+                if (el) el.value = value;
+            }
+            
+            daySelect.value = '';
+            monthSelect.value = '';
+            yearSelect.value = '';
+
+            termsCheckbox.checked = false;
+            extraTermsSection.classList.remove('show');
+            termsEditSection.classList.remove('show');
+            updatePreview();
+        }
+
+        updatePreview();
+    </script>
+</body>
+</html>

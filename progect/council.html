@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>سامانه صدور صورت جلسه - شورای اسلامی</title>
+<!-- ایمپورت فونت وزیر -->
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+
+<script>
+  // محافظت از صفحه - بررسی وضعیت ورود
+  (function() {
+    const AUTH_KEY = 'site_auth_expire';
+    const savedExpire = localStorage.getItem(AUTH_KEY);
+    
+    if (!savedExpire) {
+      // کاربر وارد نشده
+      window.location.href = 'index.html';
+      return;
+    }
+    
+    const expireTime = parseInt(savedExpire, 10);
+    const now = Date.now();
+    
+    if (now >= expireTime) {
+      // زمان انقضا رسیده
+      localStorage.removeItem(AUTH_KEY);
+      window.location.href = 'index.html';
+    }
+  })();
+</script>
+
+<style>
+  /* ================= تنظیمات کلی ================= */
+  * {
+    box-sizing: border-box;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  body {
+    /* تغییر فونت به وزیر */
+    font-family: 'Vazirmatn', 'Tahoma', sans-serif;
+    background: #e2e8f0;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* هدر سایت */
+  .app-header {
+    background: #1e293b;
+    color: #fff;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 10;
+  }
+  .app-header h1 { margin: 0; font-size: 18px; font-weight: normal; }
+  
+  .toolbar button {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-right: 10px;
+  }
+  .btn-print { background: #10b981; }
+  .btn-print:hover { background: #059669; }
+  .btn-reset { background: #ef4444; }
+  .btn-reset:hover { background: #dc2626; }
+
+  /* داشبورد */
+  .dashboard {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ستون فرم (فیلدها) */
+  .form-panel {
+    width: 420px;
+    background: #fff;
+    padding: 20px;
+    overflow-y: auto;
+    box-shadow: -2px 0 10px rgba(0,0,0,0.05);
+    border-left: 1px solid #cbd5e1;
+  }
+  .form-panel h2 {
+    font-size: 16px;
+    color: #334155;
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 10px;
+  }
+  .form-group { margin-bottom: 12px; }
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    color: #475569;
+    margin-bottom: 5px;
+  }
+  .form-control {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .form-control:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  }
+  textarea.form-control { resize: vertical; min-height: 80px; }
+
+  /* بخش‌های داینامیک در فرم */
+  .dynamic-box {
+    border: 1px dashed #cbd5e1;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    background: #f8fafc;
+  }
+  .dynamic-box h3 {
+    margin: 0 0 10px 0;
+    font-size: 13px;
+    color: #334155;
+  }
+  .btn-add-sm {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    width: 100%;
+    margin-top: 5px;
+  }
+  .btn-add-sm:hover { background: #1d4ed8; }
+
+  /* دکمه‌های حذف در فرم */
+  .btn-del-sm {
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    margin-top: 5px;
+    width: 100%;
+  }
+  .btn-del-sm:hover { background: #dc2626; }
+
+  /* ================= ستون نامه (پیش‌نمایش) ================= */
+  .preview-panel {
+    flex: 1;
+    background: #cbd5e1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* کاغذ A4 */
+  .page {
+    background: #fff;
+    width: 210mm;
+    height: 296mm; 
+    padding: 8mm 12mm;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column; 
+    font-size: 13px;
+  }
+
+  /* سربرگ */
+  .letterhead {
+    border: 2px solid #000;
+    border-radius: 4px;
+    padding: 4px 12px;
+    margin-bottom: 6px;
+  }
+  .header-top { display: flex; justify-content: space-between; align-items: center; }
+  .col-right { width: 30%; text-align: center; font-size: 13px; line-height: 1.6; font-weight: bold; }
+  .col-center { width: 40%; display: flex; justify-content: center; align-items: center; }
+  
+  /* استایل عکس لوگو */
+  .logo-img {
+    max-width: 85px;
+    max-height: 85px;
+    object-fit: contain;
+  }
+  
+  .col-left { width: 30%; display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: bold; }
+  .field-row { display: flex; align-items: center; }
+  .field-label { white-space: nowrap; margin-left: 5px; }
+  .field-line {
+    flex-grow: 1; border-bottom: 2px dashed #000; position: relative;
+    height: 20px; display: flex; align-items: center; justify-content: center;
+  }
+  
+  .header-bottom {
+    text-align: center; font-size: 15px; font-weight: bold;
+    margin-top: 4px; display: flex; justify-content: center; align-items: center; gap: 5px;
+  }
+  .title-red { color: #d90000; }
+  .title-black { color: #000; }
+
+  /* جدول‌ها */
+  table { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
+  th, td { border: 1px solid #000; padding: 3px 6px; text-align: right; vertical-align: middle; }
+  .bg-gray { background-color: #d9d9d9 !important; font-weight: bold; }
+  .text-center { text-align: center !important; }
+  
+  .compact-header td { padding: 2px 5px !important; line-height: 1.2; font-size: 12px; }
+  .resolution-cell { vertical-align: top; line-height: 1.8; padding: 6px 10px !important; }
+
+  /* ================= بخش امضاها ================= */
+  .signatures {
+    margin-top: auto; /* هول دادن به پایین صفحه */
+    /* حذف کادر دور کل بخش امضا */
+    border: none; 
+    display: flex; 
+    justify-content: space-between; 
+    padding: 0 10px; 
+    margin-bottom: 40px; /* کمی بالا آوردن از لبه پایین کاغذ */
+    text-align: center; 
+    font-weight: bold; 
+    font-size: 13px;
+  }
+  .signatures div { 
+    width: 33%; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+  }
+  
+  .text-red-val { color: #d90000; font-weight: bold; }
+  .text-black-val { color: #000; font-weight: bold; }
+  .signature-line { margin-top: 5px; min-height: 15px; color: #d90000; font-weight: bold; }
+
+  /* تنظیمات چاپ */
+  @media print {
+    @page { size: A4; margin: 0; }
+    body { background: #fff; height: auto; overflow: visible; display: block; }
+    .app-header, .form-panel, .no-print { display: none !important; }
+    .dashboard { display: block; overflow: visible; }
+    .preview-panel { background: #fff; padding: 0; overflow: visible; display: block; }
+    
+    .page {
+      box-shadow: none; width: 210mm; height: 296mm; margin: 0; padding: 10mm 12mm;
+      page-break-after: avoid; page-break-inside: avoid;
+    }
+    .letterhead { border: 1px solid #000 !important; }
+    .text-red-val { color: #d90000 !important; }
+  }
+</style>
+</head>
+<body>
+
+  <header class="app-header">
+    <h1>سامانه صدور صورت جلسه</h1>
+    <div class="toolbar">
+      <button class="btn-reset" onclick="resetForm()">↺ بازنشانی فرم</button>
+      <button class="btn-print" onclick="window.print()">🖨️ چاپ نامه</button>
+    </div>
+  </header>
+
+  <div class="dashboard">
+    
+    <!-- ================= ستون فرم (فیلدها) ================= -->
+    <div class="form-panel">
+      <h2>ویرایش اطلاعات</h2>
+
+      <div class="form-group">
+        <label>عنوان (بخش اول)</label>
+        <input type="text" id="inp-title1" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>نام روستا</label>
+        <input type="text" id="inp-village" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label>شماره نامه</label>
+        <input type="text" id="inp-num" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>تاریخ</label>
+        <input type="text" id="inp-date" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>موضوع جلسه</label>
+        <input type="text" id="inp-subject" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>محل برگزاری</label>
+        <input type="text" id="inp-location" class="form-control">
+      </div>
+      <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+        <div class="form-group" style="flex: 1; margin-bottom:0;">
+          <label>زمان شروع</label>
+          <input type="text" id="inp-start" class="form-control text-center">
+        </div>
+        <div class="form-group" style="flex: 1; margin-bottom:0;">
+          <label>زمان پایان</label>
+          <input type="text" id="inp-end" class="form-control text-center">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>اعضای مدعوین</label>
+        <input type="text" id="inp-att1" class="form-control" style="margin-bottom: 5px;">
+        <input type="text" id="inp-att2" class="form-control" style="margin-bottom: 5px;">
+        <input type="text" id="inp-att3" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>اعضای حاضرین</label>
+        <input type="text" id="inp-pre1" class="form-control" style="margin-bottom: 5px;">
+        <input type="text" id="inp-pre2" class="form-control" style="margin-bottom: 5px;">
+        <input type="text" id="inp-pre3" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>اعضای غایبین</label>
+        <input type="text" id="inp-abs1" class="form-control" style="margin-bottom: 5px;">
+        <input type="text" id="inp-abs2" class="form-control" style="margin-bottom: 5px;">
+        <input type="text" id="inp-abs3" class="form-control">
+      </div>
+
+      <!-- دستور کار (داینامیک در فرم) -->
+      <div class="dynamic-box" id="form-agenda-container">
+        <h3>عناوین دستور کار جلسه</h3>
+        <button class="btn-add-sm" onclick="addAgendaField()">+ افزودن دستور کار</button>
+      </div>
+
+      <!-- مصوبات (داینامیک در فرم) -->
+      <div class="dynamic-box" id="form-resolution-container">
+        <h3>مصوبات جلسه</h3>
+        <button class="btn-add-sm" onclick="addResolutionField()">+ افزودن مصوبه</button>
+      </div>
+
+      <div class="form-group">
+        <label>امضاها (رئیس شورا)</label>
+        <input type="text" id="inp-sign1" class="form-control">
+      </div>
+    </div>
+
+    <!-- ================= ستون نامه (پیش‌نمایش) ================= -->
+    <div class="preview-panel">
+      <div class="page">
+        
+        <!-- سربرگ -->
+        <div class="letterhead">
+          <div class="header-top">
+            <div class="col-right">
+              <div>وزارت کشور</div>
+              <div>استانداری استان کردستان</div>
+              <div>فرمانداری ویژه شهرستان سقز</div>
+              <div>بخشداری بخش مرکزی</div>
+            </div>
+            <!-- لوگو -->
+            <div class="col-center">
+              <img src="logo.png" alt="لوگو" class="logo-img">
+            </div>
+            <div class="col-left">
+              <div class="field-row">
+                <span class="field-label">شماره :</span>
+                <div class="field-line"><span class="text-red-val" id="view-num"></span></div>
+              </div>
+              <div class="field-row">
+                <span class="field-label">تاریخ :</span>
+                <div class="field-line"><span class="text-red-val" id="view-date"></span></div>
+              </div>
+            </div>
+          </div>
+          <div class="header-bottom">
+            <span class="title-black" id="view-title1"></span>
+            <span class="title-red" id="view-village"></span>
+          </div>
+        </div>
+
+        <!-- جدول ۱ -->
+        <table>
+          <tr>
+            <td colspan="4" class="bg-gray">موضوع جلسه : <span class="text-black-val" id="view-subject"></span></td>
+          </tr>
+          <tr>
+            <td colspan="2" class="text-center" style="width: 50%;">زمان شروع : <span class="text-red-val" id="view-start"></span></td>
+            <td colspan="2" class="text-center" style="width: 50%;">زمان پایان : <span class="text-red-val" id="view-end"></span></td>
+          </tr>
+          <tr>
+            <td colspan="4" class="text-center bg-gray">محل برگزاری : <span class="text-black-val" id="view-location"></span></td>
+          </tr>
+        </table>
+
+        <!-- جدول ۲ -->
+        <table>
+          <tr class="bg-gray text-center">
+            <th style="width: 33%;">اسامی مدعوین</th>
+            <th style="width: 33%;">اسامی حاضرین</th>
+            <th style="width: 34%;">اسامی غایبین</th>
+          </tr>
+          <tr>
+            <td>
+              ۱. <span class="text-red-val" id="view-att1"></span><br>
+              ۲. <span class="text-red-val" id="view-att2"></span><br>
+              ۳. <span class="text-red-val" id="view-att3"></span>
+            </td>
+            <td>
+              ۱. <span class="text-red-val" id="view-pre1"></span><br>
+              ۲. <span class="text-red-val" id="view-pre2"></span><br>
+              ۳. <span class="text-red-val" id="view-pre3"></span>
+            </td>
+            <td>
+              ۱. <span class="text-red-val" id="view-abs1"></span><br>
+              ۲. <span class="text-red-val" id="view-abs2"></span><br>
+              ۳. <span class="text-red-val" id="view-abs3"></span>
+            </td>
+          </tr>
+        </table>
+
+        <!-- جدول ۳: دستور کار (داینامیک) -->
+        <table id="view-agenda-table">
+          <tr>
+            <td class="bg-gray text-center" style="width: 15%;">ردیف</td>
+            <td class="bg-gray text-center">عناوین دستور کار جلسه</td>
+          </tr>
+        </table>
+
+        <!-- جدول ۴: مصوبات (داینامیک) -->
+        <table id="view-resolution-table">
+          <tr>
+            <td class="bg-gray text-center compact-header" style="width: 15%;">شماره<br>مصوبه</td>
+            <td class="bg-gray text-center compact-header">مصوبات جلسه</td>
+          </tr>
+        </table>
+
+        <!-- امضاها (کادر دور آن حذف شد و کمی بالا آمد) -->
+        <div class="signatures">
+          <div>
+            امضا رئیس شورا
+            <div class="signature-line" id="view-sign1"></div>
+          </div>
+          <div>امضا نایب رئیس</div>
+          <div>امضا منشی</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ================== تابع تبدیل اعداد انگلیسی به فارسی ==================
+    function toPersianDigits(str) {
+      if (!str) return '';
+      const englishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+      const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+      return str.toString().replace(/[0-9]/g, function(w) {
+        return persianDigits[englishDigits.indexOf(w)];
+      });
+    }
+
+    // ================== ذخیره و بازیابی فیلدهای ثابت ==================
+    const bindings = [
+      { input: 'inp-title1', output: 'view-title1' },
+      { input: 'inp-village', output: 'view-village' },
+      { input: 'inp-num', output: 'view-num' },
+      { input: 'inp-date', output: 'view-date' },
+      { input: 'inp-subject', output: 'view-subject' },
+      { input: 'inp-location', output: 'view-location' },
+      { input: 'inp-start', output: 'view-start' },
+      { input: 'inp-end', output: 'view-end' },
+      { input: 'inp-att1', output: 'view-att1' },
+      { input: 'inp-att2', output: 'view-att2' },
+      { input: 'inp-att3', output: 'view-att3' },
+      { input: 'inp-pre1', output: 'view-pre1' },
+      { input: 'inp-pre2', output: 'view-pre2' },
+      { input: 'inp-pre3', output: 'view-pre3' },
+      { input: 'inp-abs1', output: 'view-abs1' },
+      { input: 'inp-abs2', output: 'view-abs2' },
+      { input: 'inp-abs3', output: 'view-abs3' },
+      { input: 'inp-sign1', output: 'view-sign1' }
+    ];
+
+    const defaultValues = {
+      'inp-title1': 'صورت جلسه و مصوبه شورای اسلامی روستای',
+      'inp-village': 'تموغه',
+      'inp-num': '', 'inp-date': '', 'inp-subject': '', 'inp-location': '', 'inp-start': '', 'inp-end': '',
+      'inp-att1': '', 'inp-att2': '', 'inp-att3': '',
+      'inp-pre1': '', 'inp-pre2': '', 'inp-pre3': '',
+      'inp-abs1': '', 'inp-abs2': '', 'inp-abs3': '',
+      'inp-sign1': ''
+    };
+
+    bindings.forEach(bind => {
+      const inputEl = document.getElementById(bind.input);
+      const outputEl = document.getElementById(bind.output);
+      if (!inputEl || !outputEl) return;
+
+      const savedValue = localStorage.getItem('form_' + bind.input);
+      inputEl.value = (savedValue !== null) ? savedValue : (defaultValues[bind.input] || '');
+      
+      outputEl.textContent = toPersianDigits(inputEl.value);
+
+      inputEl.addEventListener('input', (e) => {
+        const persianValue = toPersianDigits(e.target.value);
+        outputEl.textContent = persianValue;
+        localStorage.setItem('form_' + bind.input, e.target.value);
+      });
+    });
+
+    // ================== مدیریت دستور کار (Agenda) ==================
+    let agendaCount = 0;
+    const persianNumbers = ['۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹', '۱۰', '۱۱', '۱۲', '۱۳', '۱۴', '۱۵'];
+
+    function addAgendaField(data = null) {
+      agendaCount++;
+      const id = Date.now(); 
+
+      const formContainer = document.getElementById('form-agenda-container');
+      const addBtn = formContainer.querySelector('.btn-add-sm');
+      
+      const formGroup = document.createElement('div');
+      formGroup.style.marginBottom = '10px';
+      formGroup.style.paddingBottom = '10px';
+      formGroup.style.borderBottom = '1px solid #e2e8f0';
+      formGroup.id = `form-agenda-${id}`;
+      
+      formGroup.innerHTML = `
+        <input type="text" class="form-control" placeholder="متن دستور کار..." 
+               value="${data ? data.title : ''}" oninput="updateAgendaTitle(${id}, this.value)">
+        <button class="btn-del-sm" onclick="removeAgenda(${id})">حذف این دستور کار</button>
+      `;
+      formContainer.insertBefore(formGroup, addBtn);
+
+      const viewTable = document.getElementById('view-agenda-table');
+      const viewRow = document.createElement('tr');
+      viewRow.id = `view-agenda-${id}`;
+      viewRow.innerHTML = `
+        <td class="text-center" style="vertical-align: top;">
+          <span class="text-red-val agenda-num"></span>
+        </td>
+        <td>
+          <span class="text-red-val" id="view-agenda-title-${id}"></span>
+        </td>
+      `;
+      viewTable.appendChild(viewRow);
+      
+      if (data && data.title) {
+        document.getElementById(`view-agenda-title-${id}`).textContent = toPersianDigits(data.title);
+      }
+      
+      updateAgendaNumbers();
+    }
+
+    function updateAgendaTitle(id, value) {
+      const target = document.getElementById(`view-agenda-title-${id}`);
+      if (target) target.textContent = toPersianDigits(value);
+    }
+
+    function removeAgenda(id) {
+      if(confirm('حذف شود؟')) {
+        document.getElementById(`form-agenda-${id}`).remove();
+        document.getElementById(`view-agenda-${id}`).remove();
+        updateAgendaNumbers();
+      }
+    }
+
+    function updateAgendaNumbers() {
+      const rows = document.querySelectorAll('#view-agenda-table tr:not(:first-child)');
+      rows.forEach((row, index) => {
+        row.querySelector('.agenda-num').textContent = persianNumbers[index] || (index + 1);
+      });
+    }
+
+    // ================== مدیریت مصوبات (Resolutions) ==================
+    let resolutionCount = 0;
+
+    function addResolutionField(data = null) {
+      resolutionCount++;
+      const id = Date.now();
+
+      const formContainer = document.getElementById('form-resolution-container');
+      const addBtn = formContainer.querySelector('.btn-add-sm');
+      
+      const formGroup = document.createElement('div');
+      formGroup.style.marginBottom = '10px';
+      formGroup.style.paddingBottom = '10px';
+      formGroup.style.borderBottom = '1px solid #e2e8f0';
+      formGroup.id = `form-res-${id}`;
+      
+      formGroup.innerHTML = `
+        <label style="font-size:12px; color:#d90000; margin-bottom:5px; display:block;">متن مصوبه</label>
+        <textarea class="form-control" style="margin-bottom:5px; min-height:60px;" placeholder="متن مصوبه را وارد کنید..."
+               oninput="updateResolutionText(${id}, this.value)">${data ? data.text : ''}</textarea>
+        <button class="btn-del-sm" onclick="removeResolution(${id})">حذف این مصوبه</button>
+      `;
+      formContainer.insertBefore(formGroup, addBtn);
+
+      const viewTable = document.getElementById('view-resolution-table');
+      const viewRow = document.createElement('tr');
+      viewRow.id = `view-res-${id}`;
+      viewRow.innerHTML = `
+        <td class="text-center" style="vertical-align: top;">
+          <span class="text-red-val res-num"></span>
+        </td>
+        <td class="resolution-cell">
+          <span class="text-black-val" id="view-res-text-${id}" style="font-weight:normal;"></span>
+        </td>
+      `;
+      viewTable.appendChild(viewRow);
+      
+      if (data && data.text) {
+        document.getElementById(`view-res-text-${id}`).textContent = toPersianDigits(data.text);
+      }
+      
+      updateResolutionNumbers();
+    }
+
+    function updateResolutionText(id, value) {
+      const target = document.getElementById(`view-res-text-${id}`);
+      if (target) target.textContent = toPersianDigits(value);
+    }
+
+    function removeResolution(id) {
+      if(confirm('حذف شود؟')) {
+        document.getElementById(`form-res-${id}`).remove();
+        document.getElementById(`view-res-${id}`).remove();
+        updateResolutionNumbers();
+      }
+    }
+
+    function updateResolutionNumbers() {
+      const rows = document.querySelectorAll('#view-resolution-table tr:not(:first-child)');
+      rows.forEach((row, index) => {
+        row.querySelector('.res-num').textContent = persianNumbers[index] || (index + 1);
+      });
+    }
+
+    // ================== بازنشانی ==================
+    function resetForm() {
+      if (confirm('آیا از پاک کردن تمام مقادیر مطمئن هستید؟ صفحه رفرش می‌شود.')) {
+        localStorage.clear();
+        location.reload();
+      }
+    }
+
+    // ================== بارگذاری اولیه ==================
+    window.onload = function() {
+      addAgendaField({ title: '' });
+      addResolutionField({ text: '' });
+    };
+  </script>
+
+</body>
+</html>

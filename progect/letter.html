@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیستم صدور نامه شورای اسلامی</title>
+
+<script>
+  // محافظت از صفحه - بررسی وضعیت ورود
+  (function() {
+    const AUTH_KEY = 'site_auth_expire';
+    const savedExpire = localStorage.getItem(AUTH_KEY);
+    
+    if (!savedExpire) {
+      // کاربر وارد نشده
+      window.location.href = 'index.html';
+      return;
+    }
+    
+    const expireTime = parseInt(savedExpire, 10);
+    const now = Date.now();
+    
+    if (now >= expireTime) {
+      // زمان انقضا رسیده
+      localStorage.removeItem(AUTH_KEY);
+      window.location.href = 'index.html';
+    }
+  })();
+</script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap');
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
+            background-color: #e9ecef;
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: flex-start;
+            gap: 30px; min-height: 100vh;
+        }
+        .form-panel {
+            background-color: #fff; padding: 25px; border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.1); width: 350px;
+            position: sticky; top: 20px;
+        }
+        .form-panel h2 {
+            margin-top: 0; color: #333; font-size: 1.1em; text-align: center;
+            border-bottom: 2px solid #4caf50; padding-bottom: 10px; margin-bottom: 15px;
+        }
+        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+        .form-group label { font-size: .9em; margin-bottom: 5px; color: #555; font-weight: 700; }
+        .form-group input, .form-group select {
+            padding: 8px 12px; border: 1px solid #ccc; border-radius: 5px;
+            font-family: 'Vazirmatn', Tahoma; font-size: 1em; transition: border .3s;
+            direction: rtl; background-color: #fff; cursor: pointer;
+        }
+        .form-group select:focus, .form-group input:focus {
+            outline: 0; border-color: #4caf50; box-shadow: 0 0 5px rgba(76,175,80,.3);
+        }
+        .date-group { display: flex; gap: 5px; }
+        .date-group select { flex: 1; }
+        
+        .preview-panel { display: flex; flex-direction: column; align-items: center; }
+        .controls {
+            margin-bottom: 15px; background: #fff; padding: 10px 20px; border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.1); display: flex; gap: 15px;
+            align-items: center; width: 210mm; justify-content: center;
+        }
+        button {
+            padding: 8px 20px; cursor: pointer; border: 0; border-radius: 5px;
+            font-family: 'Vazirmatn', Tahoma; font-weight: 700; transition: .3s;
+        }
+        .btn-print { background-color: #4caf50; color: #fff; }
+        .btn-print:hover { background-color: #45a049; }
+        .size-selector { display: flex; align-items: center; gap: 10px; }
+
+        .document-container {
+            background-color: #fff; box-shadow: 0 0 15px rgba(0,0,0,.2);
+            margin: 0 auto; position: relative; width: 210mm; height: 297mm;
+            padding: 15mm; transition: all .3s ease;
+        }
+        .document-container.a5-mode { width: 148mm; height: 210mm; padding: 10mm; font-size: .85em; }
+        .inner-border {
+            border: 2px solid #000; width: 100%; height: 100%;
+            padding: 15px; display: flex; flex-direction: column;
+        }
+        .header-section {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            margin-bottom: 20px; padding-bottom: 10px;
+        }
+        .header-right {
+            text-align: center; font-size: .9em; line-height: 1.6; width: 35%;
+            margin-top: 10px; display: flex; flex-direction: column; align-items: center;
+        }
+        .header-center {
+            text-align: center; width: 30%; display: flex; flex-direction: column; align-items: center;
+        }
+        .logo-container {
+            width: 90px; height: 100px; display: flex; justify-content: center;
+            align-items: center; margin-bottom: 10px;
+        }
+        .logo-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .dehyari-name { font-weight: 700; font-size: 1.1em; color: #000; white-space: nowrap; }
+        .header-left {
+            width: 35%; margin-top: 25px; display: flex; flex-direction: column; gap: 20px;
+        }
+        .contract-field {
+            display: flex; align-items: flex-end; justify-content: flex-start; font-size: .95em;
+        }
+        .contract-field span.label { white-space: nowrap; margin-left: 5px; }
+        .dotted-line {
+            flex-grow: 1; border-bottom: 2px dashed #000; min-height: 1.2em;
+            position: relative; top: -5px; color: red; font-weight: 700;
+        }
+        .content-area {
+            flex-grow: 1; margin-top: 20px; line-height: 2; font-size: 1.05em;
+            display: flex; flex-direction: column;
+        }
+        .recipient { text-align: right; margin-bottom: 15px; padding-right: 20px; }
+        .letter-text { text-align: justify; text-indent: 2em; margin-bottom: 30px; }
+        .dynamic-red { color: red; font-weight: 700; }
+        .signatures {
+            display: flex; flex-direction: column; align-items: flex-start;
+            padding-right: 30px; line-height: 2.5; font-size: 1em;
+            margin-top: auto; padding-bottom: 20px;
+        }
+        .signatures-title { font-weight: 700; margin-bottom: 10px; }
+
+        @page { size: auto; margin: 0; }
+        @media print {
+            body { background: none; padding: 0; margin: 0; display: block; }
+            .form-panel { display: none !important; }
+            .controls { display: none !important; }
+            .preview-panel { display: block; }
+            .document-container {
+                box-shadow: none; margin: 0; width: 100% !important;
+                height: 100vh !important; padding: 0;
+            }
+            body.print-a4 @page { size: A4 portrait; margin: 5mm; }
+            body.print-a4 .document-container { padding: 5mm; }
+            body.print-a5 @page { size: A5 portrait; margin: 5mm; }
+            body.print-a5 .document-container.a5-mode { padding: 5mm; }
+            .inner-border { height: 100% !important; border: 2px solid #000; padding: 20px; }
+            .content-area { height: 100%; }
+        }
+        @media (max-width: 1024px) {
+            body { flex-direction: column; align-items: center; }
+            .form-panel { width: 100%; max-width: 500px; position: static; }
+            .controls { width: 100%; }
+            .document-container { width: 100%; height: auto; overflow-x: auto; }
+        }
+    </style>
+</head>
+<body class="print-a4">
+
+    <div class="form-panel">
+        <h2>اطلاعات سربرگ نامه</h2>
+        <div class="form-group">
+            <label>نام روستا:</label>
+            <input type="text" id="inputVillage" value="تموغه" oninput="updatePreview('village', this.value)">
+        </div>
+        <div class="form-group">
+            <label>شماره نامه:</label>
+            <input type="text" id="inputNumber" value="الف / ۱۰" oninput="this.value=toPersianDigits(this.value); updatePreview('number', this.value)">
+        </div>
+        <div class="form-group">
+            <label>تاریخ نامه (سربرگ):</label>
+            <div class="date-group">
+                <select id="letterDay" onchange="calcLetterDate()"></select>
+                <select id="letterMonth" onchange="calcLetterDate()"></select>
+                <select id="letterYear" onchange="calcLetterDate()"></select>
+            </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px dashed #ccc; margin: 20px 0;">
+        
+        <h2>اطلاعات متن نامه</h2>
+        <div class="form-group">
+            <label>شماره صورتجلسه:</label>
+            <input type="text" id="inputNumberBody" value="الف / ۱۰" oninput="this.value=toPersianDigits(this.value); updatePreview('numberBody', this.value)">
+        </div>
+        <div class="form-group">
+            <label>تاریخ صورتجلسه (متن):</label>
+            <div class="date-group">
+                <select id="bodyDay" onchange="calcBodyDate()"></select>
+                <select id="bodyMonth" onchange="calcBodyDate()"></select>
+                <select id="bodyYear" onchange="calcBodyDate()"></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>موضوع صورتجلسه:</label>
+            <input type="text" id="inputSubject" value="برگزاری مراسم قدردانی از دانش آموزان" oninput="updatePreview('subject', this.value)">
+        </div>
+        <div class="form-group">
+            <label>نام بخش:</label>
+            <input type="text" id="inputBakhsh" value="مرکزی" oninput="updatePreview('bakhsh', this.value)">
+        </div>
+        <div class="form-group">
+            <label>نام شهرستان:</label>
+            <input type="text" id="inputShahrestan" value="سقز" oninput="updatePreview('shahrestan', this.value)">
+        </div>
+
+        <hr style="border: 0; border-top: 1px dashed #ccc; margin: 20px 0;">
+        <h2>امضاکنندگان</h2>
+        <div class="form-group">
+            <label>۱. نام رئیس شورا:</label>
+            <input type="text" id="inputSign1" value="نام ریس شورا" oninput="updatePreview('sign1', this.value)">
+        </div>
+        <div class="form-group">
+            <label>۲. نام نایب رئیس:</label>
+            <input type="text" id="inputSign2" value="نام نایب ریس" oninput="updatePreview('sign2', this.value)">
+        </div>
+        <div class="form-group">
+            <label>۳. نام منشی:</label>
+            <input type="text" id="inputSign3" value="نام منشی" oninput="updatePreview('sign3', this.value)">
+        </div>
+    </div>
+
+    <div class="preview-panel">
+        <div class="controls">
+            <div class="size-selector">
+                <label>اندازه کاغذ:</label>
+                <select id="paperSize" onchange="changePaperSize()" style="padding: 5px; border-radius: 5px; font-family: Vazirmatn;">
+                    <option value="a4">A4 (معمولی)</option>
+                    <option value="a5">A5 (نصف برگه)</option>
+                </select>
+            </div>
+            <button class="btn-print" onclick="window.print()">🖨️ چاپ نامه</button>
+        </div>
+
+        <div class="document-container" id="docContainer">
+            <div class="inner-border">
+                <div class="header-section">
+                    <div class="header-right">
+                        <div>وزارت کشور</div>
+                        <div>استانداری استان کردستان</div>
+                        <div>فرمانداری ویژه شهرستان سقز</div>
+                        <div>بخشداری بخش مرکزی</div>
+                    </div>
+                    <div class="header-center">
+                        <div class="logo-container">
+                            <img src="BASE64_HERE" alt="لوگو" id="dehyariLogo" onerror="this.style.display='none'; document.getElementById('fallbackLogo').style.display='block';">
+                            <svg id="fallbackLogo" style="display: none; width: 80px;" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M50 5 L60 25 L85 25 L70 45 L80 70 L50 60 L20 70 L30 45 L15 25 L40 25 Z" fill="none" stroke="black" stroke-width="3"/>
+                                <path d="M50 30 Q60 40 50 60 Q40 40 50 30" fill="black"/>
+                            </svg>
+                        </div>
+                        <div class="dehyari-name">
+                            شورای اسلامی روستای <span class="dynamic-red" id="previewVillageCenter">تموغه</span>
+                        </div>
+                    </div>
+                    <div class="header-left">
+                        <div class="contract-field">
+                            <span class="label">شماره :</span>
+                            <span class="dotted-line" id="previewNumber">الف / ۱۰</span>
+                        </div>
+                        <div class="contract-field">
+                            <span class="label">تاریخ :</span>
+                            <span class="dotted-line" id="previewLetterDate">۱۰ بهمن ۱۴۰۵</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-area">
+                    <div class="recipient">
+                        <b>بخشداری محترم بخش <span class="dynamic-red" id="previewBakhsh">مرکزی</span> شهرستان <span class="dynamic-red" id="previewShahrestan">سقز</span></b>
+                        <br>
+                        <b>باسلام</b>
+                    </div>
+                    <p class="letter-text">
+                        احتراماً ، با پیوست صورتجلسه و مصوبه شماره : <span class="dynamic-red" id="previewNumberBody">الف / ۱۰</span> مورخه : <span class="dynamic-red" id="previewBodyDate">۱۰ بهمن ۱۴۰۵</span> شورای اسلامی روستای <span class="dynamic-red" id="previewVillageBody">تموغه</span> با موضوع : <span class="dynamic-red" id="previewSubjectBody">برگزاری مراسم قدردانی از دانش آموزان</span> جهت اخذ رای در هیات تطبیق بحضور ارسال می گردد.
+                    </p>
+                    <div class="signatures">
+                        <div class="signatures-title">
+                            شورای اسلامی روستای <span class="dynamic-red" id="previewVillageSign">تموغه</span>
+                        </div>
+                        <div>۱ . <span class="dynamic-red" id="previewSign1">نام ریس شورا</span> (ریس شورا)</div>
+                        <div>۲ . <span class="dynamic-red" id="previewSign2">نام نایب ریس</span> (نایب ریس)</div>
+                        <div>۳ . <span class="dynamic-red" id="previewSign3">نام منشی</span> (منشی)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toPersianDigits(str) {
+            const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+            return str.replace(/[0-9]/g, function(w) { return persianDigits[+w]; });
+        }
+
+        function updatePreview(field, value) {
+            if (value.trim() === '') value = '......';
+            if (field === 'village') {
+                document.getElementById('previewVillageCenter').innerText = value;
+                document.getElementById('previewVillageBody').innerText = value;
+                document.getElementById('previewVillageSign').innerText = value;
+            } else if (field === 'number') {
+                document.getElementById('previewNumber').innerText = value;
+            } else if (field === 'numberBody') {
+                document.getElementById('previewNumberBody').innerText = value;
+            } else if (field === 'letterDate') {
+                document.getElementById('previewLetterDate').innerText = value;
+            } else if (field === 'bodyDate') {
+                document.getElementById('previewBodyDate').innerText = value;
+            } else if (field === 'subject') {
+                document.getElementById('previewSubjectBody').innerText = value;
+            } else if (field === 'bakhsh') {
+                document.getElementById('previewBakhsh').innerText = value;
+            } else if (field === 'shahrestan') {
+                document.getElementById('previewShahrestan').innerText = value;
+            } else if (field === 'sign1') {
+                document.getElementById('previewSign1').innerText = value;
+            } else if (field === 'sign2') {
+                document.getElementById('previewSign2').innerText = value;
+            } else if (field === 'sign3') {
+                document.getElementById('previewSign3').innerText = value;
+            }
+        }
+
+        function changePaperSize() {
+            const size = document.getElementById('paperSize').value;
+            const container = document.getElementById('docContainer');
+            const body = document.body;
+            if (size === 'a5') {
+                container.classList.add('a5-mode');
+                body.classList.remove('print-a4');
+                body.classList.add('print-a5');
+            } else {
+                container.classList.remove('a5-mode');
+                body.classList.remove('print-a5');
+                body.classList.add('print-a4');
+            }
+        }
+
+        // محاسبه تاریخ سربرگ
+        function calcLetterDate() {
+            let d = document.getElementById('letterDay').value;
+            let m = document.getElementById('letterMonth').value;
+            let y = document.getElementById('letterYear').value;
+            updatePreview('letterDate', d + " " + m + " " + y);
+        }
+
+        // محاسبه تاریخ متن نامه
+        function calcBodyDate() {
+            let d = document.getElementById('bodyDay').value;
+            let m = document.getElementById('bodyMonth').value;
+            let y = document.getElementById('bodyYear').value;
+            updatePreview('bodyDate', d + " " + m + " " + y);
+        }
+
+        // تابع کمکی برای پر کردن منوهای کشویی
+        function populateDateSelects(dayId, monthId, yearId) {
+            const dSel = document.getElementById(dayId);
+            const mSel = document.getElementById(monthId);
+            const ySel = document.getElementById(yearId);
+            const months = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"];
+
+            // روزها
+            for (let i = 1; i <= 31; i++) {
+                let opt = document.createElement('option');
+                opt.value = toPersianDigits(i.toString());
+                opt.textContent = toPersianDigits(i.toString());
+                if (i === 10) opt.selected = true; 
+                dSel.appendChild(opt);
+            }
+            // ماه‌ها
+            months.forEach((name, index) => {
+                let opt = document.createElement('option');
+                opt.value = name;
+                opt.textContent = name;
+                if (index === 10) opt.selected = true; 
+                mSel.appendChild(opt);
+            });
+            // سال‌ها
+            for (let i = 1401; i <= 1405; i++) {
+                let opt = document.createElement('option');
+                opt.value = toPersianDigits(i.toString());
+                opt.textContent = toPersianDigits(i.toString());
+                if (i === 1405) opt.selected = true;
+                ySel.appendChild(opt);
+            }
+        }
+
+        function initDates() {
+            populateDateSelects('letterDay', 'letterMonth', 'letterYear');
+            populateDateSelects('bodyDay', 'bodyMonth', 'bodyYear');
+            calcLetterDate();
+            calcBodyDate();
+        }
+        window.onload = initDates;
+    </script>
+</body>
+</html>
