@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نامه‌های دهیاری</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+  
+  :root {
+    --primary: #1e5fa8;
+    --primary-dark: #143f70;
+    --primary-light: #3b82d6;
+    --accent: #4fa3e8;
+    --bg: #f0f6ff;
+    --text: #1a2b45;
+    --shadow: 0 4px 20px rgba(30, 95, 168, 0.15);
+  }
+
+  body {
+    background: linear-gradient(135deg, #e8f1fc 0%, #f0f6ff 100%);
+    min-height: 100vh;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ===== Header ===== */
+  header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #fff;
+    padding: 18px 30px;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .logo {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #fff;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.6);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+  .logo-fallback {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 24px; color: var(--primary); font-weight: bold;
+  }
+  #siteTitle {
+    font-size: 22px;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+    letter-spacing: 0.5px;
+  }
+  #siteTitle:active { opacity: 0.8; }
+
+  /* ===== Main ===== */
+  main {
+    flex: 1;
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 50px 20px;
+  }
+  .hero-title {
+    text-align: center;
+    color: var(--primary-dark);
+    margin-bottom: 10px;
+    font-size: 28px;
+  }
+  .hero-sub {
+    text-align: center;
+    color: #5a7292;
+    margin-bottom: 40px;
+    font-size: 15px;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 22px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 30px 25px;
+    box-shadow: var(--shadow);
+    border-top: 4px solid var(--primary-light);
+    transition: transform 0.25s, box-shadow 0.25s;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--text);
+    display: block;
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(30, 95, 168, 0.25);
+  }
+  .card-icon {
+    width: 54px; height: 54px;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    margin-bottom: 16px;
+    color: #fff;
+  }
+  .card h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: var(--primary-dark);
+  }
+  .card p {
+    font-size: 13.5px;
+    color: #5a7292;
+    line-height: 1.7;
+  }
+
+  /* ===== Footer ===== */
+  footer {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    color: #e6f0fb;
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+    margin-top: 40px;
+  }
+  footer span { color: #ff8fa3; }
+
+  /* ===== Modals ===== */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 35, 65, 0.65);
+    backdrop-filter: blur(5px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+  .overlay.active { display: flex; }
+  .modal {
+    background: #fff;
+    border-radius: 20px;
+    padding: 35px 30px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: popIn 0.3s ease;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .modal h2 {
+    color: var(--primary-dark);
+    text-align: center;
+    margin-bottom: 22px;
+    font-size: 20px;
+  }
+  .modal input[type="password"],
+  .modal input[type="text"],
+  .modal input[type="number"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #d5e3f5;
+    border-radius: 10px;
+    font-size: 15px;
+    margin-bottom: 15px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+    background: #f7faff;
+  }
+  .modal input:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    background: #fff;
+  }
+  .modal label {
+    font-size: 13px;
+    color: #5a7292;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    color: #fff;
+  }
+  .btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+  .btn-danger { background: linear-gradient(135deg, #e05a6a, #c0394f); }
+  .btn-secondary { background: #e3ecf8; color: var(--primary-dark); }
+  .btn + .btn { margin-top: 10px; }
+  .error-msg {
+    color: #c0394f;
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 10px;
+    min-height: 18px;
+  }
+  .welcome-msg {
+    color: var(--primary);
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  /* ===== Admin Panel ===== */
+  #adminOverlay .modal { max-width: 520px; max-height: 90vh; overflow-y: auto; }
+  .admin-section {
+    border-bottom: 1px solid #e3ecf8;
+    padding-bottom: 18px;
+    margin-bottom: 18px;
+  }
+  .admin-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .admin-section h4 {
+    color: var(--primary-dark);
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+  .link-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .link-row input {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px 12px;
+    border: 2px solid #d5e3f5;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: inherit;
+    background: #f7faff;
+  }
+  .link-row input:focus { outline: none; border-color: var(--primary-light); }
+  .close-x {
+    float: left;
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #8aa5c5;
+    line-height: 1;
+  }
+  .close-x:hover { color: var(--primary); }
+
+  /* ===== Lock overlay (site locked) ===== */
+  #lockScreen {
+    position: fixed; inset: 0; z-index: 2000;
+    background: linear-gradient(135deg, #143f70, #1e5fa8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #lockScreen.active { display: flex; }
+  .lock-box {
+    background: #fff;
+    border-radius: 20px;
+    padding: 40px 30px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+  }
+  .lock-box h2 { color: var(--primary-dark); margin-bottom: 10px; }
+  .lock-box p { color: #5a7292; font-size: 14px; margin-bottom: 20px; line-height: 1.7; }
+  .timer-badge {
+    display: inline-block;
+    background: #fff3e0;
+    color: #c76a00;
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 18px;
+  }
+  .lock-icon { font-size: 48px; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<!-- ========== LOCK SCREEN (کاملاً مخفی در ابتدا) ========== -->
+<div id="lockScreen">
+  <div class="lock-box">
+    <div class="lock-icon">🔒</div>
+    <h2>دسترسی موقتاً قفل است</h2>
+    <p>مدت زمان باقی‌مانده تا باز شدن خودکار سایت:</p>
+    <div class="timer-badge" id="lockTimer">--:--</div>
+    <p style="font-size:12px;">در صورت نیاز با مدیر سایت تماس بگیرید.</p>
+  </div>
+</div>
+
+<!-- ========== HEADER ========== -->
+<header>
+  <div class="header-inner">
+    <img src="logo.png" alt="لوگو" class="logo" 
+         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <div class="logo-fallback" style="display:none;">🏛</div>
+    <h1 id="siteTitle">نامه‌های دهیاری</h1>
+  </div>
+</header>
+
+<!-- ========== MAIN ========== -->
+<main>
+  <h2 class="hero-title">به سامانه نامه‌های دهیاری خوش آمدید</h2>
+  <p class="hero-sub">برای دسترسی به هر بخش، روی کارت مربوطه کلیک کنید</p>
+  <div class="cards" id="cardsContainer"></div>
+</main>
+
+<!-- ========== FOOTER ========== -->
+<footer>
+  تهیه شده با <span>❤</span> توسط کاوه - سال ۱۴۰۵
+</footer>
+
+<!-- ========== LOGIN MODAL ========== -->
+<div class="overlay" id="loginOverlay">
+  <div class="modal">
+    <button class="close-x" onclick="closeLogin()">✕</button>
+    <h2>ورود به سایت</h2>
+    <div class="error-msg" id="loginError"></div>
+    <label>رمز عبور</label>
+    <input type="password" id="loginPassword" placeholder="رمز عبور را وارد کنید" 
+           onkeydown="if(event.key==='Enter') doLogin()">
+    <button class="btn" onclick="doLogin()">ورود</button>
+  </div>
+</div>
+
+<!-- ========== ADMIN PANEL ========== -->
+<div class="overlay" id="adminOverlay">
+  <div class="modal">
+    <button class="close-x" onclick="closeAdmin()">✕</button>
+    <h2>پنل مدیریت</h2>
+    <div class="welcome-msg" id="adminWelcome"></div>
+
+    <!-- Change password -->
+    <div class="admin-section">
+      <h4>🔑 تغییر رمز ادمین</h4>
+      <label>رمز فعلی</label>
+      <input type="password" id="oldAdminPass" placeholder="رمز فعلی ادمین">
+      <label>رمز جدید</label>
+      <input type="password" id="newAdminPass" placeholder="رمز جدید">
+      <button class="btn" onclick="changeAdminPassword()">ذخیره رمز جدید</button>
+      <div class="error-msg" id="passMsg"></div>
+    </div>
+
+    <!-- Site lock timer -->
+    <div class="admin-section">
+      <h4>⏱ تنظیم تایمر قفل سایت</h4>
+      <label>مدت اعتبار ورود کاربر (دقیقه)</label>
+      <input type="number" id="lockMinutes" min="1" value="60">
+      <p style="font-size:12px; color:#5a7292; margin:6px 0 12px;">
+        بعد از این مدت، سایت برای کاربر قفل می‌شود و باید توسط ادمین مجدداً باز شود.
+      </p>
+      <button class="btn" onclick="setLockTimer()">ذخیره تایمر</button>
+      <button class="btn btn-danger" onclick="lockNow()">🔒 قفل کردن فوری سایت</button>
+      <button class="btn btn-secondary" onclick="unlockNow()">🔓 باز کردن قفل سایت</button>
+      <div class="error-msg" id="timerMsg"></div>
+    </div>
+
+    <!-- Edit links -->
+    <div class="admin-section">
+      <h4>🔗 ویرایش لینک‌های کارت‌ها</h4>
+      <div id="linkEditors"></div>
+      <button class="btn" onclick="saveLinks()">ذخیره لینک‌ها</button>
+      <div class="error-msg" id="linksMsg"></div>
+    </div>
+
+    <button class="btn btn-secondary" onclick="resetAll()">♻ بازگردانی تنظیمات پیش‌فرض</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   DATA STORE (localStorage)
+   ============================================================ */
+const STORE_KEY = 'dehyari_site_data_v1';
+
+const DEFAULT_DATA = {
+  adminPassword: '1234567',
+  lockMinutes: 60,
+  lockUntil: 0,
+  sessionStart: 0,
+  unlockedByAdmin: false,
+  links: [
+    { title: 'نامه‌های دریافتی', desc: 'مشاهده و مدیریت نامه‌های دریافت شده', icon: '📥', url: 'https://example.com/inbox' },
+    { title: 'نامه‌های ارسالی', desc: 'پیگیری نامه‌های ارسال شده', icon: '📤', url: 'https://example.com/outbox' },
+    { title: 'بایگانی اسناد', desc: 'دسترسی به آرشیو کامل اسناد', icon: '🗂', url: 'https://example.com/archive' },
+    { title: 'گزارش‌ها', desc: 'مشاهده گزارش‌های آماری', icon: '📊', url: 'https://example.com/reports' },
+    { title: 'تنظیمات کاربری', desc: 'مدیریت حساب کاربری', icon: '⚙️', url: 'https://example.com/settings' },
+    { title: 'پشتیبانی', desc: 'تماس با پشتیبانی دهیاری', icon: '📞', url: 'https://example.com/support' }
+  ]
+};
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return JSON.parse(JSON.stringify(DEFAULT_DATA));
+    const d = JSON.parse(raw);
+    return Object.assign(JSON.parse(JSON.stringify(DEFAULT_DATA)), d);
+  } catch(e) {
+    return JSON.parse(JSON.stringify(DEFAULT_DATA));
+  }
+}
+function saveData(data) {
+  localStorage.setItem(STORE_KEY, JSON.stringify(data));
+}
+
+let DB = loadData();
+
+/* ============================================================
+   RENDER CARDS
+   ============================================================ */
+function renderCards() {
+  const container = document.getElementById('cardsContainer');
+  container.innerHTML = '';
+  DB.links.forEach(link => {
+    const a = document.createElement('a');
+    a.className = 'card';
+    a.href = link.url || '#';
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.innerHTML = `
+      <div class="card-icon">${link.icon || '🔗'}</div>
+      <h3>${escapeHtml(link.title)}</h3>
+      <p>${escapeHtml(link.desc || '')}</p>
+    `;
+    container.appendChild(a);
+  });
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ============================================================
+   LOGIN LOGIC
+   ============================================================ */
+function openLogin() {
+  document.getElementById('loginOverlay').classList.add('active');
+  document.getElementById('loginError').textContent = '';
+  document.getElementById('loginPassword').value = '';
+  setTimeout(() => document.getElementById('loginPassword').focus(), 100);
+}
+function closeLogin() {
+  document.getElementById('loginOverlay').classList.remove('active');
+}
+function doLogin() {
+  const pass = document.getElementById('loginPassword').value;
+  const err = document.getElementById('loginError');
+  if (pass === DB.adminPassword) {
+    DB.sessionStart = Date.now();
+    DB.unlockedByAdmin = false;
+    saveData(DB);
+    err.style.color = '#1e8e4e';
+    err.textContent = '✅ ورود موفق!';
+    setTimeout(() => {
+      closeLogin();
+      showSiteContent();
+    }, 500);
+  } else {
+    err.style.color = '#c0394f';
+    err.textContent = '❌ رمز عبور اشتباه است';
+  }
+}
+
+/* ============================================================
+   SITE LOCK / TIMER LOGIC
+   ============================================================ */
+function isSiteLocked() {
+  if (DB.unlockedByAdmin) return false;
+  if (!DB.sessionStart) return true; // never logged in
+  const elapsedMin = (Date.now() - DB.sessionStart) / 60000;
+  return elapsedMin >= DB.lockMinutes;
+}
+
+function showSiteContent() {
+  document.getElementById('lockScreen').classList.remove('active');
+  document.getElementById('loginOverlay').classList.remove('active');
+}
+
+function showLockScreen() {
+  document.getElementById('loginOverlay').classList.remove('active');
+  document.getElementById('lockScreen').classList.add('active');
+  updateLockTimer();
+}
+
+let lockTimerInterval = null;
+function updateLockTimer() {
+  const timerEl = document.getElementById('lockTimer');
+  if (!timerEl) return;
+  if (DB.sessionStart) {
+    const remainingMs = (DB.sessionStart + DB.lockMinutes * 60000) - Date.now();
+    if (remainingMs <= 0) {
+      showLockScreen();
+      timerEl.textContent = '00:00';
+      return;
+    }
+    const totalSec = Math.floor(remainingMs / 1000);
+    const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
+    const s = String(totalSec % 60).padStart(2, '0');
+    timerEl.textContent = `${m}:${s}`;
+  } else {
+    timerEl.textContent = '--:--';
+  }
+}
+
+function startLockWatch() {
+  if (lockTimerInterval) clearInterval(lockTimerInterval);
+  lockTimerInterval = setInterval(() => {
+    updateLockTimer();
+    if (isSiteLocked() && !DB.unlockedByAdmin && !document.getElementById('loginOverlay').classList.contains('active')) {
+      showLockScreen();
+    }
+  }, 1000);
+}
+
+/* ============================================================
+   ADMIN PANEL
+   ============================================================ */
+let titleClicks = 0;
+let titleClickTimer = null;
+
+document.getElementById('siteTitle').addEventListener('click', () => {
+  titleClicks++;
+  if (titleClickTimer) clearTimeout(titleClickTimer);
+  titleClickTimer = setTimeout(() => { titleClicks = 0; }, 1500);
+  if (titleClicks >= 7) {
+    titleClicks = 0;
+    clearTimeout(titleClickTimer);
+    openAdminPanel();
+  }
+});
+
+function openAdminPanel() {
+  document.getElementById('adminOverlay').classList.add('active');
+  document.getElementById('adminWelcome').textContent = '🎉 خوش آمدید، مدیر عزیز';
+  document.getElementById('passMsg').textContent = '';
+  document.getElementById('timerMsg').textContent = '';
+  document.getElementById('linksMsg').textContent = '';
+  document.getElementById('oldAdminPass').value = '';
+  document.getElementById('newAdminPass').value = '';
+  document.getElementById('lockMinutes').value = DB.lockMinutes;
+  renderLinkEditors();
+}
+function closeAdmin() {
+  document.getElementById('adminOverlay').classList.remove('active');
+  renderCards();
+}
+
+function renderLinkEditors() {
+  const container = document.getElementById('linkEditors');
+  container.innerHTML = '';
+  DB.links.forEach((link, i) => {
+    const div = document.createElement('div');
+    div.className = 'link-row';
+    div.innerHTML = `
+      <input type="text" id="linkTitle_${i}" value="${escapeHtml(link.title)}" placeholder="عنوان">
+      <input type="text" id="linkUrl_${i}" value="${escapeHtml(link.url)}" placeholder="لینک">
+    `;
+    container.appendChild(div);
+  });
+}
+
+function saveLinks() {
+  const msg = document.getElementById('linksMsg');
+  let ok = true;
+  DB.links.forEach((link, i) => {
+    const t = document.getElementById(`linkTitle_${i}`).value.trim();
+    const u = document.getElementById(`linkUrl_${i}`).value.trim();
+    if (!t || !u) { ok = false; return; }
+    link.title = t;
+    link.url = u;
+  });
+  if (!ok) {
+    msg.style.color = '#c0394f';
+    msg.textContent = '❌ عنوان و لینک نمی‌توانند خالی باشند';
+    return;
+  }
+  saveData(DB);
+  msg.style.color = '#1e8e4e';
+  msg.textContent = '✅ لینک‌ها با موفقیت ذخیره شد';
+  renderCards();
+}
+
+function changeAdminPassword() {
+  const oldP = document.getElementById('oldAdminPass').value;
+  const newP = document.getElementById('newAdminPass').value;
+  const msg = document.getElementById('passMsg');
+  if (oldP !== DB.adminPassword) {
+    msg.style.color = '#c0394f';
+    msg.textContent = '❌ رمز فعلی اشتباه است';
+    return;
+  }
+  if (newP.length < 4) {
+    msg.style.color = '#c0394f';
+    msg.textContent = '❌ رمز جدید باید حداقل ۴ کاراکتر باشد';
+    return;
+  }
+  DB.adminPassword = newP;
+  saveData(DB);
+  msg.style.color = '#1e8e4e';
+  msg.textContent = '✅ رمز ادمین تغییر کرد';
+  document.getElementById('oldAdminPass').value = '';
+  document.getElementById('newAdminPass').value = '';
+}
+
+function setLockTimer() {
+  const val = parseInt(document.getElementById('lockMinutes').value, 10);
+  const msg = document.getElementById('timerMsg');
+  if (!val || val < 1) {
+    msg.style.color = '#c0394f';
+    msg.textContent = '❌ عدد معتبر وارد کنید (حداقل ۱ دقیقه)';
+    return;
+  }
+  DB.lockMinutes = val;
+  if (DB.sessionStart) DB.sessionStart = Date.now();
+  saveData(DB);
+  msg.style.color = '#1e8e4e';
+  msg.textContent = `✅ تایمر روی ${val} دقیقه تنظیم شد`;
+}
+
+function lockNow() {
+  DB.unlockedByAdmin = false;
+  DB.sessionStart = 0;
+  saveData(DB);
+  closeAdmin();
+  showLockScreen();
+  document.getElementById('timerMsg').textContent = '';
+}
+
+function unlockNow() {
+  DB.sessionStart = Date.now();
+  DB.unlockedByAdmin = false;
+  saveData(DB);
+  showSiteContent();
+  const msg = document.getElementById('timerMsg');
+  msg.style.color = '#1e8e4e';
+  msg.textContent = '✅ سایت باز شد و تایمر از نو شروع شد';
+}
+
+function resetAll() {
+  if (!confirm('همه تنظیمات به حالت پیش‌فرض بازگردد؟')) return;
+  DB = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  saveData(DB);
+  renderCards();
+  closeAdmin();
+  showLockScreen();
+}
+
+/* ============================================================
+   INIT (اصلاح شده)
+   ============================================================ */
+function init() {
+  renderCards();
+  startLockWatch();
+
+  // بررسی وضعیت اولیه ورود
+  if (!DB.sessionStart) {
+    // کاربر هنوز لاگین نکرده است
+    openLogin();
+  } else if (isSiteLocked()) {
+    // تایمر کاربر تمام شده است
+    showLockScreen();
+  } else {
+    // کاربر لاگین است و تایمر هنوز تمام نشده
+    showSiteContent();
+  }
+}
+
+init();
+</script>
+</body>
+</html>
