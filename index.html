@@ -38,15 +38,14 @@
     gap: 15px;
   }
   
-  /* پس‌زمینه لوگو دقیقا رنگ هدر شد و حاشیه سفید حذف شد */
   .logo {
-    width: 56px; 
-    height: 56px;
+    width: 56px; height: 56px;
     border-radius: 50%;
     background: transparent; 
     object-fit: contain; 
     border: none; 
     flex-shrink: 0;
+    cursor: pointer; /* نشانگر برای کلیک مخفی */
   }
   .logo-fallback {
     width: 52px; height: 52px; border-radius: 50%;
@@ -54,12 +53,14 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 24px; color: #fff; font-weight: bold;
     flex-shrink: 0;
+    cursor: pointer;
   }
   #siteTitle {
     font-size: 20px;
     font-weight: 700;
     user-select: none;
     white-space: nowrap;
+    cursor: pointer;
   }
   
   .header-actions {
@@ -125,25 +126,31 @@
   }
   .overlay.active { display: flex; }
   .modal {
-    background: #fff; border-radius: 20px; padding: 30px 25px; width: 100%; max-width: 380px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: popIn 0.3s ease;
+    background: #fff; border-radius: 20px; padding: 30px 25px; width: 100%; max-width: 480px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: popIn 0.3s ease; max-height: 90vh; overflow-y: auto;
   }
   @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   .modal h2 { color: var(--primary-dark); text-align: center; margin-bottom: 20px; font-size: 19px; }
-  .modal input[type="password"] {
-    width: 100%; padding: 12px 15px; border: 2px solid #d5e3f5; border-radius: 10px;
-    font-size: 15px; margin-bottom: 15px; font-family: inherit; transition: border-color 0.2s; background: #f7faff;
+  .modal label { font-size: 13px; color: #5a7292; display: block; margin-bottom: 4px; margin-top: 10px; }
+  
+  .modal input {
+    width: 100%; padding: 10px 12px; border: 2px solid #d5e3f5; border-radius: 8px;
+    font-size: 14px; font-family: inherit; transition: border-color 0.2s; background: #f7faff;
   }
   .modal input:focus { outline: none; border-color: var(--primary-light); background: #fff; }
-  .modal label { font-size: 13px; color: #5a7292; display: block; margin-bottom: 6px; }
+  
   .btn {
     width: 100%; padding: 12px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600;
     font-family: inherit; cursor: pointer; transition: all 0.2s;
-    background: linear-gradient(135deg, var(--primary-light), var(--primary)); color: #fff;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary)); color: #fff; margin-top: 15px;
   }
   .btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
   .btn:active { transform: translateY(0); }
+  .btn-secondary { background: #cbd5e1; color: #333; }
+  .btn-danger { background: #ef4444; }
   .error-msg { color: #c0394f; font-size: 13px; text-align: center; margin-bottom: 10px; min-height: 18px; }
+  .admin-section { border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 15px; }
+  .admin-section:last-child { border-bottom: none; }
 
   @media (max-width: 600px) {
     .header-inner { flex-direction: column; gap: 12px; }
@@ -157,9 +164,11 @@
 
 <header>
   <div class="header-inner">
-    <img src="logo.png" alt="لوگو" class="logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-    <div class="logo-fallback" style="display:none;">🏛</div>
-    <h1 id="siteTitle">نامه‌های دهیاری</h1>
+    <!-- کلیک ۵ باره روی این دو المان، پنل ادمین را باز می‌کند -->
+    <img src="logo.png" alt="لوگو" class="logo" id="secretLogo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <div class="logo-fallback" id="secretFallback" style="display:none;">🏛</div>
+    <h1 id="siteTitle" class="site-title">نامه‌های دهیاری</h1>
+    
     <div class="header-actions">
       <div class="header-date" id="shamsiDate">📅 در حال بارگذاری...</div>
       <button id="logoutBtn" onclick="logout()">🚪 خروج</button>
@@ -172,30 +181,12 @@
   <p class="hero-sub">برای دسترسی به هر بخش، روی کارت مربوطه کلیک کنید</p>
   
   <div class="cards">
-    <a href="contract.html" class="card">
-      <div class="card-icon">📄</div>
-      <h3>قرارداد کار دهیاری</h3>
-    </a>
-    <a href="status.html" class="card">
-      <div class="card-icon">📋</div>
-      <h3>صورت وضعیت قرارداد</h3>
-    </a>
-    <a href="council.html" class="card">
-      <div class="card-icon">📑</div>
-      <h3>صورت جلسه شورا</h3>
-    </a>
-    <a href="letter.html" class="card">
-      <div class="card-icon">✉️</div>
-      <h3>نامه شورا به تطبیق</h3>
-    </a>
-    <a href="amalkard.html" class="card">
-      <div class="card-icon">📈</div>
-      <h3>گزارش عملکرد دهیار</h3>
-    </a>
-    <a href="cardkaregary.html" class="card">
-      <div class="card-icon">💼</div>
-      <h3>کارت کارگری</h3>
-    </a>
+    <a href="contract.html" class="card"><div class="card-icon">📄</div><h3>قرارداد کار دهیاری</h3></a>
+    <a href="status.html" class="card"><div class="card-icon">📋</div><h3>صورت وضعیت قرارداد</h3></a>
+    <a href="council.html" class="card"><div class="card-icon">📑</div><h3>صورت جلسه شورا</h3></a>
+    <a href="letter.html" class="card"><div class="card-icon">✉️</div><h3>نامه شورا به تطبیق</h3></a>
+    <a href="amalkard.html" class="card"><div class="card-icon">📈</div><h3>گزارش عملکرد دهیار</h3></a>
+    <a href="cardkaregary.html" class="card"><div class="card-icon">💼</div><h3>کارت کارگری</h3></a>
   </div>
 </main>
 
@@ -212,12 +203,51 @@
   </div>
 </div>
 
+<!-- پنل مدیریت مخفی -->
+<div class="overlay" id="adminOverlay">
+  <div class="modal">
+    <h2>🔐 پنل مدیریت مخفی</h2>
+    <div class="error-msg" id="adminMsg"></div>
+    
+    <div class="admin-section">
+      <label>رمز عبور (برای ویرایش یا ساخت جدید)</label>
+      <input type="text" id="admPass" placeholder="مثلاً 123434">
+      
+      <label>تاریخ انقضا (YYYY-MM-DD)</label>
+      <input type="text" id="admExpire" placeholder="2026-12-31">
+      
+      <label>نام دهیاری</label>
+      <input type="text" id="admVillage" placeholder="دهیاری تموغه">
+      
+      <label>نام و نام خانوادگی دهیار/کارفرما</label>
+      <input type="text" id="admEmployer" placeholder="کاوه عبدی">
+      
+      <label>کد ملی کارفرما</label>
+      <input type="text" id="admNationalId" placeholder="37537375">
+      
+      <label>نام رئیس شورا</label>
+      <input type="text" id="admChairman" placeholder="نام رئیس شورا">
+      
+      <label>نام نایب رئیس</label>
+      <input type="text" id="admVice" placeholder="نام نایب رئیس">
+      
+      <label>نام منشی</label>
+      <input type="text" id="admSecretary" placeholder="نام منشی">
+      
+      <label>نام مدعوین</label>
+      <input type="text" id="admAttendees" placeholder="نام مدعوین">
+    </div>
+
+    <button class="btn" onclick="saveAdminProfile()">💾 ذخیره اطلاعات</button>
+    <button class="btn btn-secondary" onclick="closeAdmin()">بستن</button>
+  </div>
+</div>
+
 <script>
   // ============================================================
-  // تنظیمات اصلی رمزها و پروفایل‌ها
+  // تنظیمات پیش‌فرض (اگر کاربری چیزی در پنل ادمین ذخیره نکرده باشد)
   // ============================================================
-  // فرمت: "رمز": { تاریخ انقضا، نام دهیاری، نام دهیار، کد ملی، اعضای شورا و ... }
-  const SITE_PROFILES = {
+  let SITE_PROFILES = {
     "123434": { 
       expire: "2026-12-31",
       villageName: "دهیاری تموغه",
@@ -227,34 +257,21 @@
       councilVice: "نام نایب رئیس",
       councilSecretary: "نام منشی",
       attendees: "نام مدعوین"
-    },
-    "112233": {
-      expire: "2026-11-15",
-      villageName: "دهیاری سقز",
-      employerName: "علی رضایی",
-      employerNationalId: "12345678",
-      councilChairman: "رئیس شورای سقز",
-      councilVice: "نایب رئیس سقز",
-      councilSecretary: "منشی سقز",
-      attendees: "مدعوین سقز"
-    },
-    "445566": {
-      expire: "2026-10-20",
-      villageName: "دهیاری سنندج",
-      employerName: "محمد کریمی",
-      employerNationalId: "98765432",
-      councilChairman: "رئیس شورای سنندج",
-      councilVice: "نایب رئیس سنندج",
-      councilSecretary: "منشی سنندج",
-      attendees: "مدعوین سنندج"
     }
   };
 
   const AUTH_KEY = 'site_auth_expire';
   const PROFILE_KEY = 'site_user_profile';
+  const ADMIN_DB_KEY = 'site_admin_db';
+
+  // بارگذاری تنظیمات ادمین از حافظه (اگر قبلاً ذخیره شده باشد)
+  const savedAdminDB = localStorage.getItem(ADMIN_DB_KEY);
+  if (savedAdminDB) {
+    try { SITE_PROFILES = JSON.parse(savedAdminDB); } catch(e) {}
+  }
 
   // ============================================================
-  // توابع تقویم شمسی
+  // تقویم شمسی
   // ============================================================
   function getShamsiDate() {
     const today = new Date();
@@ -283,7 +300,7 @@
   }
 
   // ============================================================
-  // دریافت زمان (کلادفلر ← API خارجی ← ساعت مرورگر)
+  // زمان
   // ============================================================
   async function getServerTime() {
     try {
@@ -300,7 +317,7 @@
   }
 
   // ============================================================
-  // بررسی وضعیت ورود
+  // بررسی وضعیت
   // ============================================================
   async function checkAuthStatus() {
     const savedExpire = localStorage.getItem(AUTH_KEY);
@@ -322,7 +339,7 @@
     const now = await getServerTime();
     if (now >= expireTime) {
       localStorage.removeItem(AUTH_KEY);
-      localStorage.removeItem(PROFILE_KEY); 
+      localStorage.removeItem(PROFILE_KEY);
       loginOverlay.classList.add('active');
       document.getElementById('loginError').style.color = '#c0394f';
       document.getElementById('loginError').textContent = '⏳ زمان دسترسی شما به پایان رسیده است.';
@@ -334,7 +351,7 @@
   }
 
   // ============================================================
-  // ورود و ذخیره پروفایل
+  // ورود
   // ============================================================
   async function doLogin() {
     const pass = document.getElementById('loginPassword').value;
@@ -351,8 +368,6 @@
 
     const now = await getServerTime();
     let expireDateStr = SITE_PROFILES[pass].expire;
-    
-    // اصلاح خودکار فرمت تاریخ
     let parts = expireDateStr.split('-');
     if (parts.length === 3) {
       if (parts[1].length === 1) parts[1] = '0' + parts[1];
@@ -367,7 +382,6 @@
       return;
     }
 
-    // 👇 ذخیره پروفایل در حافظه 👇
     localStorage.setItem(PROFILE_KEY, JSON.stringify(SITE_PROFILES[pass]));
     localStorage.setItem(AUTH_KEY, expireTime);
     
@@ -384,8 +398,86 @@
   // ============================================================
   function logout() {
     localStorage.removeItem(AUTH_KEY);
-    localStorage.removeItem(PROFILE_KEY); 
+    localStorage.removeItem(PROFILE_KEY);
     location.reload();
+  }
+
+  // ============================================================
+  // سیستم کلیک ۵ باره برای باز کردن پنل مخفی
+  // ============================================================
+  let secretClicks = 0;
+  let secretTimer = null;
+  
+  function handleSecretClick() {
+    secretClicks++;
+    if (secretTimer) clearTimeout(secretTimer);
+    secretTimer = setTimeout(() => { secretClicks = 0; }, 1500); // اگر ۱.۵ ثانیه صبر کند، شمارنده صفر می‌شود
+    
+    if (secretClicks >= 5) {
+      secretClicks = 0;
+      clearTimeout(secretTimer);
+      openAdminPanel();
+    }
+  }
+  
+  document.getElementById('siteTitle').addEventListener('click', handleSecretClick);
+  document.getElementById('secretLogo').addEventListener('click', handleSecretClick);
+  document.getElementById('secretFallback').addEventListener('click', handleSecretClick);
+
+  // ============================================================
+  // توابع پنل ادمین
+  // ============================================================
+  function openAdminPanel() {
+    document.getElementById('adminOverlay').classList.add('active');
+    document.getElementById('adminMsg').textContent = '';
+    // پاک کردن فرم‌ها برای ورود اطلاعات جدید
+    document.getElementById('admPass').value = '';
+    document.getElementById('admExpire').value = '';
+    document.getElementById('admVillage').value = '';
+    document.getElementById('admEmployer').value = '';
+    document.getElementById('admNationalId').value = '';
+    document.getElementById('admChairman').value = '';
+    document.getElementById('admVice').value = '';
+    document.getElementById('admSecretary').value = '';
+    document.getElementById('admAttendees').value = '';
+  }
+
+  function closeAdmin() {
+    document.getElementById('adminOverlay').classList.remove('active');
+  }
+
+  function saveAdminProfile() {
+    const pass = document.getElementById('admPass').value.trim();
+    const expire = document.getElementById('admExpire').value.trim();
+    const msg = document.getElementById('adminMsg');
+
+    if (!pass || !expire) {
+      msg.style.color = '#c0394f';
+      msg.textContent = '❌ رمز عبور و تاریخ انقضا الزامی است.';
+      return;
+    }
+
+    // ساخت آبجکت جدید برای این رمز
+    const newProfile = {
+      expire: expire,
+      villageName: document.getElementById('admVillage').value.trim(),
+      employerName: document.getElementById('admEmployer').value.trim(),
+      employerNationalId: document.getElementById('admNationalId').value.trim(),
+      councilChairman: document.getElementById('admChairman').value.trim(),
+      councilVice: document.getElementById('admVice').value.trim(),
+      councilSecretary: document.getElementById('admSecretary').value.trim(),
+      attendees: document.getElementById('admAttendees').value.trim()
+    };
+
+    SITE_PROFILES[pass] = newProfile;
+    localStorage.setItem(ADMIN_DB_KEY, JSON.stringify(SITE_PROFILES));
+
+    msg.style.color = '#1e8e4e';
+    msg.textContent = '✅ اطلاعات با موفقیت ذخیره شد. حالا می‌توانید با این رمز وارد شوید.';
+    
+    setTimeout(() => {
+      closeAdmin();
+    }, 1500);
   }
 
   // ============================================================
