@@ -38,14 +38,12 @@
     gap: 15px;
   }
   
-  /* پس‌زمینه لوگو دقیقا رنگ هدر شد و حاشیه سفید حذف شد */
   .logo {
-    width: 56px; 
-    height: 56px;
+    width: 56px; height: 56px;
     border-radius: 50%;
-    background: transparent; /* شفاف شد تا رنگ آبی هدر دیده شود */
-    object-fit: contain; /* کل لوگو داخل کادر دیده شود */
-    border: none; /* حاشیه سفید حذف شد */
+    background: transparent;
+    object-fit: contain;
+    border: none;
     flex-shrink: 0;
   }
   .logo-fallback {
@@ -62,14 +60,12 @@
     white-space: nowrap;
   }
   
-  /* استایل جدید و مرتب برای تاریخ و دکمه خروج */
   .header-actions {
     margin-right: auto;
     display: flex;
     align-items: center;
     gap: 10px;
   }
-
   .header-date {
     background: rgba(255, 255, 255, 0.15);
     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -80,7 +76,6 @@
     color: #fff;
     white-space: nowrap;
   }
-
   #logoutBtn {
     background: rgba(255, 255, 255, 0.2);
     color: #fff;
@@ -98,166 +93,61 @@
   #logoutBtn:hover { background: rgba(255,255,255,0.3); }
 
   main {
-    flex: 1;
-    max-width: 1100px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 40px 20px;
+    flex: 1; max-width: 1100px; width: 100%; margin: 0 auto; padding: 40px 20px;
   }
-  .hero-title {
-    text-align: center;
-    color: var(--primary-dark);
-    margin-bottom: 10px;
-    font-size: 24px;
-  }
-  .hero-sub {
-    text-align: center;
-    color: #5a7292;
-    margin-bottom: 40px;
-    font-size: 14px;
-  }
-  .cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-  }
+  .hero-title { text-align: center; color: var(--primary-dark); margin-bottom: 10px; font-size: 24px; }
+  .hero-sub { text-align: center; color: #5a7292; margin-bottom: 40px; font-size: 14px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
   .card {
-    background: #fff;
-    border-radius: 16px;
-    padding: 25px 20px;
-    box-shadow: var(--shadow);
-    border-top: 4px solid var(--primary-light);
-    transition: transform 0.25s, box-shadow 0.25s;
-    cursor: pointer;
-    text-decoration: none;
-    color: var(--text);
-    display: block;
+    background: #fff; border-radius: 16px; padding: 25px 20px; box-shadow: var(--shadow);
+    border-top: 4px solid var(--primary-light); transition: transform 0.25s, box-shadow 0.25s;
+    cursor: pointer; text-decoration: none; color: var(--text); display: block;
   }
-  .card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 30px rgba(30, 95, 168, 0.25);
-  }
+  .card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(30, 95, 168, 0.25); }
   .card-icon {
-    width: 50px; height: 50px;
-    background: linear-gradient(135deg, var(--primary-light), var(--primary));
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px;
-    margin-bottom: 15px;
-    color: #fff;
+    width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    font-size: 24px; margin-bottom: 15px; color: #fff;
   }
-  .card h3 {
-    font-size: 17px;
-    margin-bottom: 8px;
-    color: var(--primary-dark);
-  }
+  .card h3 { font-size: 17px; margin-bottom: 8px; color: var(--primary-dark); }
   footer {
     background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-    color: #e6f0fb;
-    text-align: center;
-    padding: 20px;
-    font-size: 13px;
-    margin-top: 40px;
+    color: #e6f0fb; text-align: center; padding: 20px; font-size: 13px; margin-top: 40px;
   }
   footer span { color: #ff8fa3; }
 
   .overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 35, 65, 0.65);
-    backdrop-filter: blur(5px);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 20px;
+    position: fixed; inset: 0; background: rgba(15, 35, 65, 0.65);
+    backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center;
+    z-index: 1000; padding: 20px;
   }
   .overlay.active { display: flex; }
   .modal {
-    background: #fff;
-    border-radius: 20px;
-    padding: 30px 25px;
-    width: 100%;
-    max-width: 380px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    animation: popIn 0.3s ease;
+    background: #fff; border-radius: 20px; padding: 30px 25px; width: 100%; max-width: 380px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: popIn 0.3s ease;
   }
-  @keyframes popIn {
-    from { transform: scale(0.9); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-  }
-  .modal h2 {
-    color: var(--primary-dark);
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 19px;
-  }
+  @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal h2 { color: var(--primary-dark); text-align: center; margin-bottom: 20px; font-size: 19px; }
   .modal input[type="password"] {
-    width: 100%;
-    padding: 12px 15px;
-    border: 2px solid #d5e3f5;
-    border-radius: 10px;
-    font-size: 15px;
-    margin-bottom: 15px;
-    font-family: inherit;
-    transition: border-color 0.2s;
-    background: #f7faff;
+    width: 100%; padding: 12px 15px; border: 2px solid #d5e3f5; border-radius: 10px;
+    font-size: 15px; margin-bottom: 15px; font-family: inherit; transition: border-color 0.2s; background: #f7faff;
   }
-  .modal input:focus {
-    outline: none;
-    border-color: var(--primary-light);
-    background: #fff;
-  }
-  .modal label {
-    font-size: 13px;
-    color: #5a7292;
-    display: block;
-    margin-bottom: 6px;
-  }
+  .modal input:focus { outline: none; border-color: var(--primary-light); background: #fff; }
+  .modal label { font-size: 13px; color: #5a7292; display: block; margin-bottom: 6px; }
   .btn {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 10px;
-    font-size: 15px;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: linear-gradient(135deg, var(--primary-light), var(--primary));
-    color: #fff;
+    width: 100%; padding: 12px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600;
+    font-family: inherit; cursor: pointer; transition: all 0.2s;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary)); color: #fff;
   }
   .btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
   .btn:active { transform: translateY(0); }
-  .error-msg {
-    color: #c0394f;
-    font-size: 13px;
-    text-align: center;
-    margin-bottom: 10px;
-    min-height: 18px;
-  }
+  .error-msg { color: #c0394f; font-size: 13px; text-align: center; margin-bottom: 10px; min-height: 18px; }
 
-  /* تنظیمات مخصوص موبایل برای جلوگیری از به هم ریختگی هدر */
   @media (max-width: 600px) {
-    .header-inner {
-      flex-direction: column;
-      gap: 12px;
-    }
-    #siteTitle {
-      font-size: 18px;
-    }
-    .header-actions {
-      margin-right: 0;
-      width: 100%;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .header-date, #logoutBtn {
-      flex: 1;
-      text-align: center;
-      justify-content: center;
-      padding: 8px;
-    }
+    .header-inner { flex-direction: column; gap: 12px; }
+    #siteTitle { font-size: 18px; }
+    .header-actions { margin-right: 0; width: 100%; justify-content: center; flex-wrap: wrap; }
+    .header-date, #logoutBtn { flex: 1; text-align: center; justify-content: center; padding: 8px; }
   }
 </style>
 </head>
@@ -265,20 +155,13 @@
 
 <header>
   <div class="header-inner">
-    
-    <!-- آرم سایت -->
-    <img src="logo.png" alt="لوگو" class="logo" 
-         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <img src="logo.png" alt="لوگو" class="logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
     <div class="logo-fallback" style="display:none;">🏛</div>
-    
     <h1 id="siteTitle">نامه‌های دهیاری</h1>
-    
-    <!-- بخش تاریخ و دکمه خروج در یک کادر مرتب -->
     <div class="header-actions">
       <div class="header-date" id="shamsiDate">📅 در حال بارگذاری...</div>
       <button id="logoutBtn" onclick="logout()">🚪 خروج</button>
     </div>
-
   </div>
 </header>
 
@@ -303,36 +186,32 @@
       <div class="card-icon">✉️</div>
       <h3>نامه شورا به تطبیق</h3>
     </a>
-       <a href="amalkard.html" class="card">
-      <div class="card-icon">📑</div>
+    <a href="amalkard.html" class="card">
+      <div class="card-icon">📈</div>
       <h3>گزارش عملکرد دهیار</h3>
     </a>
-      <a href="cardkaregary.html" class="card">
-      <div class="card-icon">📑</div>
+    <a href="cardkaregary.html" class="card">
+      <div class="card-icon">💼</div>
       <h3>کارت کارگری</h3>
     </a>
   </div>
 </main>
 
-<footer>
-  تهیه شده با <span>❤</span> توسط کاوه - سال ۱۴۰۵
-</footer>
+<footer>تهیه شده با <span>❤</span> توسط کاوه - سال ۱۴۰۵</footer>
 
-<!-- پنجره ورود -->
 <div class="overlay" id="loginOverlay">
   <div class="modal">
     <h2>ورود به سایت</h2>
     <div class="error-msg" id="loginError"></div>
     <label>رمز عبور</label>
-    <input type="password" id="loginPassword" placeholder="رمز عبور را وارد کنید" 
-           onkeydown="if(event.key==='Enter') doLogin()">
+    <input type="password" id="loginPassword" placeholder="رمز عبور را وارد کنید" onkeydown="if(event.key==='Enter') doLogin()">
     <button class="btn" onclick="doLogin()">ورود</button>
   </div>
 </div>
 
 <script>
   // ============================================================
-  // تنظیمات رمزها (فرمت: "رمز": "تاریخ-انقضا")
+  // تنظیمات رمزها
   // ============================================================
   const SITE_PASSWORDS = {
     "123434": "2026-12-31",
@@ -340,7 +219,25 @@
     "445566": "2026-10-20",
     "K@veh123": "2026-11-04"
   };
+
+  // 👇 تنظیمات اطلاعات خودکار برای هر رمز 👇
+  // اگر رمزی اینجا نباشد، فرم‌ها خالی باز می‌شوند.
+  const SITE_PROFILES = {
+    "123434": {
+      villageName: "دهیاری تموغه",
+      employerName: "کاوه عبدی",
+      employerNationalId: "37537375"
+    },
+    // اگر خواستید رمز دیگری هم مشخصات داشته باشد، اینجا اضافه کنید:
+    // "112233": {
+    //   villageName: "دهیاری سقز",
+    //   employerName: "علی رضایی",
+    //   employerNationalId: "12345678"
+    // }
+  };
+
   const AUTH_KEY = 'site_auth_expire';
+  const PROFILE_KEY = 'site_user_profile';
 
   // ============================================================
   // توابع تقویم شمسی
@@ -372,30 +269,24 @@
   }
 
   // ============================================================
-  // دریافت زمان (کلادفلر ← API خارجی ← ساعت مرورگر)
+  // دریافت زمان
   // ============================================================
   async function getServerTime() {
     try {
       const res = await fetch('/time', { cache: 'no-store' });
-      if (res.ok) {
-        const data = await res.json();
-        return data.serverTime;
-      }
+      if (res.ok) { const data = await res.json(); return data.serverTime; }
       throw new Error('no local time');
     } catch (e) {
       try {
         const res = await fetch('https://worldtimeapi.org/api/timezone/Asia/Tehran', { cache: 'no-store' });
         if (!res.ok) throw new Error('api failed');
-        const data = await res.json();
-        return new Date(data.datetime).getTime();
-      } catch (e2) {
-        return Date.now();
-      }
+        const data = await res.json(); return new Date(data.datetime).getTime();
+      } catch (e2) { return Date.now(); }
     }
   }
 
   // ============================================================
-  // بررسی وضعیت ورود
+  // بررسی وضعیت
   // ============================================================
   async function checkAuthStatus() {
     const savedExpire = localStorage.getItem(AUTH_KEY);
@@ -407,7 +298,6 @@
       if (logoutBtn) logoutBtn.style.display = 'none';
       return;
     }
-
     const expireTime = parseInt(savedExpire, 10);
     if (isNaN(expireTime)) {
       localStorage.removeItem(AUTH_KEY);
@@ -415,17 +305,16 @@
       if (logoutBtn) logoutBtn.style.display = 'none';
       return;
     }
-
     const now = await getServerTime();
     if (now >= expireTime) {
       localStorage.removeItem(AUTH_KEY);
+      localStorage.removeItem(PROFILE_KEY); // پاک کردن پروفایل هنگام انقضا
       loginOverlay.classList.add('active');
       document.getElementById('loginError').style.color = '#c0394f';
       document.getElementById('loginError').textContent = '⏳ زمان دسترسی شما به پایان رسیده است.';
       if (logoutBtn) logoutBtn.style.display = 'none';
       return;
     }
-
     loginOverlay.classList.remove('active');
     if (logoutBtn) logoutBtn.style.display = 'block';
   }
@@ -447,7 +336,6 @@
     err.textContent = 'در حال بررسی زمان...';
 
     const now = await getServerTime();
-    
     let expireDateStr = SITE_PASSWORDS[pass];
     let parts = expireDateStr.split('-');
     if (parts.length === 3) {
@@ -455,13 +343,19 @@
       if (parts[2].length === 1) parts[2] = '0' + parts[2];
       expireDateStr = parts.join('-');
     }
-    
     const expireTime = new Date(expireDateStr + 'T23:59:59').getTime();
 
     if (now > expireTime) {
       err.style.color = '#c0394f';
       err.textContent = '❌ این رمز منقضی شده است.';
       return;
+    }
+
+    // 👇 ذخیره اطلاعات پروفایل در صورت وجود 👇
+    if (SITE_PROFILES[pass]) {
+      localStorage.setItem(PROFILE_KEY, JSON.stringify(SITE_PROFILES[pass]));
+    } else {
+      localStorage.removeItem(PROFILE_KEY); // اگر رمز پروفایل نداشت، حذف کن
     }
 
     localStorage.setItem(AUTH_KEY, expireTime);
@@ -478,6 +372,7 @@
   // ============================================================
   function logout() {
     localStorage.removeItem(AUTH_KEY);
+    localStorage.removeItem(PROFILE_KEY); // پاک کردن پروفایل هنگام خروج
     location.reload();
   }
 
