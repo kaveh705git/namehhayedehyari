@@ -36,6 +36,7 @@
     display: flex;
     align-items: center;
     gap: 15px;
+    flex-wrap: wrap; /* برای اینکه در موبایل به هم نریزد */
   }
   .logo {
     width: 52px; height: 52px;
@@ -56,6 +57,22 @@
     user-select: none;
     letter-spacing: 0.5px;
   }
+  
+  /* استایل تقویم شمسی */
+  .header-date {
+    margin-right: auto; /* هل دادن به سمت چپ */
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   main {
     flex: 1;
     max-width: 1100px;
@@ -196,7 +213,6 @@
     min-height: 18px;
   }
   #logoutBtn {
-    margin-right: auto;
     background: rgba(255,255,255,0.2);
     color: #fff;
     border: 1px solid rgba(255,255,255,0.5);
@@ -209,6 +225,13 @@
     transition: background 0.2s;
   }
   #logoutBtn:hover { background: rgba(255,255,255,0.3); }
+
+  /* تنظیمات ریسپانسیو برای موبایل */
+  @media (max-width: 600px) {
+    .header-inner { justify-content: center; text-align: center; }
+    .header-date { margin-right: 0; margin-top: 10px; width: 100%; justify-content: center; }
+    #logoutBtn { width: 100%; margin-top: 5px; }
+  }
 </style>
 </head>
 <body>
@@ -219,6 +242,10 @@
          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
     <div class="logo-fallback" style="display:none;">🏛</div>
     <h1 id="siteTitle">نامه‌های دهیاری</h1>
+    
+    <!-- تقویم شمسی -->
+    <div class="header-date" id="shamsiDate">📅 در حال بارگذاری...</div>
+
     <button id="logoutBtn" onclick="logout()">🚪 خروج</button>
   </div>
 </header>
@@ -264,19 +291,59 @@
 
 <script>
   // ============================================================
-  // تنظیمات رمزها (هر تعداد که خواستید اضافه کنید)
+  // تنظیمات رمزها
   // ============================================================
   const SITE_PASSWORDS = {
     "123434": "2026-12-31",
     "112233": "2026-11-15",
     "445566": "2026-10-20",
-   "K@veh123": "2026-11-04"
-    // رمز جدید را با کاما اضافه کنید: "رمز": "تاریخ"
+    "K@veh123": "2026-11-04" // تاریخ اصلاح شد (04)
   };
   const AUTH_KEY = 'site_auth_expire';
 
   // ============================================================
-  // دریافت زمان از سرور Cloudflare (یا ساعت مرورگر در صورت خطا)
+  // توابع تقویم شمسی
+  // ============================================================
+  function getShamsiDate() {
+    const today = new Date();
+    
+    // تبدیل میلادی به شمسی (الگوریتم دقیق)
+    let gy = today.getFullYear(), gm = today.getMonth() + 1, gd = today.getDate();
+    const g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+    let jy = (gy <= 1600) ? 0 : 979;
+    gy -= (gy <= 1600) ? 621 : 1600;
+    const gy2 = (gm > 2) ? (gy + 1) : gy;
+    let days = (365 * gy) + parseInt((gy2 + 3) / 4) - parseInt((gy2 + 99) / 100) + parseInt((gy2 + 399) / 400) - 80 + gd + g_d_m[gm - 1];
+    
+    jy += 33 * parseInt(days / 12053);
+    days %= 12053;
+    jy += 4 * parseInt(days / 1461);
+    days %= 1461;
+    
+    if (days > 365) {
+      jy += parseInt((days - 1) / 365);
+      days = (days - 1) % 365;
+    }
+    
+    const jm = (days < 186) ? 1 + parseInt(days / 31) : 7 + parseInt((days - 186) / 30);
+    const jd = 1 + ((days < 186) ? (days % 31) : ((days - 186) % 30));
+    
+    // نام روزهای هفته (0 = یکشنبه)
+    const weekDays = ["یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "شنبه"];
+    const dayName = weekDays[today.getDay()];
+    
+    // نام ماه‌های شمسی
+    const monthNames = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"];
+    const monthName = monthNames[jm - 1];
+    
+    // تبدیل اعداد به فارسی
+    const toPersian = (num) => num.toString().replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+    
+    return `${dayName} ${toPersian(jd)} ${monthName} ${toPersian(jy)}`;
+  }
+
+  // ============================================================
+  // دریافت زمان سرور (برای تایمر)
   // ============================================================
   async function getServerTime() {
     try {
@@ -285,7 +352,6 @@
       const data = await res.json();
       return data.serverTime;
     } catch (e) {
-      console.warn('⚠️ سرور در دسترس نیست، از ساعت مرورگر استفاده می‌شود');
       return Date.now();
     }
   }
@@ -298,14 +364,12 @@
     const logoutBtn = document.getElementById('logoutBtn');
     const loginOverlay = document.getElementById('loginOverlay');
 
-    // حالت ۱: localStorage خالی است → مدال ورود
     if (!savedExpire) {
       loginOverlay.classList.add('active');
       if (logoutBtn) logoutBtn.style.display = 'none';
       return;
     }
 
-    // حالت ۲: مقدار ذخیره شده معتبر نیست → پاک کن و مدال
     const expireTime = parseInt(savedExpire, 10);
     if (isNaN(expireTime)) {
       localStorage.removeItem(AUTH_KEY);
@@ -314,11 +378,8 @@
       return;
     }
 
-    // حالت ۳: بررسی زمان
     const now = await getServerTime();
-
     if (now >= expireTime) {
-      // زمان منقضی شده → پاک کن و مدال
       localStorage.removeItem(AUTH_KEY);
       loginOverlay.classList.add('active');
       document.getElementById('loginError').style.color = '#c0394f';
@@ -327,7 +388,6 @@
       return;
     }
 
-    // حالت ۴: کاربر مجاز است → دکمه خروج را نشان بده
     loginOverlay.classList.remove('active');
     if (logoutBtn) logoutBtn.style.display = 'block';
   }
@@ -349,7 +409,16 @@
     err.textContent = 'در حال بررسی زمان...';
 
     const now = await getServerTime();
-    const expireDateStr = SITE_PASSWORDS[pass];
+    
+    // اصلاح خودکار تاریخ (در صورتی که یک رقمی وارد شده باشد)
+    let expireDateStr = SITE_PASSWORDS[pass];
+    let parts = expireDateStr.split('-');
+    if (parts.length === 3) {
+      if (parts[1].length === 1) parts[1] = '0' + parts[1];
+      if (parts[2].length === 1) parts[2] = '0' + parts[2];
+      expireDateStr = parts.join('-');
+    }
+    
     const expireTime = new Date(expireDateStr + 'T23:59:59').getTime();
 
     if (now > expireTime) {
@@ -358,7 +427,6 @@
       return;
     }
 
-    // ورود موفق
     localStorage.setItem(AUTH_KEY, expireTime);
     err.style.color = '#1e8e4e';
     err.textContent = '✅ ورود موفق!';
@@ -377,8 +445,10 @@
   }
 
   // ============================================================
-  // شروع
+  // شروع اجرای برنامه
   // ============================================================
+  document.getElementById('shamsiDate').textContent = '📅 ' + getShamsiDate();
+  
   checkAuthStatus();
   setInterval(checkAuthStatus, 5000);
 </script>
