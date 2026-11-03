@@ -345,16 +345,32 @@
   // ============================================================
   // دریافت زمان سرور (برای تایمر)
   // ============================================================
-  async function getServerTime() {
-    try {
-      const res = await fetch('/time', { cache: 'no-store' });
-      if (!res.ok) throw new Error('server error');
+  // ============================================================
+// دریافت زمان (کلادفلر ← API خارجی ← ساعت مرورگر)
+// ============================================================
+async function getServerTime() {
+  try {
+    // ۱. تلاش برای دریافت زمان از سرور کلادفلر
+    const res = await fetch('/time', { cache: 'no-store' });
+    if (res.ok) {
       const data = await res.json();
       return data.serverTime;
-    } catch (e) {
+    }
+    throw new Error('no local time');
+  } catch (e) {
+    // ۲. اگر کلادفلر در دسترس نبود (مثل گیت‌هاب)، از API خارجی بگیر
+    try {
+      const res = await fetch('https://worldtimeapi.org/api/timezone/Asia/Tehran', { cache: 'no-store' });
+      if (!res.ok) throw new Error('api failed');
+      const data = await res.json();
+      return new Date(data.datetime).getTime();
+    } catch (e2) {
+      // ۳. اگر API خارجی هم قطع بود، از ساعت مرورگر استفاده کن
+      console.warn('⚠️ هیچ منبع زمانی در دسترس نیست، از ساعت مرورگر استفاده می‌شود');
       return Date.now();
     }
   }
+}
 
   // ============================================================
   // بررسی وضعیت ورود
