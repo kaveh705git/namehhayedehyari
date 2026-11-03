@@ -24,7 +24,7 @@
   header {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: #fff;
-    padding: 18px 30px;
+    padding: 15px 20px;
     box-shadow: var(--shadow);
     position: sticky;
     top: 0;
@@ -36,71 +36,95 @@
     display: flex;
     align-items: center;
     gap: 15px;
-    flex-wrap: wrap; /* برای اینکه در موبایل به هم نریزد */
   }
+  
+  /* پس‌زمینه لوگو دقیقا رنگ هدر شد و حاشیه سفید حذف شد */
   .logo {
-    width: 52px; height: 52px;
+    width: 56px; 
+    height: 56px;
     border-radius: 50%;
-    background: #fff;
-    object-fit: cover;
-    border: 2px solid rgba(255,255,255,0.6);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    background: transparent; /* شفاف شد تا رنگ آبی هدر دیده شود */
+    object-fit: contain; /* کل لوگو داخل کادر دیده شود */
+    border: none; /* حاشیه سفید حذف شد */
+    flex-shrink: 0;
   }
   .logo-fallback {
     width: 52px; height: 52px; border-radius: 50%;
-    background: #fff; display: flex; align-items: center; justify-content: center;
-    font-size: 24px; color: var(--primary); font-weight: bold;
+    background: rgba(255,255,255,0.2); 
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; color: #fff; font-weight: bold;
+    flex-shrink: 0;
   }
   #siteTitle {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 700;
     user-select: none;
-    letter-spacing: 0.5px;
+    white-space: nowrap;
   }
   
-  /* استایل تقویم شمسی */
-  .header-date {
-    margin-right: auto; /* هل دادن به سمت چپ */
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #fff;
+  /* استایل جدید و مرتب برای تاریخ و دکمه خروج */
+  .header-actions {
+    margin-right: auto;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
   }
+
+  .header-date {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  #logoutBtn {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: none;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+  #logoutBtn:hover { background: rgba(255,255,255,0.3); }
 
   main {
     flex: 1;
     max-width: 1100px;
     width: 100%;
     margin: 0 auto;
-    padding: 50px 20px;
+    padding: 40px 20px;
   }
   .hero-title {
     text-align: center;
     color: var(--primary-dark);
     margin-bottom: 10px;
-    font-size: 28px;
+    font-size: 24px;
   }
   .hero-sub {
     text-align: center;
     color: #5a7292;
     margin-bottom: 40px;
-    font-size: 15px;
+    font-size: 14px;
   }
   .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 22px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
   }
   .card {
     background: #fff;
     border-radius: 16px;
-    padding: 30px 25px;
+    padding: 25px 20px;
     box-shadow: var(--shadow);
     border-top: 4px solid var(--primary-light);
     transition: transform 0.25s, box-shadow 0.25s;
@@ -114,16 +138,16 @@
     box-shadow: 0 12px 30px rgba(30, 95, 168, 0.25);
   }
   .card-icon {
-    width: 54px; height: 54px;
+    width: 50px; height: 50px;
     background: linear-gradient(135deg, var(--primary-light), var(--primary));
-    border-radius: 14px;
+    border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 26px;
-    margin-bottom: 16px;
+    font-size: 24px;
+    margin-bottom: 15px;
     color: #fff;
   }
   .card h3 {
-    font-size: 18px;
+    font-size: 17px;
     margin-bottom: 8px;
     color: var(--primary-dark);
   }
@@ -132,7 +156,7 @@
     color: #e6f0fb;
     text-align: center;
     padding: 20px;
-    font-size: 14px;
+    font-size: 13px;
     margin-top: 40px;
   }
   footer span { color: #ff8fa3; }
@@ -152,9 +176,9 @@
   .modal {
     background: #fff;
     border-radius: 20px;
-    padding: 35px 30px;
+    padding: 30px 25px;
     width: 100%;
-    max-width: 400px;
+    max-width: 380px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     animation: popIn 0.3s ease;
   }
@@ -165,8 +189,8 @@
   .modal h2 {
     color: var(--primary-dark);
     text-align: center;
-    margin-bottom: 22px;
-    font-size: 20px;
+    margin-bottom: 20px;
+    font-size: 19px;
   }
   .modal input[type="password"] {
     width: 100%;
@@ -212,25 +236,28 @@
     margin-bottom: 10px;
     min-height: 18px;
   }
-  #logoutBtn {
-    background: rgba(255,255,255,0.2);
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.5);
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 14px;
-    cursor: pointer;
-    display: none;
-    transition: background 0.2s;
-  }
-  #logoutBtn:hover { background: rgba(255,255,255,0.3); }
 
-  /* تنظیمات ریسپانسیو برای موبایل */
+  /* تنظیمات مخصوص موبایل برای جلوگیری از به هم ریختگی هدر */
   @media (max-width: 600px) {
-    .header-inner { justify-content: center; text-align: center; }
-    .header-date { margin-right: 0; margin-top: 10px; width: 100%; justify-content: center; }
-    #logoutBtn { width: 100%; margin-top: 5px; }
+    .header-inner {
+      flex-direction: column;
+      gap: 12px;
+    }
+    #siteTitle {
+      font-size: 18px;
+    }
+    .header-actions {
+      margin-right: 0;
+      width: 100%;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .header-date, #logoutBtn {
+      flex: 1;
+      text-align: center;
+      justify-content: center;
+      padding: 8px;
+    }
   }
 </style>
 </head>
@@ -238,15 +265,20 @@
 
 <header>
   <div class="header-inner">
+    
+    <!-- آرم سایت -->
     <img src="logo.png" alt="لوگو" class="logo" 
          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
     <div class="logo-fallback" style="display:none;">🏛</div>
+    
     <h1 id="siteTitle">نامه‌های دهیاری</h1>
     
-    <!-- تقویم شمسی -->
-    <div class="header-date" id="shamsiDate">📅 در حال بارگذاری...</div>
+    <!-- بخش تاریخ و دکمه خروج در یک کادر مرتب -->
+    <div class="header-actions">
+      <div class="header-date" id="shamsiDate">📅 در حال بارگذاری...</div>
+      <button id="logoutBtn" onclick="logout()">🚪 خروج</button>
+    </div>
 
-    <button id="logoutBtn" onclick="logout()">🚪 خروج</button>
   </div>
 </header>
 
@@ -278,6 +310,7 @@
   تهیه شده با <span>❤</span> توسط کاوه - سال ۱۴۰۵
 </footer>
 
+<!-- پنجره ورود -->
 <div class="overlay" id="loginOverlay">
   <div class="modal">
     <h2>ورود به سایت</h2>
@@ -291,13 +324,13 @@
 
 <script>
   // ============================================================
-  // تنظیمات رمزها
+  // تنظیمات رمزها (فرمت: "رمز": "تاریخ-انقضا")
   // ============================================================
   const SITE_PASSWORDS = {
     "123434": "2026-12-31",
     "112233": "2026-11-15",
     "445566": "2026-10-20",
-    "K@veh123": "2026-11-04" // تاریخ اصلاح شد (04)
+    "K@veh123": "2026-11-04"
   };
   const AUTH_KEY = 'site_auth_expire';
 
@@ -306,71 +339,52 @@
   // ============================================================
   function getShamsiDate() {
     const today = new Date();
-    
-    // تبدیل میلادی به شمسی (الگوریتم دقیق)
     let gy = today.getFullYear(), gm = today.getMonth() + 1, gd = today.getDate();
     const g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
     let jy = (gy <= 1600) ? 0 : 979;
     gy -= (gy <= 1600) ? 621 : 1600;
     const gy2 = (gm > 2) ? (gy + 1) : gy;
     let days = (365 * gy) + parseInt((gy2 + 3) / 4) - parseInt((gy2 + 99) / 100) + parseInt((gy2 + 399) / 400) - 80 + gd + g_d_m[gm - 1];
-    
     jy += 33 * parseInt(days / 12053);
     days %= 12053;
     jy += 4 * parseInt(days / 1461);
     days %= 1461;
-    
     if (days > 365) {
       jy += parseInt((days - 1) / 365);
       days = (days - 1) % 365;
     }
-    
     const jm = (days < 186) ? 1 + parseInt(days / 31) : 7 + parseInt((days - 186) / 30);
     const jd = 1 + ((days < 186) ? (days % 31) : ((days - 186) % 30));
-    
-    // نام روزهای هفته (0 = یکشنبه)
     const weekDays = ["یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "شنبه"];
     const dayName = weekDays[today.getDay()];
-    
-    // نام ماه‌های شمسی
     const monthNames = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"];
     const monthName = monthNames[jm - 1];
-    
-    // تبدیل اعداد به فارسی
     const toPersian = (num) => num.toString().replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
-    
     return `${dayName} ${toPersian(jd)} ${monthName} ${toPersian(jy)}`;
   }
 
   // ============================================================
-  // دریافت زمان سرور (برای تایمر)
+  // دریافت زمان (کلادفلر ← API خارجی ← ساعت مرورگر)
   // ============================================================
-  // ============================================================
-// دریافت زمان (کلادفلر ← API خارجی ← ساعت مرورگر)
-// ============================================================
-async function getServerTime() {
-  try {
-    // ۱. تلاش برای دریافت زمان از سرور کلادفلر
-    const res = await fetch('/time', { cache: 'no-store' });
-    if (res.ok) {
-      const data = await res.json();
-      return data.serverTime;
-    }
-    throw new Error('no local time');
-  } catch (e) {
-    // ۲. اگر کلادفلر در دسترس نبود (مثل گیت‌هاب)، از API خارجی بگیر
+  async function getServerTime() {
     try {
-      const res = await fetch('https://worldtimeapi.org/api/timezone/Asia/Tehran', { cache: 'no-store' });
-      if (!res.ok) throw new Error('api failed');
-      const data = await res.json();
-      return new Date(data.datetime).getTime();
-    } catch (e2) {
-      // ۳. اگر API خارجی هم قطع بود، از ساعت مرورگر استفاده کن
-      console.warn('⚠️ هیچ منبع زمانی در دسترس نیست، از ساعت مرورگر استفاده می‌شود');
-      return Date.now();
+      const res = await fetch('/time', { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        return data.serverTime;
+      }
+      throw new Error('no local time');
+    } catch (e) {
+      try {
+        const res = await fetch('https://worldtimeapi.org/api/timezone/Asia/Tehran', { cache: 'no-store' });
+        if (!res.ok) throw new Error('api failed');
+        const data = await res.json();
+        return new Date(data.datetime).getTime();
+      } catch (e2) {
+        return Date.now();
+      }
     }
   }
-}
 
   // ============================================================
   // بررسی وضعیت ورود
@@ -426,7 +440,6 @@ async function getServerTime() {
 
     const now = await getServerTime();
     
-    // اصلاح خودکار تاریخ (در صورتی که یک رقمی وارد شده باشد)
     let expireDateStr = SITE_PASSWORDS[pass];
     let parts = expireDateStr.split('-');
     if (parts.length === 3) {
