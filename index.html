@@ -38,12 +38,14 @@
     gap: 15px;
   }
   
+  /* پس‌زمینه لوگو دقیقا رنگ هدر شد و حاشیه سفید حذف شد */
   .logo {
-    width: 56px; height: 56px;
+    width: 56px; 
+    height: 56px;
     border-radius: 50%;
-    background: transparent;
-    object-fit: contain;
-    border: none;
+    background: transparent; 
+    object-fit: contain; 
+    border: none; 
     flex-shrink: 0;
   }
   .logo-fallback {
@@ -199,6 +201,7 @@
 
 <footer>تهیه شده با <span>❤</span> توسط کاوه - سال ۱۴۰۵</footer>
 
+<!-- پنجره ورود -->
 <div class="overlay" id="loginOverlay">
   <div class="modal">
     <h2>ورود به سایت</h2>
@@ -211,29 +214,40 @@
 
 <script>
   // ============================================================
-  // تنظیمات رمزها
+  // تنظیمات اصلی رمزها و پروفایل‌ها
   // ============================================================
-  const SITE_PASSWORDS = {
-    "123434": "2026-12-31",
-    "112233": "2026-11-15",
-    "445566": "2026-10-20",
-    "K@veh123": "2026-11-04"
-  };
-
-  // 👇 تنظیمات اطلاعات خودکار برای هر رمز 👇
-  // اگر رمزی اینجا نباشد، فرم‌ها خالی باز می‌شوند.
+  // فرمت: "رمز": { تاریخ انقضا، نام دهیاری، نام دهیار، کد ملی، اعضای شورا و ... }
   const SITE_PROFILES = {
-    "123434": {
+    "123434": { 
+      expire: "2026-12-31",
       villageName: "دهیاری تموغه",
       employerName: "کاوه عبدی",
-      employerNationalId: "37537375"
+      employerNationalId: "37537375",
+      councilChairman: "نام رئیس شورا",
+      councilVice: "نام نایب رئیس",
+      councilSecretary: "نام منشی",
+      attendees: "نام مدعوین"
     },
-    // اگر خواستید رمز دیگری هم مشخصات داشته باشد، اینجا اضافه کنید:
-    // "112233": {
-    //   villageName: "دهیاری سقز",
-    //   employerName: "علی رضایی",
-    //   employerNationalId: "12345678"
-    // }
+    "112233": {
+      expire: "2026-11-15",
+      villageName: "دهیاری سقز",
+      employerName: "علی رضایی",
+      employerNationalId: "12345678",
+      councilChairman: "رئیس شورای سقز",
+      councilVice: "نایب رئیس سقز",
+      councilSecretary: "منشی سقز",
+      attendees: "مدعوین سقز"
+    },
+    "445566": {
+      expire: "2026-10-20",
+      villageName: "دهیاری سنندج",
+      employerName: "محمد کریمی",
+      employerNationalId: "98765432",
+      councilChairman: "رئیس شورای سنندج",
+      councilVice: "نایب رئیس سنندج",
+      councilSecretary: "منشی سنندج",
+      attendees: "مدعوین سنندج"
+    }
   };
 
   const AUTH_KEY = 'site_auth_expire';
@@ -269,7 +283,7 @@
   }
 
   // ============================================================
-  // دریافت زمان
+  // دریافت زمان (کلادفلر ← API خارجی ← ساعت مرورگر)
   // ============================================================
   async function getServerTime() {
     try {
@@ -286,7 +300,7 @@
   }
 
   // ============================================================
-  // بررسی وضعیت
+  // بررسی وضعیت ورود
   // ============================================================
   async function checkAuthStatus() {
     const savedExpire = localStorage.getItem(AUTH_KEY);
@@ -308,7 +322,7 @@
     const now = await getServerTime();
     if (now >= expireTime) {
       localStorage.removeItem(AUTH_KEY);
-      localStorage.removeItem(PROFILE_KEY); // پاک کردن پروفایل هنگام انقضا
+      localStorage.removeItem(PROFILE_KEY); 
       loginOverlay.classList.add('active');
       document.getElementById('loginError').style.color = '#c0394f';
       document.getElementById('loginError').textContent = '⏳ زمان دسترسی شما به پایان رسیده است.';
@@ -320,13 +334,13 @@
   }
 
   // ============================================================
-  // ورود
+  // ورود و ذخیره پروفایل
   // ============================================================
   async function doLogin() {
     const pass = document.getElementById('loginPassword').value;
     const err = document.getElementById('loginError');
 
-    if (!SITE_PASSWORDS[pass]) {
+    if (!SITE_PROFILES[pass]) {
       err.style.color = '#c0394f';
       err.textContent = '❌ رمز عبور اشتباه است';
       return;
@@ -336,7 +350,9 @@
     err.textContent = 'در حال بررسی زمان...';
 
     const now = await getServerTime();
-    let expireDateStr = SITE_PASSWORDS[pass];
+    let expireDateStr = SITE_PROFILES[pass].expire;
+    
+    // اصلاح خودکار فرمت تاریخ
     let parts = expireDateStr.split('-');
     if (parts.length === 3) {
       if (parts[1].length === 1) parts[1] = '0' + parts[1];
@@ -351,14 +367,10 @@
       return;
     }
 
-    // 👇 ذخیره اطلاعات پروفایل در صورت وجود 👇
-    if (SITE_PROFILES[pass]) {
-      localStorage.setItem(PROFILE_KEY, JSON.stringify(SITE_PROFILES[pass]));
-    } else {
-      localStorage.removeItem(PROFILE_KEY); // اگر رمز پروفایل نداشت، حذف کن
-    }
-
+    // 👇 ذخیره پروفایل در حافظه 👇
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(SITE_PROFILES[pass]));
     localStorage.setItem(AUTH_KEY, expireTime);
+    
     err.style.color = '#1e8e4e';
     err.textContent = '✅ ورود موفق!';
     setTimeout(() => {
@@ -372,15 +384,14 @@
   // ============================================================
   function logout() {
     localStorage.removeItem(AUTH_KEY);
-    localStorage.removeItem(PROFILE_KEY); // پاک کردن پروفایل هنگام خروج
+    localStorage.removeItem(PROFILE_KEY); 
     location.reload();
   }
 
   // ============================================================
-  // شروع اجرای برنامه
+  // شروع
   // ============================================================
   document.getElementById('shamsiDate').textContent = '📅 ' + getShamsiDate();
-  
   checkAuthStatus();
   setInterval(checkAuthStatus, 5000);
 </script>
