@@ -763,6 +763,59 @@
       addAgendaField({ title: '' });
       addResolutionField({ text: '' });
     };
+
+    // ============================================================
+// کد هوشمند (ویژه فرم صورت جلسه - با قابلیت رمز آزاد)
+// ============================================================
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    const savedProfileStr = localStorage.getItem('site_user_profile');
+    if (!savedProfileStr) return;
+
+    try {
+      const profile = JSON.parse(savedProfileStr);
+      
+      // 👇 اگر رمز آزاد باشد (نام دهیاری خالی است)، فیلدها را خالی و آزاد کن 👇
+      if (!profile.villageName) {
+        const fieldsToClear = ['inp-village', 'inp-sign1', 'inp-att1', 'inp-att2', 'inp-att3'];
+        fieldsToClear.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.value = ''; // خالی کردن
+            el.readOnly = false; // آزاد کردن
+            el.style.backgroundColor = '#fff';
+            el.style.color = '#000';
+            // آپدیت پیش‌نمایش
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+        });
+        return; // توقف اجرای بقیه کد
+      }
+
+      // در غیر این صورت (رمز عادی)، فیلدها را پر و قفل کن
+      function applyValue(inputId, value) {
+        const input = document.getElementById(inputId);
+        if (!input || !value) return;
+        
+        input.value = value;
+        input.readOnly = true;
+        input.style.backgroundColor = '#e2e8f0';
+        input.style.color = '#475569';
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+
+      applyValue('inp-village', profile.villageName);
+      applyValue('inp-sign1', profile.councilChairman);
+      applyValue('inp-att1', profile.councilChairman);
+      applyValue('inp-att2', profile.councilVice);
+      applyValue('inp-att3', profile.councilSecretary);
+
+    } catch (e) {
+      console.error('خطا در خواندن اطلاعات:', e);
+    }
+  }, 500);
+});
   </script>
 
 </body>
