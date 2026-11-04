@@ -27,6 +27,13 @@ body{background-color:#f4f4f4;margin:0;padding:0;height:100vh;display:flex;flex-
 .form-control{width:100%;padding:6px 10px;border:1px solid #cbd5e1;border-radius:6px;font-family:inherit;font-size:13px;transition:border-color .2s}
 .form-control:focus{outline:0;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.2)}
 
+/* استایل قفل شدن فیلدها در سمت راست */
+input[readonly] {
+  background-color: #e2e8f0 !important;
+  color: #475569 !important;
+  cursor: not-allowed !important;
+}
+
 /* ستون چپ: پیش‌نمایش کاغذ A4 */
 .preview-panel{flex:1;background:#cbd5e1;padding:20px;overflow-y:auto;display:flex;justify-content:center}
 .page{background:#fff;width:210mm;height:296mm;padding:15mm 12mm;box-shadow:0 10px 25px rgba(0,0,0,.2);display:flex;flex-direction:column;font-size:13px;color:#000}
@@ -79,6 +86,9 @@ th{background-color:#f0f0f0;font-weight:700}
   <!-- ستون راست: فرم‌ها -->
   <div class="form-panel">
     <h2>ویرایش اطلاعات</h2>
+    
+    <div class="form-group"><label>نام دهیاری</label><input type="text" id="inp-village" class="form-control" oninput="updatePreview('village', this.value)"></div>
+    
     <div class="form-group"><label>شماره نامه</label><input type="text" id="inp-number" class="form-control" oninput="updatePreview('number', this.value)"></div>
     
     <div class="form-group"><label>تاریخ</label>
@@ -99,10 +109,10 @@ th{background-color:#f0f0f0;font-weight:700}
 
     <hr style="border:0; border-top:1px dashed #ccc; margin:15px 0;">
     
-    <div class="form-group"><label>نام دهیار (کارفرما)</label><input type="text" id="inp-dehyar" class="form-control"></div>
-    <div class="form-group"><label>نام رئیس شورا</label><input type="text" id="inp-shora" class="form-control"></div>
-    <div class="form-group"><label>نام ناظر فنی</label><input type="text" id="inp-nazer" class="form-control"></div>
-    <div class="form-group"><label>نام امور مالی</label><input type="text" id="inp-mali" class="form-control"></div>
+    <div class="form-group"><label>نام دهیار (کارفرما)</label><input type="text" id="inp-dehyar" class="form-control" oninput="updatePreview('dehyar', this.value)"></div>
+    <div class="form-group"><label>نام رئیس شورا</label><input type="text" id="inp-shora" class="form-control" oninput="updatePreview('shora', this.value)"></div>
+    <div class="form-group"><label>نام ناظر فنی</label><input type="text" id="inp-nazer" class="form-control" oninput="updatePreview('nazer', this.value)"></div>
+    <div class="form-group"><label>نام امور مالی</label><input type="text" id="inp-mali" class="form-control" oninput="updatePreview('mali', this.value)"></div>
   </div>
 
   <!-- ستون چپ: پیش‌نمایش کاغذ -->
@@ -178,9 +188,17 @@ const persianDigits=['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
 function toPersianDigits(str){return str.toString().replace(/\d/g,x=>persianDigits[x])}
 function formatNumber(num){if(isNaN(num)||num===0)return'۰';return toPersianDigits(num.toLocaleString('en-US'))}
 
-// آپدیت پیش‌نمایش هدر
+// آپدیت پیش‌نمایش
 function updatePreview(field, value) {
+  if(field === 'village') {
+    document.getElementById('view-village-header').innerText = value || '........';
+    document.getElementById('view-village-logo').innerText = value ? 'دهیاری ' + value : 'دهیاری ...';
+  }
   if(field === 'number') document.getElementById('view-number').innerText = value || '........';
+  if(field === 'dehyar') document.getElementById('view-dehyar').innerText = value || 'نام و نام خانوادگی';
+  if(field === 'shora') document.getElementById('view-shora').innerText = value || 'نام و نام خانوادگی';
+  if(field === 'nazer') document.getElementById('view-nazer').innerText = value || 'نام و نام خانوادگی';
+  if(field === 'mali') document.getElementById('view-mali').innerText = value || 'نام و نام خانوادگی';
 }
 
 // تاریخ
@@ -258,7 +276,6 @@ function updateRowNumbers() {
   const rows = document.querySelectorAll('#viewTableBody tr');
   rows.forEach((row, index) => {
     row.cells[0].innerText = toPersianDigits(index + 1);
-    // همچنین شماره ردیف در فرم سمت راست را هم آپدیت کن (نیاز به پیچیدگی دارد، فعلاً رها می‌کنیم)
   });
 }
 
@@ -275,11 +292,9 @@ function formatInput(input, rowId) {
 }
 
 function updateRowPreview(rowId) {
-  // آپدیت شرح
   const descVal = document.getElementById('desc_' + rowId).value;
   document.getElementById('view_desc_' + rowId).innerText = descVal;
   
-  // محاسبه
   const qty = parsePersianNumber(document.getElementById('qty_' + rowId).value);
   const price = parsePersianNumber(document.getElementById('price_' + rowId).value);
   
@@ -370,16 +385,20 @@ window.addEventListener('load', function() {
         }
       }
 
-      // ۱. نام دهیاری
-      setAndLock(null, 'view-village-header', profile.villageName);
-      setAndLock(null, 'view-village-logo', profile.villageName);
+      // ۱. نام دهیاری (در فرم راست و پیش‌نمایش)
+      if (profile.villageName) {
+        // چون نام دهیاری در کد اولیه در هدر بود، ما الان یک فیلد در سمت راست داریم
+        setAndLock('inp-village', 'view-village-header', profile.villageName); // در هدر بالا
+        const logoText = document.getElementById('view-village-logo');
+        if(logoText) logoText.innerText = 'دهیاری ' + profile.villageName; // زیر لوگو
+      }
 
-      // ۲. نام‌های فوتر
+      // ۲. نام دهیار و رئیس شورا (طبق درخواست شما فقط این دو)
       setAndLock('inp-dehyar', 'view-dehyar', profile.employerName);
       setAndLock('inp-shora', 'view-shora', profile.councilChairman);
-      setAndLock('inp-nazer', 'view-nazer', profile.councilVice);
-      setAndLock('inp-mali', 'view-mali', profile.councilSecretary); 
 
+      // ناظر فنی و امور مالی آزاد هستند
+      
     } catch (e) {
       console.error('خطا در خواندن اطلاعات:', e);
     }
