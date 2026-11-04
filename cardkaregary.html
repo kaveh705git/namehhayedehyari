@@ -59,7 +59,7 @@
         }
 
         /* استایل برای فیلدهای قفل شده */
-        .form-group input[readonly] {
+        .form-group input[readonly], .form-group textarea[readonly] {
             background-color: #e2e8f0 !important;
             color: #475569 !important;
             cursor: not-allowed;
@@ -194,7 +194,7 @@
         </div>
 
         <div class="form-group">
-            <label id="lbl-letterhead">متن سربرگ (قابل ویرایش - خط آخر خودکار پر می‌شود)</label>
+            <label id="lbl-letterhead">متن سربرگ (قفل شده)</label>
             <textarea id="inp-letterhead" rows="5"></textarea>
         </div>
 
@@ -205,8 +205,6 @@
             <label>نام دهیاری (کارفرما)</label>
             <input type="text" id="inp-employer" placeholder="نام دهیاری...">
         </div>
-
-        <!-- شماره کارت حذف شد -->
         
         <div class="row">
             <div class="form-group">
@@ -219,8 +217,6 @@
             </div>
         </div>
 
-        <!-- تاریخ تولد حذف شد -->
-        
         <div class="row">
             <div class="form-group">
                 <label>تاریخ (بازه)</label>
@@ -316,7 +312,6 @@
 
             <div class="header-grid">
                 <div class="header-col">
-                    <!-- تغییر نام کارفرما به نام دهیاری و حذف شماره کارت و تاریخ تولد -->
                     <div class="header-row"><span>نام دهیاری:</span><span class="display-field" id="out-employer">.....................</span></div>
                     <div class="header-row"><span>نام و نام خانوادگی:</span><span class="display-field" id="out-name">.....................</span></div>
                     <div class="header-row"><span>تاریخ:</span><span class="display-field" id="out-date">.....................</span></div>
@@ -354,7 +349,6 @@
                     <span>مبلغ قابل پرداخت: <b id="out-total-pay">...</b></span>
                 </div>
                 <div style="border-top: 1px dotted #999; padding-top: 5px; margin-top: 5px;">
-                    <!-- جمع مزد روزانه حذف شد -->
                     <span>مساعده: <b id="out-advance">.....................</b></span>
                 </div>
             </div>
@@ -408,15 +402,24 @@
                         inpDehyariName.style.color = "#475569";
                         document.getElementById('out-dehyari-name').textContent = `دهیاری ${profile.villageName}`;
                         
-                        // 2. متن سربرگ
+                        // 2. متن سربرگ (حالا کاملاً قفل می‌شود)
                         let baseLetterhead = `وزارت کشور
 استانداری استان کردستان
 فرمانداری ویژه شهرستان سقز
-بخشداری بخش مرکزی`;
-                        inpLetterhead.value = baseLetterhead + `\n${profile.villageName}`;
+بخشداری بخش مرکزی
+دهیاری ${profile.villageName}`; // خط آخر با نام دهیاری جایگزین می‌شود
+                        
+                        inpLetterhead.value = baseLetterhead;
+                        
+                        // قفل کردن فیلد متن سربرگ
+                        inpLetterhead.readOnly = true;
+                        inpLetterhead.style.backgroundColor = "#e2e8f0";
+                        inpLetterhead.style.color = "#475569";
+                        
+                        // آپدیت پیش‌نمایش
                         document.getElementById('out-letterhead').innerHTML = inpLetterhead.value.replace(/\n/g, '<br>');
 
-                        // 3. فیلد نام دهیاری (کارفرما) - جدید و قفل شده
+                        // 3. فیلد نام دهیاری (کارفرما)
                         inpEmployer.value = `دهیاری ${profile.villageName}`;
                         inpEmployer.readOnly = true;
                         inpEmployer.style.backgroundColor = "#e2e8f0";
@@ -520,13 +523,11 @@
             unitSelect.addEventListener('change', updateOutput);
         }
 
-        // اتصال فیلدها
         bindTextInput('inp-name', 'out-name');
         bindTextInput('inp-duration', 'out-duration');
         bindTextInput('inp-days-worked', 'out-days-worked');
         bindTextInput('inp-job', 'out-job');
         
-        // اتصال پول
         bindMoneyInput('inp-advance', 'unit-advance', 'out-advance');
         bindMoneyInput('inp-total-overtime', 'unit-total-overtime', 'out-total-overtime');
         bindMoneyInput('inp-total-pay', 'unit-total-pay', 'out-total-pay');
@@ -556,6 +557,7 @@
 بخشداری بخش مرکزی
 دهیاری تموغه`;
         
+        // اگر پروفایلی وجود نداشت، متن پیش‌فرض نمایش داده شود
         if(!inpLetterhead.value) {
             inpLetterhead.value = defaultLetterhead;
             outLetterhead.innerHTML = defaultLetterhead.replace(/\n/g, '<br>');
