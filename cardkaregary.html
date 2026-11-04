@@ -200,16 +200,13 @@
 
         <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
         
-        <div class="row">
-            <div class="form-group">
-                <label>شرکت / کارگاه</label>
-                <input type="text" id="inp-company" placeholder="نام شرکت...">
-            </div>
-            <div class="form-group">
-                <label>شماره کارت</label>
-                <input type="text" id="inp-card-no" placeholder="شماره کارت...">
-            </div>
+        <!-- فیلد نام دهیاری (کارفرما) که قفل می‌شود -->
+        <div class="form-group">
+            <label>نام دهیاری (کارفرما)</label>
+            <input type="text" id="inp-employer" placeholder="نام دهیاری...">
         </div>
+
+        <!-- شماره کارت حذف شد -->
         
         <div class="row">
             <div class="form-group">
@@ -222,15 +219,9 @@
             </div>
         </div>
 
+        <!-- تاریخ تولد حذف شد -->
+        
         <div class="row">
-            <div class="form-group">
-                <label>تاریخ تولد</label>
-                <div class="date-group">
-                    <select id="birth-day"></select>
-                    <select id="birth-month"></select>
-                    <select id="birth-year"></select>
-                </div>
-            </div>
             <div class="form-group">
                 <label>تاریخ (بازه)</label>
                 <div class="date-group">
@@ -239,16 +230,19 @@
                     <select id="range-year"></select>
                 </div>
             </div>
-        </div>
-        
-        <div class="row">
             <div class="form-group">
                 <label>مدت کارکرد</label>
                 <input type="text" id="inp-duration" placeholder="15 روز">
             </div>
+        </div>
+        
+        <div class="row">
             <div class="form-group">
                 <label>تعداد روزکار</label>
                 <input type="text" id="inp-days-worked" placeholder="...">
+            </div>
+            <div class="form-group">
+                <!-- فضای خالی برای توازن -->
             </div>
         </div>
         
@@ -322,15 +316,15 @@
 
             <div class="header-grid">
                 <div class="header-col">
-                    <div class="header-row"><span>شرکت / کارگاه:</span><span class="display-field" id="out-company">.....................</span></div>
+                    <!-- تغییر نام کارفرما به نام دهیاری و حذف شماره کارت و تاریخ تولد -->
+                    <div class="header-row"><span>نام دهیاری:</span><span class="display-field" id="out-employer">.....................</span></div>
                     <div class="header-row"><span>نام و نام خانوادگی:</span><span class="display-field" id="out-name">.....................</span></div>
                     <div class="header-row"><span>تاریخ:</span><span class="display-field" id="out-date">.....................</span></div>
                     <div class="header-row" style="border:none;"><span>شغل:</span><span class="display-field" id="out-job">.....................</span></div>
                 </div>
                 <div class="header-col">
-                    <div class="header-row"><span>شماره کارت:</span><span class="display-field" id="out-card-no">.....................</span></div>
-                    <div class="header-row"><span>تاریخ تولد:</span><span class="display-field" id="out-birth">.....................</span></div>
-                    <div class="header-row" style="border:none;"><span>مدت کارکرد:</span><span class="display-field" id="out-duration">.....................</span></div>
+                    <div class="header-row"><span>مدت کارکرد:</span><span class="display-field" id="out-duration">.....................</span></div>
+                    <div class="header-row" style="border:none;"></div> <!-- فضای خالی برای توازن -->
                 </div>
             </div>
 
@@ -360,7 +354,7 @@
                     <span>مبلغ قابل پرداخت: <b id="out-total-pay">...</b></span>
                 </div>
                 <div style="border-top: 1px dotted #999; padding-top: 5px; margin-top: 5px;">
-                    <span>جمع مزد روزانه: .....................</span>
+                    <!-- جمع مزد روزانه حذف شد -->
                     <span>مساعده: <b id="out-advance">.....................</b></span>
                 </div>
             </div>
@@ -397,35 +391,37 @@
         window.addEventListener("load", function() {
             setTimeout(function() {
                 var userProfileStr = localStorage.getItem("site_user_profile");
-                if (!userProfileStr) return; // اگر پروفایلی وجود نداشت، خارج شو
+                if (!userProfileStr) return; 
 
                 try {
                     var profile = JSON.parse(userProfileStr);
                     
                     const inpDehyariName = document.getElementById('inp-dehyari-name');
                     const inpLetterhead = document.getElementById('inp-letterhead');
+                    const inpEmployer = document.getElementById('inp-employer');
                     
                     if (profile.villageName) {
-                        // 1. پر کردن و قفل کردن فیلد نام دهیاری (با کلمه دهیاری)
+                        // 1. فیلد نام دهیاری (زیر آرم)
                         inpDehyariName.value = `دهیاری ${profile.villageName}`;
                         inpDehyariName.readOnly = true;
                         inpDehyariName.style.backgroundColor = "#e2e8f0";
                         inpDehyariName.style.color = "#475569";
+                        document.getElementById('out-dehyari-name').textContent = `دهیاری ${profile.villageName}`;
                         
-                        // 2. پر کردن متن سربرگ (فقط اضافه کردن نام دهیاری به خط آخر)
+                        // 2. متن سربرگ
                         let baseLetterhead = `وزارت کشور
 استانداری استان کردستان
 فرمانداری ویژه شهرستان سقز
 بخشداری بخش مرکزی`;
-                        
-                        // خط آخر دقیقا برابر با مقدار پروفایل است (بدون کلمه دهیاری اضافه)
                         inpLetterhead.value = baseLetterhead + `\n${profile.villageName}`;
-                        
-                        // **نکته مهم:** اینجا دیگر فیلد متن سربرگ را قفل (readOnly) نمی‌کنیم تا کاربر بتواند 4 خط اول را ویرایش کند.
-                        
-                        // آپدیت دستی پیش‌نمایش
-                        document.getElementById('out-dehyari-name').textContent = `دهیاری ${profile.villageName}`;
                         document.getElementById('out-letterhead').innerHTML = inpLetterhead.value.replace(/\n/g, '<br>');
+
+                        // 3. فیلد نام دهیاری (کارفرما) - جدید و قفل شده
+                        inpEmployer.value = `دهیاری ${profile.villageName}`;
+                        inpEmployer.readOnly = true;
+                        inpEmployer.style.backgroundColor = "#e2e8f0";
+                        inpEmployer.style.color = "#475569";
+                        document.getElementById('out-employer').textContent = `دهیاری ${profile.villageName}`;
                     }
 
                 } catch (err) {
@@ -462,7 +458,7 @@
             previewBody.appendChild(trPrev);
         }
 
-        // --- 3. پر کردن منوهای تاریخ ---
+        // --- 3. پر کردن منوهای تاریخ (فقط بازه) ---
         function populateDateSelects(prefix) {
             const daySelect = document.getElementById(`${prefix}-day`);
             const monthSelect = document.getElementById(`${prefix}-month`);
@@ -481,13 +477,11 @@
             for (let i = 1300; i <= 1410; i++) {
                 let opt = document.createElement('option');
                 opt.value = toPersianDigits(i); opt.textContent = toPersianDigits(i);
-                if(prefix === 'birth' && i === 1370) opt.selected = true;
                 if(prefix === 'range' && i === 1405) opt.selected = true;
                 yearSelect.appendChild(opt);
             }
         }
 
-        populateDateSelects('birth');
         populateDateSelects('range');
 
         // --- 4. منطق اتصال (Live Preview) ---
@@ -526,13 +520,13 @@
             unitSelect.addEventListener('change', updateOutput);
         }
 
-        bindTextInput('inp-company', 'out-company');
+        // اتصال فیلدها
         bindTextInput('inp-name', 'out-name');
-        bindTextInput('inp-card-no', 'out-card-no');
         bindTextInput('inp-duration', 'out-duration');
         bindTextInput('inp-days-worked', 'out-days-worked');
         bindTextInput('inp-job', 'out-job');
         
+        // اتصال پول
         bindMoneyInput('inp-advance', 'unit-advance', 'out-advance');
         bindMoneyInput('inp-total-overtime', 'unit-total-overtime', 'out-total-overtime');
         bindMoneyInput('inp-total-pay', 'unit-total-pay', 'out-total-pay');
@@ -552,7 +546,6 @@
             updateDate();
         }
 
-        bindDateSelects('birth', 'out-birth');
         bindDateSelects('range', 'out-date');
 
         const inpLetterhead = document.getElementById('inp-letterhead');
@@ -563,7 +556,6 @@
 بخشداری بخش مرکزی
 دهیاری تموغه`;
         
-        // مقدار پیش‌فرض اگر پروفایلی وجود نداشته باشد
         if(!inpLetterhead.value) {
             inpLetterhead.value = defaultLetterhead;
             outLetterhead.innerHTML = defaultLetterhead.replace(/\n/g, '<br>');
