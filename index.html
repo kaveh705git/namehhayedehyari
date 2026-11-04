@@ -152,6 +152,11 @@
   .admin-section { border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 15px; }
   .admin-section:last-child { border-bottom: none; }
 
+  /* استایل مخصوص مودال ویدیو */
+  .video-modal {
+    max-width: 800px; padding: 20px;
+  }
+
   @media (max-width: 600px) {
     .header-inner { flex-direction: column; gap: 12px; }
     #siteTitle { font-size: 18px; }
@@ -200,7 +205,22 @@
     <div class="error-msg" id="loginError"></div>
     <label>رمز عبور</label>
     <input type="password" id="loginPassword" placeholder="رمز عبور را وارد کنید" onkeydown="if(event.key==='Enter') doLogin()">
+    
     <button class="btn" onclick="doLogin()">ورود</button>
+    <!-- دکمه نمایش ویدیو -->
+    <button class="btn btn-secondary" onclick="openVideo()" style="margin-top:10px;">🎬 مشاهده ویدیو معرفی سایت</button>
+  </div>
+</div>
+
+<!-- پنجره ویدیو -->
+<div class="overlay" id="videoOverlay">
+  <div class="modal video-modal">
+    <h2>معرفی سامانه نامه‌های دهیاری</h2>
+    <video id="demoVideo" controls style="width: 100%; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+      <source src="demo.mp4" type="video/mp4">
+      مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
+    </video>
+    <button class="btn" onclick="closeVideo()" style="margin-top: 15px;">بستن ویدیو</button>
   </div>
 </div>
 
@@ -246,14 +266,14 @@
 
 <script>
   // ============================================================
-  // تنظیمات پیش‌فرض (اگر کاربری چیزی در پنل ادمین ذخیره نکرده باشد)
+  // تنظیمات پیش‌فرض
   // ============================================================
   let SITE_PROFILES = {
     "123434": { 
       expire: "2026-12-31",
       villageName: "تموغه",
       employerName: "کاوه عبدی",
-      contractorName: "", // 👈 این خط را اضافه کنید
+      contractorName: "",
       employerNationalId: "37537375",
       councilChairman: "نام رئیس شورا",
       councilVice: "نام نایب رئیس",
@@ -263,7 +283,7 @@
       expire: "2026-12-31",
       villageName: "",
       employerName: "",
-      contractorName: "", // 👈 این خط را اضافه کنید
+      contractorName: "",
       employerNationalId: "",
       councilChairman: "",
       councilVice: "",
@@ -273,7 +293,7 @@
       expire: "2026-12-04",
       villageName: "کیله شین",
       employerName: "جمال فتحی",
-      contractorName: "", // 👈 این خط را اضافه کنید
+      contractorName: "",
       employerNationalId: "3760468917",
       councilChairman: "خالد قادری",
       councilVice: "جمال شهنازی",
@@ -285,7 +305,7 @@
   const PROFILE_KEY = 'site_user_profile';
   const ADMIN_DB_KEY = 'site_admin_db';
 
-  // بارگذاری تنظیمات ادمین از حافظه (اگر قبلاً ذخیره شده باشد)
+  // بارگذاری تنظیمات ادمین از حافظه
   const savedAdminDB = localStorage.getItem(ADMIN_DB_KEY);
   if (savedAdminDB) {
     try { SITE_PROFILES = JSON.parse(savedAdminDB); } catch(e) {}
@@ -424,6 +444,22 @@
   }
 
   // ============================================================
+  // توابع ویدیو
+  // ============================================================
+  function openVideo() {
+    document.getElementById('videoOverlay').classList.add('active');
+    const vid = document.getElementById('demoVideo');
+    vid.currentTime = 0; // ویدیو از اول پخش شود
+    vid.play();
+  }
+
+  function closeVideo() {
+    document.getElementById('videoOverlay').classList.remove('active');
+    const vid = document.getElementById('demoVideo');
+    vid.pause(); // ویدیو هنگام بستن متوقف شود
+  }
+
+  // ============================================================
   // سیستم کلیک ۵ باره برای باز کردن پنل مخفی
   // ============================================================
   let secretClicks = 0;
@@ -432,7 +468,7 @@
   function handleSecretClick() {
     secretClicks++;
     if (secretTimer) clearTimeout(secretTimer);
-    secretTimer = setTimeout(() => { secretClicks = 0; }, 1500); // اگر ۱.۵ ثانیه صبر کند، شمارنده صفر می‌شود
+    secretTimer = setTimeout(() => { secretClicks = 0; }, 1500);
     
     if (secretClicks >= 5) {
       secretClicks = 0;
@@ -451,7 +487,6 @@
   function openAdminPanel() {
     document.getElementById('adminOverlay').classList.add('active');
     document.getElementById('adminMsg').textContent = '';
-    // پاک کردن فرم‌ها برای ورود اطلاعات جدید
     document.getElementById('admPass').value = '';
     document.getElementById('admExpire').value = '';
     document.getElementById('admVillage').value = '';
@@ -478,7 +513,6 @@
       return;
     }
 
-    // ساخت آبجکت جدید برای این رمز
     const newProfile = {
       expire: expire,
       villageName: document.getElementById('admVillage').value.trim(),
