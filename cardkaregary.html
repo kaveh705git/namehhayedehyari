@@ -59,7 +59,7 @@
         }
 
         /* استایل برای فیلدهای قفل شده */
-        .form-group input[readonly], .form-group textarea[readonly] {
+        .form-group input[readonly] {
             background-color: #e2e8f0 !important;
             color: #475569 !important;
             cursor: not-allowed;
@@ -193,9 +193,16 @@
             <input type="text" id="inp-dehyari-name" placeholder="دهیاری ...">
         </div>
 
+        <!-- متن 4 خط اول قابل ویرایش -->
         <div class="form-group">
-            <label id="lbl-letterhead">متن سربرگ (قفل شده)</label>
-            <textarea id="inp-letterhead" rows="5"></textarea>
+            <label id="lbl-letterhead">متن سربرگ (خطوط بالا - قابل ویرایش)</label>
+            <textarea id="inp-letterhead" rows="4"></textarea>
+        </div>
+
+        <!-- خط آخر (نام دهیاری) به صورت فیلد جداگانه و قفل‌شده -->
+        <div class="form-group">
+            <label id="lbl-letterhead-last">خط آخر سربرگ (نام دهیاری - قفل شده)</label>
+            <input type="text" id="inp-letterhead-last" placeholder="دهیاری ...">
         </div>
 
         <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
@@ -302,6 +309,7 @@
         <div class="a4-paper" id="print-area">
             
             <div class="letterhead">
+                <!-- متن سربرگ که از ترکیب 4 خط بالا و 1 خط پایین ساخته می‌شود -->
                 <div class="letterhead-right" id="out-letterhead"></div>
                 <div class="letterhead-center"><h1>کارت کارگری</h1></div>
                 <div class="letterhead-left">
@@ -392,6 +400,7 @@
                     
                     const inpDehyariName = document.getElementById('inp-dehyari-name');
                     const inpLetterhead = document.getElementById('inp-letterhead');
+                    const inpLetterheadLast = document.getElementById('inp-letterhead-last');
                     const inpEmployer = document.getElementById('inp-employer');
                     
                     if (profile.villageName) {
@@ -402,24 +411,23 @@
                         inpDehyariName.style.color = "#475569";
                         document.getElementById('out-dehyari-name').textContent = `دهیاری ${profile.villageName}`;
                         
-                        // 2. متن سربرگ (حالا کاملاً قفل می‌شود)
+                        // 2. متن سربرگ (4 خط بالا - قابل ویرایش)
                         let baseLetterhead = `وزارت کشور
 استانداری استان کردستان
 فرمانداری ویژه شهرستان سقز
-بخشداری بخش مرکزی
-دهیاری ${profile.villageName}`; // خط آخر با نام دهیاری جایگزین می‌شود
-                        
+بخشداری بخش مرکزی`;
                         inpLetterhead.value = baseLetterhead;
                         
-                        // قفل کردن فیلد متن سربرگ
-                        inpLetterhead.readOnly = true;
-                        inpLetterhead.style.backgroundColor = "#e2e8f0";
-                        inpLetterhead.style.color = "#475569";
-                        
-                        // آپدیت پیش‌نمایش
-                        document.getElementById('out-letterhead').innerHTML = inpLetterhead.value.replace(/\n/g, '<br>');
+                        // 3. خط آخر سربرگ (قفل شده)
+                        inpLetterheadLast.value = `دهیاری ${profile.villageName}`;
+                        inpLetterheadLast.readOnly = true;
+                        inpLetterheadLast.style.backgroundColor = "#e2e8f0";
+                        inpLetterheadLast.style.color = "#475569";
 
-                        // 3. فیلد نام دهیاری (کارفرما)
+                        // آپدیت پیش‌نمایش (ترکیب هر دو فیلد)
+                        updateLetterheadPreview();
+
+                        // 4. فیلد نام دهیاری (کارفرما)
                         inpEmployer.value = `دهیاری ${profile.villageName}`;
                         inpEmployer.readOnly = true;
                         inpEmployer.style.backgroundColor = "#e2e8f0";
@@ -488,6 +496,26 @@
         populateDateSelects('range');
 
         // --- 4. منطق اتصال (Live Preview) ---
+        
+        // تابع اختصاصی برای آپدیت سربرگ (چون از دو فیلد تشکیل شده)
+        function updateLetterheadPreview() {
+            const textTop = document.getElementById('inp-letterhead').value;
+            const textBottom = document.getElementById('inp-letterhead-last').value;
+            
+            let fullText = textTop;
+            if (textBottom) {
+                fullText += '\n' + textBottom;
+            }
+            
+            fullText = toPersianDigits(fullText);
+            document.getElementById('out-letterhead').innerHTML = fullText.replace(/\n/g, '<br>');
+        }
+
+        // اتصال رویدادها برای سربرگ
+        document.getElementById('inp-letterhead').addEventListener('input', updateLetterheadPreview);
+        document.getElementById('inp-letterhead-last').addEventListener('input', updateLetterheadPreview);
+
+        // بقیه فیلدها
         function bindTextInput(inputId, outputId) {
             const input = document.getElementById(inputId);
             const output = document.getElementById(outputId);
@@ -549,25 +577,20 @@
 
         bindDateSelects('range', 'out-date');
 
+        // مقدار پیش‌فرض برای زمانی که پروفایلی وجود ندارد
         const inpLetterhead = document.getElementById('inp-letterhead');
-        const outLetterhead = document.getElementById('out-letterhead');
-        const defaultLetterhead = `وزارت کشور
+        const inpLetterheadLast = document.getElementById('inp-letterhead-last');
+        
+        if(!inpLetterhead.value) {
+            inpLetterhead.value = `وزارت کشور
 استانداری استان کردستان
 فرمانداری ویژه شهرستان سقز
-بخشداری بخش مرکزی
-دهیاری تموغه`;
-        
-        // اگر پروفایلی وجود نداشت، متن پیش‌فرض نمایش داده شود
-        if(!inpLetterhead.value) {
-            inpLetterhead.value = defaultLetterhead;
-            outLetterhead.innerHTML = defaultLetterhead.replace(/\n/g, '<br>');
+بخشداری بخش مرکزی`;
+            inpLetterheadLast.value = `دهیاری تموغه`;
+            updateLetterheadPreview();
         }
 
-        inpLetterhead.addEventListener('input', () => {
-            let text = toPersianDigits(inpLetterhead.value);
-            outLetterhead.innerHTML = text.replace(/\n/g, '<br>');
-        });
-
+        // آپدیت جدول
         inputRows.addEventListener('input', function(e) {
             if (e.target.tagName === 'INPUT') {
                 const rowIndex = e.target.getAttribute('data-row'); 
