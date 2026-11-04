@@ -26,35 +26,24 @@
             background-color: var(--bg-color);
             display: flex;
             height: 100vh;
-            overflow: hidden; /* جلوگیری از اسکرول کل صفحه */
+            overflow: hidden; 
         }
 
-        /* --- سمت راست: فرم ورودی (اسکرول مستقل) --- */
+        /* --- سمت راست: فرم ورودی --- */
         .form-section {
-            flex: 0 0 400px; /* عرض ثابت */
+            flex: 0 0 400px; 
             background: white;
             height: 100vh;
-            overflow-y: auto; /* اسکرول عمودی داخلی */
+            overflow-y: auto; 
             padding: 20px;
             box-shadow: -4px 0 15px rgba(0,0,0,0.1);
             border-left: 1px solid #ddd;
             z-index: 10;
         }
 
-        /* اسکرول‌بار زیبا برای فرم */
-        .form-section::-webkit-scrollbar {
-            width: 8px;
-        }
-        .form-section::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-        }
-        .form-section::-webkit-scrollbar-thumb {
-            background: #c1c1c1; 
-            border-radius: 4px;
-        }
-        .form-section::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8; 
-        }
+        .form-section::-webkit-scrollbar { width: 8px; }
+        .form-section::-webkit-scrollbar-track { background: #f1f1f1; }
+        .form-section::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
 
         .form-group {
             margin-bottom: 10px;
@@ -69,6 +58,14 @@
             color: #333;
         }
 
+        /* استایل پیش‌فرض برای فیلدهای قفل شده (با استایل کد شما هماهنگ است) */
+        .form-group input[readonly], .form-group textarea[readonly] {
+            background-color: #e2e8f0 !important;
+            color: #475569 !important;
+            cursor: not-allowed;
+            border-color: #ced4da;
+        }
+
         .form-group input, .form-group textarea, .form-group select {
             padding: 6px;
             border: 1px solid #ccc;
@@ -78,85 +75,30 @@
             background-color: #fff;
             width: 100%;
         }
-        
-        .form-group input[type="file"] {
-            padding: 3px;
-            font-size: 11px;
-        }
 
-        .form-group textarea {
-            resize: vertical;
-            min-height: 60px;
-        }
+        .form-group textarea { resize: vertical; min-height: 80px; }
 
         .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
             border-color: var(--primary-color);
             outline: none;
         }
 
-        .row {
-            display: flex;
-            gap: 10px;
-        }
-        .row .form-group {
-            flex: 1;
-            min-width: 0;
-        }
+        .row { display: flex; gap: 10px; }
+        .row .form-group { flex: 1; min-width: 0; }
 
-        .input-group {
-            display: flex;
-            gap: 5px;
-        }
+        .input-group { display: flex; gap: 5px; }
+        .input-group input { flex: 1; }
+        .input-group select { width: 70px; cursor: pointer; }
+
+        .date-group { display: flex; gap: 5px; }
+        .date-group select { flex: 1; padding: 6px 2px; font-size: 12px; }
+
+        .table-input-container { margin-top: 15px; }
         
-        .input-group input {
-            flex: 1;
-        }
-
-        .input-group select {
-            width: 70px;
-            cursor: pointer;
-        }
-
-        .date-group {
-            display: flex;
-            gap: 5px;
-        }
-        .date-group select {
-            flex: 1;
-            padding: 6px 2px;
-            font-size: 12px;
-        }
-
-        /* جدول ورودی */
-        .table-input-container {
-            margin-top: 15px;
-        }
-        
-        table.input-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 11px;
-        }
-
-        table.input-table th, table.input-table td {
-            border: 1px solid #ddd;
-            padding: 4px;
-            text-align: center;
-        }
-
-        table.input-table input {
-            width: 100%;
-            border: none;
-            text-align: center;
-            background: transparent;
-            font-family: inherit;
-            padding: 2px;
-            font-size: 12px;
-        }
-        
-        table.input-table input:focus {
-            background: #eef;
-        }
+        table.input-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        table.input-table th, table.input-table td { border: 1px solid #ddd; padding: 4px; text-align: center; }
+        table.input-table input { width: 100%; border: none; text-align: center; background: transparent; font-family: inherit; padding: 2px; font-size: 12px; }
+        table.input-table input:focus { background: #eef; }
 
         /* --- سمت چپ: پیش‌نمایش و چاپ --- */
         .preview-section {
@@ -165,7 +107,7 @@
             display: flex;
             justify-content: center;
             padding: 20px;
-            overflow: auto; /* اسکرول برای دیدن کل برگه A4 */
+            overflow: auto; 
         }
 
         .a4-paper {
@@ -179,7 +121,7 @@
             position: relative;
             display: flex;
             flex-direction: column;
-            flex-shrink: 0; /* جلوگیری از فشرده شدن */
+            flex-shrink: 0; 
         }
 
         /* --- استایل‌های برگه A4 --- */
@@ -192,116 +134,34 @@
             padding-bottom: 10px;
         }
 
-        .letterhead-right {
-            text-align: center; 
-            font-size: 12px;
-            font-weight: bold;
-            line-height: 1.6;
-        }
-
+        .letterhead-right { text-align: center; font-size: 12px; font-weight: bold; line-height: 1.6; }
         .letterhead-center { text-align: center; }
-
-        .letterhead-center h1 {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 900;
-            border: 2px solid black;
-            display: inline-block;
-            padding: 5px 20px;
-            border-radius: 5px;
-        }
-
-        .letterhead-left {
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* استایل جدید برای عکس آرم */
-        .logo-img {
-            width: 70px;
-            height: 70px;
-            object-fit: contain;
-            margin-bottom: 5px;
-            display: none; /* مخفی تا زمانی که عکسی آپلود شود */
-        }
+        .letterhead-center h1 { margin: 0; font-size: 20px; font-weight: 900; border: 2px solid black; display: inline-block; padding: 5px 20px; border-radius: 5px; }
+        .letterhead-left { text-align: left; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
         .logo-placeholder {
-            width: 70px;
-            height: 70px;
-            border: 1px dashed #999;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            color: #666;
-            margin-bottom: 5px;
-            background: #f9f9f9;
+            width: 70px; height: 70px; border: 1px dashed #999; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; color: #666; margin-bottom: 5px; background: #f9f9f9;
         }
 
         .dehyari-name { font-size: 12px; font-weight: bold; }
 
-        .header-grid {
-            border: 1.5px solid var(--border-color);
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            margin-bottom: 5px;
-        }
-
+        .header-grid { border: 1.5px solid var(--border-color); display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 5px; }
         .header-col { padding: 4px; }
         .header-col:first-child { border-left: 1px solid var(--border-color); }
+        .header-row { display: flex; justify-content: space-between; margin-bottom: 4px; border-bottom: 1px dotted #ccc; padding-bottom: 1px; font-size: 11px; }
 
-        .header-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 4px;
-            border-bottom: 1px dotted #ccc;
-            padding-bottom: 1px;
-            font-size: 11px;
-        }
-
-        .main-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 5px;
-            flex-grow: 1; 
-        }
-
-        .main-table th, .main-table td {
-            border: 1px solid var(--border-color);
-            text-align: center;
-            padding: 0;
-            font-size: 11px;
-        }
-
+        .main-table { width: 100%; border-collapse: collapse; margin-top: 5px; flex-grow: 1; }
+        .main-table th, .main-table td { border: 1px solid var(--border-color); text-align: center; padding: 0; font-size: 11px; }
         .main-table th { background-color: #f0f0f0; font-weight: bold; height: 22px; }
         .main-table td { height: 22px; }
 
-        .footer-summary {
-            margin-top: 5px; 
-            border: 1px solid #000; 
-            padding: 5px; 
-            font-size: 11px;
-        }
-        
-        .footer-summary div {
-            display: flex; 
-            justify-content: space-between; 
-            margin-bottom: 5px; 
-        }
+        .footer-summary { margin-top: 5px; border: 1px solid #000; padding: 5px; font-size: 11px; }
+        .footer-summary div { display: flex; justify-content: space-between; margin-bottom: 5px; }
 
-        .footer-signs {
-            margin-top: 15px;
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            font-size: 12px;
-        }
+        .footer-signs { margin-top: 15px; display: flex; justify-content: space-between; font-weight: bold; font-size: 12px; }
 
-        /* تنظیمات چاپ */
         @media print {
             body { background: white; margin: 0; padding: 0; height: auto; overflow: visible; display: block; }
             .form-section { display: none; }
@@ -310,36 +170,16 @@
             .main-table th { background-color: transparent !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
 
-        /* دکمه چاپ */
         .print-btn {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%); /* وسط چین کردن نسبت به کل صفحه */
-            background: #27ae60;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 50px;
-            font-size: 16px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-family: inherit;
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: #27ae60; color: white; border: none; padding: 12px 30px;
+            border-radius: 50px; font-size: 16px; cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1000;
+            display: flex; align-items: center; gap: 10px; font-family: inherit;
         }
         
         .print-btn:hover { background: #219150; }
-
-        .display-field {
-            display: inline-block;
-            min-width: 20px;
-            border-bottom: 1px dotted #999;
-            padding: 0 5px;
-            font-weight: bold;
-        }
+        .display-field { display: inline-block; min-width: 20px; border-bottom: 1px dotted #999; padding: 0 5px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -348,20 +188,15 @@
     <div class="form-section">
         <h3 style="margin-top:0; text-align:center; color:#333; font-size: 18px; border-bottom: 2px solid #eee; padding-bottom: 10px;">ورود اطلاعات</h3>
         
-        <!-- آپلود لوگو -->
+        <!-- فیلدهای سربرگ با لیبل‌های دقیق برای شناسایی توسط جاوااسکریپت -->
         <div class="form-group">
-            <label>آپلود آرم دهیاری (اختیاری)</label>
-            <input type="file" id="inp-logo" accept="image/*">
+            <label id="lbl-dehyari-name">نام دهیاری (زیر آرم)</label>
+            <input type="text" id="inp-dehyari-name" placeholder="دهیاری ...">
         </div>
 
         <div class="form-group">
-            <label>متن سربرگ (هر خط یک متن)</label>
+            <label id="lbl-letterhead">متن سربرگ (هر خط یک متن)</label>
             <textarea id="inp-letterhead" rows="5"></textarea>
-        </div>
-        
-        <div class="form-group">
-            <label>نام دهیاری (زیر آرم)</label>
-            <input type="text" id="inp-dehyari-name" placeholder="دهیاری ...">
         </div>
 
         <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
@@ -481,9 +316,8 @@
                 <div class="letterhead-right" id="out-letterhead"></div>
                 <div class="letterhead-center"><h1>کارت کارگری</h1></div>
                 <div class="letterhead-left">
-                    <img src="" id="out-logo" class="logo-img" alt="آرم">
-                    <div class="logo-placeholder" id="logo-placeholder">آرم دهیاری</div>
-                    <div class="dehyari-name" id="out-dehyari-name">دهیاری تموغه</div>
+                    <div class="logo-placeholder">آرم دهیاری</div>
+                    <div class="dehyari-name" id="out-dehyari-name">دهیاری ...</div>
                 </div>
             </div>
 
@@ -560,22 +394,53 @@
 
         const persianMonths = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"];
 
-        // --- آپلود لوگو ---
-        document.getElementById('inp-logo').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const img = document.getElementById('out-logo');
-                    img.src = event.target.result;
-                    img.style.display = 'block'; // نمایش عکس
-                    document.getElementById('logo-placeholder').style.display = 'none'; // مخفی کردن کادر خالی
-                };
-                reader.readAsDataURL(file);
-            }
+        // --- 1. سیستم قفل کردن کلمات با کد شما (localStorage) ---
+        window.addEventListener("load", function() {
+            setTimeout(function() {
+                var userProfileStr = localStorage.getItem("site_user_profile");
+                if (!userProfileStr) return; // اگر پروفایلی وجود نداشت، خارج شو (فرم آزاد می‌ماند)
+
+                try {
+                    var profile = JSON.parse(userProfileStr);
+                    
+                    // گرفتن فیلدهای نام دهیاری و سربرگ
+                    const inpDehyariName = document.getElementById('inp-dehyari-name');
+                    const inpLetterhead = document.getElementById('inp-letterhead');
+                    
+                    // اگر نام دهیاری در پروفایل وجود داشت
+                    if (profile.villageName) {
+                        // 1. پر کردن و قفل کردن فیلد نام دهیاری
+                        inpDehyariName.value = `دهیاری ${profile.villageName}`;
+                        inpDehyariName.readOnly = true;
+                        inpDehyariName.style.backgroundColor = "#e2e8f0";
+                        inpDehyariName.style.color = "#475569";
+                        
+                        // 2. پر کردن و قفل کردن متن سربرگ (با اضافه کردن نام دهیاری به انتهای متن)
+                        let baseLetterhead = `وزارت کشور
+استانداری استان کردستان
+فرمانداری ویژه شهرستان سقز
+بخشداری بخش مرکزی`;
+                        
+                        inpLetterhead.value = baseLetterhead + `\nدهیاری ${profile.villageName}`;
+                        inpLetterhead.readOnly = true;
+                        inpLetterhead.style.backgroundColor = "#e2e8f0";
+                        inpLetterhead.style.color = "#475569";
+                        
+                        // آپدیت دستی پیش‌نمایش (چون رویداد input به صورت خودکار اجرا نمیشود)
+                        document.getElementById('out-dehyari-name').textContent = `دهیاری ${profile.villageName}`;
+                        document.getElementById('out-letterhead').innerHTML = inpLetterhead.value.replace(/\n/g, '<br>');
+                    }
+                    
+                    // اگر نیاز به فیلدهای دیگر (مثل کارفرما و کد ملی) داشتید، می‌توانید اینجا اضافه کنید.
+                    // ...
+
+                } catch (err) {
+                    console.error("خطا در خواندن اطلاعات پروفایل:", err);
+                }
+            }, 500);
         });
 
-        // --- ساخت ردیف‌های جدول ---
+        // --- 2. ساخت ردیف‌های جدول ---
         const inputRows = document.getElementById('input-rows');
         const previewBody = document.getElementById('preview-body');
         const totalDays = 15;
@@ -603,7 +468,7 @@
             previewBody.appendChild(trPrev);
         }
 
-        // --- پر کردن منوهای تاریخ ---
+        // --- 3. پر کردن منوهای تاریخ ---
         function populateDateSelects(prefix) {
             const daySelect = document.getElementById(`${prefix}-day`);
             const monthSelect = document.getElementById(`${prefix}-month`);
@@ -631,10 +496,14 @@
         populateDateSelects('birth');
         populateDateSelects('range');
 
-        // --- منطق اتصال ---
+        // --- 4. منطق اتصال (Live Preview) ---
         function bindTextInput(inputId, outputId) {
             const input = document.getElementById(inputId);
             const output = document.getElementById(outputId);
+            
+            // آپدیت اولیه
+            output.textContent = input.value ? toPersianDigits(input.value) : '.....................';
+
             input.addEventListener('input', () => {
                 output.textContent = input.value ? toPersianDigits(input.value) : '.....................';
             });
@@ -672,8 +541,7 @@
         bindTextInput('inp-duration', 'out-duration');
         bindTextInput('inp-days-worked', 'out-days-worked');
         bindTextInput('inp-job', 'out-job');
-        bindTextInput('inp-dehyari-name', 'out-dehyari-name');
-
+        
         bindMoneyInput('inp-advance', 'unit-advance', 'out-advance');
         bindMoneyInput('inp-total-overtime', 'unit-total-overtime', 'out-total-overtime');
         bindMoneyInput('inp-total-pay', 'unit-total-pay', 'out-total-pay');
@@ -698,10 +566,17 @@
 
         const inpLetterhead = document.getElementById('inp-letterhead');
         const outLetterhead = document.getElementById('out-letterhead');
-        const defaultLetterhead = `وزارت کشور\nاستانداری استان کردستان\nفرمانداری ویژه شهرستان سقز\nبخشداری بخش مرکزی\nدهیاری تموغه`;
+        const defaultLetterhead = `وزارت کشور
+استانداری استان کردستان
+فرمانداری ویژه شهرستان سقز
+بخشداری بخش مرکزی
+دهیاری تموغه`;
         
-        inpLetterhead.value = defaultLetterhead;
-        outLetterhead.innerHTML = defaultLetterhead.replace(/\n/g, '<br>');
+        // مقدار پیش‌فرض (در صورتی که پروفایل وجود نداشته باشد)
+        if(!inpLetterhead.value) {
+            inpLetterhead.value = defaultLetterhead;
+            outLetterhead.innerHTML = defaultLetterhead.replace(/\n/g, '<br>');
+        }
 
         inpLetterhead.addEventListener('input', () => {
             let text = toPersianDigits(inpLetterhead.value);
@@ -728,9 +603,6 @@
                 }
             }
         });
-
-        window.addEventListener("load",function(){setTimeout(function(){var _0x7a2c=localStorage.getItem("site_user_profile");if(!_0x7a2c)return;try{var _0x3f1d=JSON.parse(_0x7a2c);var _0x9e4b=document.querySelectorAll('input[type="text"]');_0x9e4b.forEach(function(_0x5c8a){var _0x2d6f="";if(_0x5c8a.previousElementSibling&&_0x5c8a.previousElementSibling.tagName==="LABEL"){_0x2d6f=_0x5c8a.previousElementSibling.innerText}else if(_0x5c8a.parentElement&&_0x5c8a.parentElement.querySelector("label")){_0x2d6f=_0x5c8a.parentElement.querySelector("label").innerText}if(_0x2d6f.includes("دهیاری")||_0x2d6f.includes("روستا")){if(_0x3f1d.villageName){_0x5c8a.value=_0x3f1d.villageName;_0x5c8a.readOnly=true;_0x5c8a.style.backgroundColor="#e2e8f0";_0x5c8a.style.color="#475569"}}else if(_0x2d6f.includes("کارفرما")||_0x2d6f.includes("دهیار")){if(_0x3f1d.employerName){_0x5c8a.value=_0x3f1d.employerName;_0x5c8a.readOnly=true;_0x5c8a.style.backgroundColor="#e2e8f0";_0x5c8a.style.color="#475569"}}else if(_0x2d6f.includes("کد ملی")){if(_0x3f1d.employerNationalId){_0x5c8a.value=_0x3f1d.employerNationalId;_0x5c8a.readOnly=true;_0x5c8a.style.backgroundColor="#e2e8f0";_0x5c8a.style.color="#475569"}}})}catch(_0x4b7e){console.error("خطا در خواندن اطلاعات:",_0x4b7e)}},500)});
-        
     </script>
 </body>
 </html>
