@@ -58,8 +58,8 @@
             color: #333;
         }
 
-        /* استایل پیش‌فرض برای فیلدهای قفل شده (با استایل کد شما هماهنگ است) */
-        .form-group input[readonly], .form-group textarea[readonly] {
+        /* استایل برای فیلدهای قفل شده */
+        .form-group input[readonly] {
             background-color: #e2e8f0 !important;
             color: #475569 !important;
             cursor: not-allowed;
@@ -188,14 +188,13 @@
     <div class="form-section">
         <h3 style="margin-top:0; text-align:center; color:#333; font-size: 18px; border-bottom: 2px solid #eee; padding-bottom: 10px;">ورود اطلاعات</h3>
         
-        <!-- فیلدهای سربرگ با لیبل‌های دقیق برای شناسایی توسط جاوااسکریپت -->
         <div class="form-group">
             <label id="lbl-dehyari-name">نام دهیاری (زیر آرم)</label>
             <input type="text" id="inp-dehyari-name" placeholder="دهیاری ...">
         </div>
 
         <div class="form-group">
-            <label id="lbl-letterhead">متن سربرگ (هر خط یک متن)</label>
+            <label id="lbl-letterhead">متن سربرگ (قابل ویرایش - خط آخر خودکار پر می‌شود)</label>
             <textarea id="inp-letterhead" rows="5"></textarea>
         </div>
 
@@ -398,41 +397,36 @@
         window.addEventListener("load", function() {
             setTimeout(function() {
                 var userProfileStr = localStorage.getItem("site_user_profile");
-                if (!userProfileStr) return; // اگر پروفایلی وجود نداشت، خارج شو (فرم آزاد می‌ماند)
+                if (!userProfileStr) return; // اگر پروفایلی وجود نداشت، خارج شو
 
                 try {
                     var profile = JSON.parse(userProfileStr);
                     
-                    // گرفتن فیلدهای نام دهیاری و سربرگ
                     const inpDehyariName = document.getElementById('inp-dehyari-name');
                     const inpLetterhead = document.getElementById('inp-letterhead');
                     
-                    // اگر نام دهیاری در پروفایل وجود داشت
                     if (profile.villageName) {
-                        // 1. پر کردن و قفل کردن فیلد نام دهیاری
+                        // 1. پر کردن و قفل کردن فیلد نام دهیاری (با کلمه دهیاری)
                         inpDehyariName.value = `دهیاری ${profile.villageName}`;
                         inpDehyariName.readOnly = true;
                         inpDehyariName.style.backgroundColor = "#e2e8f0";
                         inpDehyariName.style.color = "#475569";
                         
-                        // 2. پر کردن و قفل کردن متن سربرگ (با اضافه کردن نام دهیاری به انتهای متن)
+                        // 2. پر کردن متن سربرگ (فقط اضافه کردن نام دهیاری به خط آخر)
                         let baseLetterhead = `وزارت کشور
 استانداری استان کردستان
 فرمانداری ویژه شهرستان سقز
 بخشداری بخش مرکزی`;
                         
-                        inpLetterhead.value = baseLetterhead + `\nدهیاری ${profile.villageName}`;
-                        inpLetterhead.readOnly = true;
-                        inpLetterhead.style.backgroundColor = "#e2e8f0";
-                        inpLetterhead.style.color = "#475569";
+                        // خط آخر دقیقا برابر با مقدار پروفایل است (بدون کلمه دهیاری اضافه)
+                        inpLetterhead.value = baseLetterhead + `\n${profile.villageName}`;
                         
-                        // آپدیت دستی پیش‌نمایش (چون رویداد input به صورت خودکار اجرا نمیشود)
+                        // **نکته مهم:** اینجا دیگر فیلد متن سربرگ را قفل (readOnly) نمی‌کنیم تا کاربر بتواند 4 خط اول را ویرایش کند.
+                        
+                        // آپدیت دستی پیش‌نمایش
                         document.getElementById('out-dehyari-name').textContent = `دهیاری ${profile.villageName}`;
                         document.getElementById('out-letterhead').innerHTML = inpLetterhead.value.replace(/\n/g, '<br>');
                     }
-                    
-                    // اگر نیاز به فیلدهای دیگر (مثل کارفرما و کد ملی) داشتید، می‌توانید اینجا اضافه کنید.
-                    // ...
 
                 } catch (err) {
                     console.error("خطا در خواندن اطلاعات پروفایل:", err);
@@ -500,10 +494,7 @@
         function bindTextInput(inputId, outputId) {
             const input = document.getElementById(inputId);
             const output = document.getElementById(outputId);
-            
-            // آپدیت اولیه
             output.textContent = input.value ? toPersianDigits(input.value) : '.....................';
-
             input.addEventListener('input', () => {
                 output.textContent = input.value ? toPersianDigits(input.value) : '.....................';
             });
@@ -572,7 +563,7 @@
 بخشداری بخش مرکزی
 دهیاری تموغه`;
         
-        // مقدار پیش‌فرض (در صورتی که پروفایل وجود نداشته باشد)
+        // مقدار پیش‌فرض اگر پروفایلی وجود نداشته باشد
         if(!inpLetterhead.value) {
             inpLetterhead.value = defaultLetterhead;
             outLetterhead.innerHTML = defaultLetterhead.replace(/\n/g, '<br>');
