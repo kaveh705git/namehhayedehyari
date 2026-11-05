@@ -3,7 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>فرم صورت‌وضعیت دهیاری</title>
+<title>فرم اقلام ریز مصرفی</title>
+
+<script>
+  // ==========================================
+  // کد نگهبان: بررسی وضعیت ورود و تاریخ انقضا
+  // ==========================================
+  (function() {
+    const AUTH_KEY = 'site_auth_expire';
+    const savedExpire = localStorage.getItem(AUTH_KEY);
+    
+    // ۱. اگر کاربر اصلاً وارد نشده باشد
+    if (!savedExpire) {
+      window.location.href = 'index.html';
+      return;
+    }
+    
+    // ۲. بررسی زمان انقضا با زمان محلی (برای سرعت بالا در لود صفحه)
+    const expireTime = parseInt(savedExpire, 10);
+    const now = Date.now();
+    
+    if (isNaN(expireTime) || now >= expireTime) {
+      localStorage.removeItem(AUTH_KEY);
+      localStorage.removeItem('site_user_profile'); // پاک کردن اطلاعات کاربری
+      window.location.href = 'index.html';
+    }
+  })();
+</script>
+
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap');
   
@@ -88,13 +115,13 @@
   th, td { border: 1px solid #000; padding: 6px; text-align: center; font-size: 12px; }
   th { background-color: #f0f0f0; font-weight: 700; }
   
-  /* ================= بخش جمع نهایی (یک خط) ================= */
+  /* ================= بخش جمع نهایی ================= */
   .total-section { 
     margin-top: 15px; 
     display: flex; 
-    justify-content: flex-end; /* هردو در سمت چپ قرار می‌گیرند */
-    align-items: center; /* تراز عمودی وسط */
-    flex-wrap: wrap; /* جلوگیری از به هم ریختگی در فضای کم */
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
     gap: 15px; 
   }
   
@@ -153,7 +180,6 @@
 
 <div class="dashboard">
   
-  <!-- ================= ستون راست: فرم‌ها ================= -->
   <div class="form-panel">
     <h2>ویرایش اطلاعات</h2>
     
@@ -209,11 +235,9 @@
     </div>
   </div>
 
-  <!-- ================= ستون چپ: پیش‌نمایش ================= -->
   <div class="preview-panel">
     <div class="page">
       
-      <!-- سربرگ -->
       <div class="header-layout">
         <div class="header-right-col">
           <div>وزارت کشور</div>
@@ -236,7 +260,6 @@
 
       <div class="table-title-wrapper"><div class="table-title">اقلام ریز مصرفی</div></div>
       
-      <!-- متن بالای جدول با فیلدهای کشسان -->
       <div class="above-table-text">
         بدینوسیله گواهی می‌شود اقلام مصرفی و اقدامات مشروحه‌ی زیر جهت اجرای پروژه 
         <span style="margin: 0 2px;"> ( </span>
@@ -262,7 +285,6 @@
         <tbody id="viewTableBody"></tbody>
       </table>
 
-      <!-- بخش جمع نهایی (در یک خط) -->
       <div class="total-section">
         <div class="total-row">
           <span style="margin-left:8px;">جمع نهایی (ریال):</span>
@@ -274,7 +296,6 @@
         </div>
       </div>
 
-      <!-- فوتر -->
       <div class="footer">
         <div class="footer-box">
           <div>دهیار</div><div class="sign-space"></div>
