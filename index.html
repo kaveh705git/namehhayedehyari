@@ -163,6 +163,21 @@
     .header-actions { margin-right: 0; width: 100%; justify-content: center; flex-wrap: wrap; }
     .header-date, #logoutBtn { flex: 1; text-align: center; justify-content: center; padding: 8px; }
   }
+
+ .call-btn {
+  display: inline-block;
+  padding: 12px 24px;
+  background: #25D366;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-family: sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+}
+.call-btn:hover {
+  background: #1ebe5b;
+}
 </style>
 </head>
 <body>
@@ -210,7 +225,9 @@
     <button class="btn" onclick="doLogin()">ورود</button>
     
     <button class="btn btn-secondary" onclick="openVideo()" style="margin-top:10px;">🎬 مشاهده ویدیو معرفی سایت</button>
-    
+
+    <a href="tel:+989182716632" class="call-btn">📞 تماس با ما</a>
+
     <!-- 👇 دکمه تهیه اشتراک (بدون بستن پنجره) 👇 -->
     <a href="eshterak.html" class="btn" style="display:block; text-align:center; text-decoration:none; background: linear-gradient(135deg, #10b981, #059669); margin-top:10px;">💳 تهیه اشتراک - پشتیبانی</a>
   </div>
