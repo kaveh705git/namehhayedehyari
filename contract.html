@@ -821,16 +821,12 @@
                         }
                     }
 
-                    // پر کردن و قفل کردن فیلدهای ثابت
-                    fillAndLock('provinceName', profile.ostan || 'کردستان'); // اگر در پروفایل نبود، پیش‌فرض
-                    fillAndLock('countyName', profile.shahrestan || 'سقز');
-                    fillAndLock('districtName', profile.bakhsh || 'مرکزی');
-                    
+                    // پر کردن و قفل کردن فقط فیلدهای مخصوص دهیاری
                     fillAndLock('villageName', profile.villageName);
                     fillAndLock('employerName', profile.employerName);
                     fillAndLock('employerNationalId', profile.employerNationalId);
 
-                    // فیلدهای پیمانکار (contractorName, contractorNationalId, contractorAddress) قفل نمی‌شوند تا قابل ویرایش باشند.
+                    // فیلدهای استان، شهرستان، بخش و فیلدهای پیمانکار قفل نمی‌شوند.
 
                 } catch (e) {
                     console.error('خطا در خواندن اطلاعات:', e);
