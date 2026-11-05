@@ -25,18 +25,18 @@
       })();
     </script>
     <!-- 👆👆 پایان کد نگهبان 👆👆 -->
-    
-    <!-- لینک استاندارد فونت وزیرمتن -->
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.0.0/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
 
     <style>
+        /* 👇 ایمپورت صحیح فونت وزیرمتن 👇 */
+        @import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
+        
         :root {
             --border-color: #ccc;
             --bg-color: #f4f4f9;
         }
 
         body {
-            font-family: 'Vazirmatn', sans-serif;
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
             margin: 0;
             padding: 20px;
             background-color: var(--bg-color);
@@ -355,7 +355,10 @@
                 </div>
                 
                 <div class="header-center">
-                    <div class="logo">تصویر لوگو</div>
+                    <div class="logo">
+                        <img src="logo.png" alt="لوگو" style="max-width:100%; max-height:100%; object-fit:contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <span style="display:none; font-size:10px;">لوگو</span>
+                    </div>
                     <span class="sub-text" id="preview-dehyari-logo">دهیاری</span>
                 </div>
                 
@@ -455,7 +458,7 @@
         }
 
         // ==========================================
-        // 👇 کد پر کردن و قفل کردن خودکار فیلدها 👇
+        // 👇 کد پر کردن و قفل کردن خودکار فیلدها (اصلاح شده) 👇
         // ==========================================
         window.addEventListener('load', function() {
             setTimeout(function() {
@@ -475,13 +478,11 @@
                         }
                     }
 
-                    // پر کردن و قفل کردن فیلدهای ثابت
-                    fillAndLock('input-province', profile.ostan || 'کردستان'); 
-                    fillAndLock('input-county', profile.shahrestan || 'سقز');
-                    fillAndLock('input-district', profile.bakhsh || 'مرکزی');
-                    
+                    // فقط نام روستا (دهیاری) و نام دهیار قفل می‌شوند
                     fillAndLock('input-village', profile.villageName);
                     fillAndLock('input-dehyar-name', profile.employerName);
+
+                    // فیلدهای استان، شهرستان و بخش (کردستان، سقز، مرکزی) قفل نمی‌شوند.
 
                 } catch (e) {
                     console.error('خطا در خواندن اطلاعات:', e);
