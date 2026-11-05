@@ -190,7 +190,8 @@ a.btn {
     <!-- کلیک ۵ باره روی این دو المان، پنل ادمین را باز می‌کند -->
     <img src="logo.png" alt="لوگو" class="logo" id="secretLogo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
     <div class="logo-fallback" id="secretFallback" style="display:none;">🏛</div>
-    <h1 id="siteTitle" class="site-title">نامه‌های دهیاری</h1>
+    <!-- 👇 تگ span برای نمایش نام دهیاری اضافه شد 👇 -->
+    <h1 id="siteTitle" class="site-title">نامه‌های دهیاری <span id="header-village-name" style="font-size: 0.8em; font-weight: normal; opacity: 0.9;"></span></h1>
     
     <div class="header-actions">
       <div class="header-date" id="shamsiDate">📅 در حال بارگذاری...</div>
@@ -451,6 +452,9 @@ a.btn {
     localStorage.setItem(PROFILE_KEY, JSON.stringify(SITE_PROFILES[pass]));
     localStorage.setItem(AUTH_KEY, expireTime);
     
+    // 👇 نمایش نام دهیاری در هدر هنگام ورود 👇
+    document.getElementById('header-village-name').innerText = `( دهیاری ${SITE_PROFILES[pass].villageName} )`;
+
     err.style.color = '#1e8e4e';
     err.textContent = '✅ ورود موفق!';
     setTimeout(() => {
@@ -465,6 +469,8 @@ a.btn {
   function logout() {
     localStorage.removeItem(AUTH_KEY);
     localStorage.removeItem(PROFILE_KEY);
+    // 👇 پاک کردن نام دهیاری هنگام خروج 👇
+    document.getElementById('header-village-name').innerText = '';
     location.reload();
   }
 
@@ -566,6 +572,19 @@ a.btn {
   document.getElementById('shamsiDate').textContent = '📅 ' + getShamsiDate();
   checkAuthStatus();
   setInterval(checkAuthStatus, 5000);
+
+  // 👇 نمایش نام دهیاری در هدر هنگام لود مجدد صفحه (رفرش) 👇
+  window.addEventListener('load', function() {
+    const savedProfileStr = localStorage.getItem(PROFILE_KEY);
+    if (savedProfileStr) {
+      try {
+        const profile = JSON.parse(savedProfileStr);
+        if (profile.villageName) {
+          document.getElementById('header-village-name').innerText = `( دهیاری ${profile.villageName} )`;
+        }
+      } catch(e) {}
+    }
+  });
 </script>
 </body>
 </html>
