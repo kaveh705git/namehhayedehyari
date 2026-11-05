@@ -16,7 +16,6 @@
     }
     
     const expireTime = parseInt(savedExpire, 10);
-    // اگر زمان ذخیره شده نامعتبر بود یا از تاریخ انقضا گذشته بود (با ۱ روز ارفاق)
     if (isNaN(expireTime) || Date.now() > (expireTime + 86400000)) {
       localStorage.removeItem(AUTH_KEY);
       localStorage.removeItem('site_user_profile');
@@ -26,291 +25,93 @@
 </script>
 <!-- 👆👆 پایان کد نگهبان 👆👆 -->
 
-<!-- ایمپورت فونت وزیر -->
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  /* ================= تنظیمات کلی ================= */
-  * {
-    box-sizing: border-box;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body {
     font-family: 'Vazirmatn', 'Tahoma', sans-serif;
-    background: #e2e8f0;
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    background: #e2e8f0; margin: 0; padding: 0; height: 100vh;
+    display: flex; flex-direction: column; overflow: hidden;
   }
-
-  /* هدر سایت */
   .app-header {
-    background: #1e293b;
-    color: #fff;
-    padding: 15px 25px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    z-index: 10;
+    background: #1e293b; color: #fff; padding: 15px 25px;
+    display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 10;
   }
   .app-header h1 { margin: 0; font-size: 18px; font-weight: normal; }
-  
   .toolbar button {
-    padding: 8px 20px;
-    border: none;
-    border-radius: 6px;
-    color: #fff;
-    font-size: 14px;
-    font-family: inherit;
-    cursor: pointer;
-    transition: background 0.2s;
-    margin-right: 10px;
+    padding: 8px 20px; border: none; border-radius: 6px; color: #fff;
+    font-size: 14px; font-family: inherit; cursor: pointer; transition: background 0.2s; margin-right: 10px;
   }
-  .btn-print { background: #10b981; }
-  .btn-print:hover { background: #059669; }
-  .btn-reset { background: #ef4444; }
-  .btn-reset:hover { background: #dc2626; }
+  .btn-print { background: #10b981; } .btn-print:hover { background: #059669; }
+  .btn-reset { background: #ef4444; } .btn-reset:hover { background: #dc2626; }
 
-  /* داشبورد */
-  .dashboard {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-  }
+  .dashboard { display: flex; flex: 1; overflow: hidden; }
 
-  /* ستون فرم (فیلدها) */
   .form-panel {
-    width: 420px;
-    background: #fff;
-    padding: 20px;
-    overflow-y: auto;
-    box-shadow: -2px 0 10px rgba(0,0,0,0.05);
-    border-left: 1px solid #cbd5e1;
+    width: 420px; background: #fff; padding: 20px; overflow-y: auto;
+    box-shadow: -2px 0 10px rgba(0,0,0,0.05); border-left: 1px solid #cbd5e1;
   }
-  .form-panel h2 {
-    font-size: 16px;
-    color: #334155;
-    margin-top: 0;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #e2e8f0;
-    padding-bottom: 10px;
-  }
+  .form-panel h2 { font-size: 16px; color: #334155; margin-top: 0; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
   .form-group { margin-bottom: 12px; }
-  .form-group label {
-    display: block;
-    font-size: 13px;
-    font-weight: bold;
-    color: #475569;
-    margin-bottom: 5px;
-  }
+  .form-group label { display: block; font-size: 13px; font-weight: bold; color: #475569; margin-bottom: 5px; }
   .form-control {
-    width: 100%;
-    padding: 8px 10px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    font-family: inherit;
-    font-size: 14px;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px;
+    font-family: inherit; font-size: 14px; transition: border-color 0.2s, box-shadow 0.2s;
   }
-  .form-control:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-  }
-
-  /* 👇 استایل فیلدهای قفل شده 👇 */
-  input[readonly] {
-    background-color: #e2e8f0 !important;
-    color: #475569 !important;
-    cursor: not-allowed !important;
-  }
+  .form-control:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
   
-  textarea.form-control { 
-    resize: vertical; 
-    min-height: 35px; 
-    height: 40px; 
-    overflow-y: auto; 
-  }
+  /* استایل قفل شدن فیلدها */
+  input[readonly] { background-color: #e2e8f0 !important; color: #475569 !important; cursor: not-allowed !important; }
 
-  /* استایل منوهای کشویی تاریخ در پنل فرم */
-  .date-dropdowns {
-    display: flex;
-    gap: 5px;
-    margin-bottom: 12px;
-  }
+  textarea.form-control { resize: vertical; min-height: 35px; height: 40px; overflow-y: auto; }
+  .date-dropdowns { display: flex; gap: 5px; margin-bottom: 12px; }
   .date-dropdowns select {
-    flex: 1;
-    padding: 8px 5px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    font-family: inherit;
-    font-size: 14px;
-    background-color: #fff;
-    cursor: pointer;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    outline: none;
-  }
-  .date-dropdowns select:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    flex: 1; padding: 8px 5px; border: 1px solid #cbd5e1; border-radius: 6px;
+    font-family: inherit; font-size: 14px; background-color: #fff; cursor: pointer; outline: none;
   }
   .date-dropdowns select:first-child { flex: 1.2; }
 
-  /* بخش‌های داینامیک در فرم */
-  .dynamic-box {
-    border: 1px dashed #cbd5e1;
-    padding: 10px;
-    border-radius: 6px;
-    margin-bottom: 15px;
-    background: #f8fafc;
-  }
-  .dynamic-box h3 {
-    margin: 0 0 10px 0;
-    font-size: 13px;
-    color: #334155;
-  }
-  .btn-add-sm {
-    background: #2563eb;
-    color: #fff;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 12px;
-    width: 100%;
-    margin-top: 5px;
-  }
-  .btn-add-sm:hover { background: #1d4ed8; }
+  .dynamic-box { border: 1px dashed #cbd5e1; padding: 10px; border-radius: 6px; margin-bottom: 15px; background: #f8fafc; }
+  .dynamic-box h3 { margin: 0 0 10px 0; font-size: 13px; color: #334155; }
+  .btn-add-sm { background: #2563eb; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-family: inherit; font-size: 12px; width: 100%; margin-top: 5px; }
+  .btn-del-sm { background: #ef4444; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-family: inherit; font-size: 12px; margin-top: 5px; width: 100%; }
 
-  /* دکمه‌های حذف در فرم */
-  .btn-del-sm {
-    background: #ef4444;
-    color: #fff;
-    border: none;
-    padding: 4px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 12px;
-    margin-top: 5px;
-    width: 100%;
-  }
-  .btn-del-sm:hover { background: #dc2626; }
+  .preview-panel { flex: 1; background: #cbd5e1; padding: 20px; overflow-y: auto; display: flex; justify-content: center; }
+  .page { background: #fff; width: 210mm; height: 296mm; padding: 8mm 12mm; box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: flex; flex-direction: column; font-size: 13px; }
 
-  /* ================= ستون نامه (پیش‌نمایش) ================= */
-  .preview-panel {
-    flex: 1;
-    background: #cbd5e1;
-    padding: 20px;
-    overflow-y: auto;
-    display: flex;
-    justify-content: center;
-  }
-
-  /* کاغذ A4 */
-  .page {
-    background: #fff;
-    width: 210mm;
-    height: 296mm; 
-    padding: 8mm 12mm;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    display: flex;
-    flex-direction: column; 
-    font-size: 13px;
-  }
-
-  /* سربرگ */
-  .letterhead {
-    border: 2px solid #000;
-    border-radius: 4px;
-    padding: 4px 12px;
-    margin-bottom: 6px;
-  }
+  .letterhead { border: 2px solid #000; border-radius: 4px; padding: 4px 12px; margin-bottom: 6px; }
   .header-top { display: flex; justify-content: space-between; align-items: center; }
   .col-right { width: 30%; text-align: center; font-size: 13px; line-height: 1.6; font-weight: bold; }
   .col-center { width: 40%; display: flex; justify-content: center; align-items: center; }
-  
-  .logo-img {
-    max-width: 85px;
-    max-height: 85px;
-    object-fit: contain;
-  }
-  
+  .logo-img { max-width: 85px; max-height: 85px; object-fit: contain; }
   .col-left { width: 30%; display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: bold; }
   .field-row { display: flex; align-items: center; }
   .field-label { white-space: nowrap; margin-left: 5px; }
-  .field-line {
-    flex-grow: 1; border-bottom: 2px dashed #000; position: relative;
-    height: 20px; display: flex; align-items: center; justify-content: center;
-  }
-  
-  .header-bottom {
-    text-align: center; font-size: 15px; font-weight: bold;
-    margin-top: 4px; display: flex; justify-content: center; align-items: center; gap: 5px;
-  }
-  .title-red { color: #d90000; }
-  .title-black { color: #000; }
+  .field-line { flex-grow: 1; border-bottom: 2px dashed #000; position: relative; height: 20px; display: flex; align-items: center; justify-content: center; }
+  .header-bottom { text-align: center; font-size: 15px; font-weight: bold; margin-top: 4px; display: flex; justify-content: center; align-items: center; gap: 5px; }
+  .title-red { color: #d90000; } .title-black { color: #000; }
 
-  /* ================= جدول‌ها ================= */
   table { width: 100%; border-collapse: collapse; margin-bottom: 5px; table-layout: fixed; }
-  
-  th, td { 
-    border: 1px solid #000; 
-    padding: 4px 6px; 
-    text-align: right; 
-    vertical-align: middle; 
-    word-wrap: break-word; 
-    word-break: break-word;
-    white-space: normal; 
-    line-height: 1.6; 
-  }
-  
+  th, td { border: 1px solid #000; padding: 4px 6px; text-align: right; vertical-align: middle; word-wrap: break-word; word-break: break-word; white-space: normal; line-height: 1.6; }
   .bg-gray { background-color: #d9d9d9 !important; font-weight: bold; }
   .text-center { text-align: center !important; }
-  
   .compact-header td { padding: 2px 5px !important; line-height: 1.2; font-size: 12px; }
-  
-  .resolution-cell { 
-    vertical-align: top; 
-    padding: 6px 10px !important; 
-  }
+  .resolution-cell { vertical-align: top; padding: 6px 10px !important; }
 
-  /* ================= بخش امضاها ================= */
-  .signatures {
-    margin-top: auto; 
-    border: none; 
-    display: flex; 
-    justify-content: space-between; 
-    padding: 0 10px; 
-    margin-bottom: 40px; 
-    text-align: center; 
-    font-weight: bold; 
-    font-size: 13px;
-  }
+  .signatures { margin-top: auto; border: none; display: flex; justify-content: space-between; padding: 0 10px; margin-bottom: 40px; text-align: center; font-weight: bold; font-size: 13px; }
   .signatures div { width: 33%; display: flex; flex-direction: column; align-items: center; }
-  
   .text-red-val { color: #d90000; font-weight: bold; }
   .text-black-val { color: #000; font-weight: bold; }
   .signature-line { margin-top: 5px; min-height: 15px; color: #d90000; font-weight: bold; }
 
-  /* تنظیمات چاپ */
   @media print {
     @page { size: A4; margin: 0; }
     body { background: #fff; height: auto; overflow: visible; display: block; }
     .app-header, .form-panel, .no-print { display: none !important; }
     .dashboard { display: block; overflow: visible; }
     .preview-panel { background: #fff; padding: 0; overflow: visible; display: block; }
-    
-    .page {
-      box-shadow: none; width: 210mm; height: 296mm; margin: 0; padding: 10mm 12mm;
-      page-break-after: avoid; page-break-inside: avoid;
-    }
+    .page { box-shadow: none; width: 210mm; height: 296mm; margin: 0; padding: 10mm 12mm; page-break-after: avoid; page-break-inside: avoid; }
     .letterhead { border: 1px solid #000 !important; }
     .text-red-val { color: #d90000 !important; }
   }
@@ -328,7 +129,6 @@
 
   <div class="dashboard">
     
-    <!-- ================= ستون فرم (فیلدها) ================= -->
     <div class="form-panel">
       <h2>ویرایش اطلاعات</h2>
 
@@ -341,7 +141,6 @@
         <input type="text" id="inp-village" class="form-control">
       </div>
 
-      <!-- فیلدهای جدید برای سربرگ -->
       <div class="form-group">
         <label>استان (در سربرگ)</label>
         <input type="text" id="inp-province" class="form-control" value="کردستان">
@@ -360,7 +159,6 @@
         <input type="text" id="inp-num" class="form-control">
       </div>
 
-      <!-- فیلدهای تاریخ به صورت منوی کشویی -->
       <div class="form-group">
         <label>تاریخ</label>
         <div class="date-dropdowns">
@@ -408,13 +206,11 @@
         <input type="text" id="inp-abs3" class="form-control">
       </div>
 
-      <!-- دستور کار (داینامیک در فرم) -->
       <div class="dynamic-box" id="form-agenda-container">
         <h3>عناوین دستور کار جلسه</h3>
         <button class="btn-add-sm" onclick="addAgendaField()">+ افزودن دستور کار</button>
       </div>
 
-      <!-- مصوبات (داینامیک در فرم) -->
       <div class="dynamic-box" id="form-resolution-container">
         <h3>مصوبات جلسه</h3>
         <button class="btn-add-sm" onclick="addResolutionField()">+ افزودن مصوبه</button>
@@ -426,21 +222,17 @@
       </div>
     </div>
 
-    <!-- ================= ستون نامه (پیش‌نمایش) ================= -->
     <div class="preview-panel">
       <div class="page">
         
-        <!-- سربرگ -->
         <div class="letterhead">
           <div class="header-top">
             <div class="col-right">
               <div>وزارت کشور</div>
-              <!-- اتصال فیلدهای جدید به متن سربرگ -->
               <div>استانداری استان <span id="view-province"></span></div>
               <div>فرمانداری ویژه شهرستان <span id="view-county"></span></div>
               <div>بخشداری بخش <span id="view-district"></span></div>
             </div>
-            <!-- لوگو -->
             <div class="col-center">
               <img src="logo.png" alt="لوگو" class="logo-img">
             </div>
@@ -461,7 +253,6 @@
           </div>
         </div>
 
-        <!-- جدول ۱ -->
         <table>
           <tr>
             <td colspan="4" class="bg-gray">موضوع جلسه : <span class="text-black-val" id="view-subject"></span></td>
@@ -475,7 +266,6 @@
           </tr>
         </table>
 
-        <!-- جدول ۲ -->
         <table>
           <tr class="bg-gray text-center">
             <th style="width: 33%;">اسامی مدعوین</th>
@@ -501,7 +291,6 @@
           </tr>
         </table>
 
-        <!-- جدول ۳: دستور کار (داینامیک) -->
         <table id="view-agenda-table">
           <tr>
             <td class="bg-gray text-center" style="width: 15%;">ردیف</td>
@@ -509,7 +298,6 @@
           </tr>
         </table>
 
-        <!-- جدول ۴: مصوبات (داینامیک) -->
         <table id="view-resolution-table">
           <tr>
             <td class="bg-gray text-center compact-header" style="width: 15%;">شماره<br>مصوبه</td>
@@ -517,7 +305,6 @@
           </tr>
         </table>
 
-        <!-- امضاها -->
         <div class="signatures">
           <div>
             امضا رئیس شورا
@@ -532,7 +319,6 @@
   </div>
 
   <script>
-    // ================== تابع تبدیل اعداد انگلیسی به فارسی ==================
     function toPersianDigits(str) {
       if (!str) return '';
       const englishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
@@ -542,7 +328,6 @@
       });
     }
 
-    // ================== مدیریت تاریخ ==================
     const months = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
     
     function initDateDropdowns() {
@@ -551,30 +336,16 @@
       const yearSelect = document.getElementById('date-year');
 
       for (let i = 1; i <= 31; i++) {
-        let opt = document.createElement('option');
-        opt.value = i;
-        opt.textContent = toPersianDigits(i);
-        daySelect.appendChild(opt);
+        let opt = document.createElement('option'); opt.value = i; opt.textContent = toPersianDigits(i); daySelect.appendChild(opt);
       }
-
       months.forEach((m, index) => {
-        let opt = document.createElement('option');
-        opt.value = index + 1;
-        opt.textContent = m;
-        monthSelect.appendChild(opt);
+        let opt = document.createElement('option'); opt.value = index + 1; opt.textContent = m; monthSelect.appendChild(opt);
       });
-
       for (let i = 1400; i <= 1410; i++) {
-        let opt = document.createElement('option');
-        opt.value = i;
-        opt.textContent = toPersianDigits(i);
-        yearSelect.appendChild(opt);
+        let opt = document.createElement('option'); opt.value = i; opt.textContent = toPersianDigits(i); yearSelect.appendChild(opt);
       }
 
-      daySelect.value = "1";
-      monthSelect.value = "1";
-      yearSelect.value = "1405";
-      
+      daySelect.value = "1"; monthSelect.value = "1"; yearSelect.value = "1405";
       updateDate();
     }
 
@@ -582,7 +353,6 @@
       const d = document.getElementById('date-day').value;
       const m = document.getElementById('date-month').value;
       const y = document.getElementById('date-year').value;
-      
       const monthName = months[parseInt(m) - 1];
       const formattedDate = `${toPersianDigits(d)} ${monthName} ${toPersianDigits(y)}`;
       
@@ -607,15 +377,12 @@
       }
     }
 
-    // ================== ذخیره و بازیابی فیلدهای ثابت ==================
     const bindings = [
       { input: 'inp-title1', output: 'view-title1' },
       { input: 'inp-village', output: 'view-village' },
-      // فیلدهای جدید سربرگ به لیست متصل شدند
       { input: 'inp-province', output: 'view-province' },
       { input: 'inp-county', output: 'view-county' },
       { input: 'inp-district', output: 'view-district' },
-      
       { input: 'inp-num', output: 'view-num' },
       { input: 'inp-subject', output: 'view-subject' },
       { input: 'inp-location', output: 'view-location' },
@@ -663,7 +430,6 @@
       });
     });
 
-    // ================== مدیریت دستور کار (Agenda) ==================
     let agendaCount = 0;
     const persianNumbers = ['۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹', '۱۰', '۱۱', '۱۲', '۱۳', '۱۴', '۱۵'];
 
@@ -727,7 +493,6 @@
       });
     }
 
-    // ================== مدیریت مصوبات (Resolutions) ==================
     let resolutionCount = 0;
 
     function addResolutionField(data = null) {
@@ -791,7 +556,6 @@
       });
     }
 
-    // ================== بازنشانی ==================
     function resetForm() {
       if (confirm('آیا از پاک کردن تمام مقادیر مطمئن هستید؟ صفحه رفرش می‌شود.')) {
         localStorage.clear();
@@ -799,7 +563,6 @@
       }
     }
 
-    // ================== بارگذاری اولیه ==================
     window.onload = function() {
       initDateDropdowns(); 
       loadSavedDate();     
@@ -811,9 +574,6 @@
     // ==========================================
     // 👇 کد پر کردن و قفل کردن خودکار فیلدها 👇
     // ==========================================
-    window.addEventListener('load', function() {    // ==========================================
-    // 👇 کد پر کردن و قفل کردن خودکار فیلدها 👇
-    // ==========================================
     window.addEventListener('load', function() {
       setTimeout(function() {
         const savedProfileStr = localStorage.getItem('site_user_profile');
@@ -823,11 +583,12 @@
           const profile = JSON.parse(savedProfileStr);
           if (!profile.villageName) return;
 
+          // تابع اعمال تغییرات روی فیلدها
           function fillAndLock(id, value) {
             const el = document.getElementById(id);
             if (el && value) {
               el.value = value;
-              el.dispatchEvent(new Event('input', { bubbles: true })); // برای آپدیت پیش‌نمایش
+              el.dispatchEvent(new Event('input', { bubbles: true })); // آپدیت پیش‌نمایش
               el.readOnly = true; // قفل کردن
             }
           }
@@ -835,13 +596,13 @@
           // ۱. پر کردن نام روستا (دهیاری)
           fillAndLock('inp-village', profile.villageName);
 
-          // ۲. پر کردن و قفل کردن امضاها (رئیس شورا)
+          // ۲. پر کردن امضاها
           fillAndLock('inp-sign1', profile.councilChairman);
 
-          // ۳. پر کردن و قفل کردن مدعوین با نام‌های اعضای شورا
-          fillAndLock('inp-att1', profile.councilChairman); // ردیف ۱: رئیس
-          fillAndLock('inp-att2', profile.councilVice);     // ردیف ۲: نایب رئیس
-          fillAndLock('inp-att3', profile.councilSecretary);// ردیف ۳: منشی
+          // ۳. پر کردن مدعوین با نام‌های شورا (رئیس، نایب، منشی)
+          fillAndLock('inp-att1', profile.councilChairman);
+          fillAndLock('inp-att2', profile.councilVice);
+          fillAndLock('inp-att3', profile.councilSecretary);
 
           // اگر مقادیر استان، شهرستان و بخش در پروفایل وجود داشت
           if(profile.ostan) fillAndLock('inp-province', profile.ostan);
