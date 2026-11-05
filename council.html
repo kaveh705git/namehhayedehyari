@@ -811,6 +811,9 @@
     // ==========================================
     // 👇 کد پر کردن و قفل کردن خودکار فیلدها 👇
     // ==========================================
+    window.addEventListener('load', function() {    // ==========================================
+    // 👇 کد پر کردن و قفل کردن خودکار فیلدها 👇
+    // ==========================================
     window.addEventListener('load', function() {
       setTimeout(function() {
         const savedProfileStr = localStorage.getItem('site_user_profile');
@@ -829,14 +832,18 @@
             }
           }
 
-          // پر کردن نام روستا (دهیاری)
+          // ۱. پر کردن نام روستا (دهیاری)
           fillAndLock('inp-village', profile.villageName);
 
-          // پر کردن نام رئیس شورا (در بخش امضاها)
+          // ۲. پر کردن و قفل کردن امضاها (رئیس شورا)
           fillAndLock('inp-sign1', profile.councilChairman);
 
-          // اگر مقادیر استان، شهرستان و بخش در پروفایل وجود داشت، آن‌ها را هم پر کن
-          // (اگر در پنل ادمین این فیلدها را اضافه نکرده‌اید، این خطوط نادیده گرفته می‌شوند)
+          // ۳. پر کردن و قفل کردن مدعوین با نام‌های اعضای شورا
+          fillAndLock('inp-att1', profile.councilChairman); // ردیف ۱: رئیس
+          fillAndLock('inp-att2', profile.councilVice);     // ردیف ۲: نایب رئیس
+          fillAndLock('inp-att3', profile.councilSecretary);// ردیف ۳: منشی
+
+          // اگر مقادیر استان، شهرستان و بخش در پروفایل وجود داشت
           if(profile.ostan) fillAndLock('inp-province', profile.ostan);
           if(profile.shahrestan) fillAndLock('inp-county', profile.shahrestan);
           if(profile.bakhsh) fillAndLock('inp-district', profile.bakhsh);
