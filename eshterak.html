@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>صفحه پرداخت | کارت به کارت</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Vazirmatn', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .card {
+    background: #fff;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    overflow: hidden;
+    animation: fadeUp 0.6s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 30px 20px;
+    text-align: center;
+    color: #fff;
+  }
+
+  .header .icon {
+    width: 64px; height: 64px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 12px;
+    font-size: 30px;
+  }
+
+  .header h1 { font-size: 20px; font-weight: 700; }
+  .header p { font-size: 13px; opacity: 0.9; margin-top: 6px; }
+
+  .content { padding: 24px 24px 28px; }
+
+  .amount-box {
+    background: #f5f6ff;
+    border: 1px dashed #667eea;
+    border-radius: 14px;
+    padding: 14px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .amount-box span { font-size: 12px; color: #666; display: block; margin-bottom: 4px; }
+  .amount-box strong { font-size: 20px; color: #4a3fb5; }
+
+  .label { font-size: 13px; color: #888; margin-bottom: 8px; display: block; }
+
+  /* ==== باکس شماره کارت - پس زمینه آبی ==== */
+  .card-number-box {
+    background: linear-gradient(135deg, #1e6ff0 0%, #0b4fd1 100%);
+    border-radius: 16px;
+    padding: 18px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;   /* دکمه زیر شماره */
+    gap: 14px;
+    margin-bottom: 18px;
+    box-shadow: 0 8px 20px rgba(30,111,240,0.35);
+  }
+
+  .card-number-box .num {
+    font-size: 25px;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    direction: ltr;
+    text-align: center;
+    font-family: 'Vazirmatn', monospace;
+    white-space: nowrap;       /* جلوگیری از شکستن خط */
+  }
+
+  .card-number-box .owner {
+    font-size: 12px;
+    opacity: 0.9;
+    margin-top: 6px;
+    display: block;
+    text-align: center;
+  }
+
+  .copy-btn {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.2s;
+    white-space: nowrap;
+    width: 100%;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.35); }
+  .copy-btn.copied { background: #2ecc71; border-color: #2ecc71; }
+
+  .steps {
+    background: #fafafa;
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 20px;
+  }
+  .steps h3 { font-size: 14px; color: #333; margin-bottom: 12px; }
+  .step {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 13px; color: #555; line-height: 1.8; margin-bottom: 8px;
+  }
+  .step .badge {
+    background: #667eea; color: #fff;
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; flex-shrink: 0; margin-top: 2px;
+  }
+
+  .send-btn {
+    display: block;
+    width: 100%;
+    background: linear-gradient(135deg, #25d366, #128c7e);
+    color: #fff;
+    text-align: center;
+    padding: 14px;
+    border-radius: 14px;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 700;
+    transition: 0.2s;
+    box-shadow: 0 8px 18px rgba(37,211,102,0.35);
+  }
+  .send-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(37,211,102,0.45); }
+
+  .note {
+    text-align: center; font-size: 11px; color: #aaa;
+    margin-top: 16px; line-height: 1.8;
+  }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #2ecc71; color: #fff;
+    padding: 10px 22px; border-radius: 30px;
+    font-size: 13px; opacity: 0; transition: 0.35s; z-index: 99;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ==== تنظیمات موبایل: شماره کارت بزرگ‌تر و در یک خط ==== */
+  @media (max-width: 480px) {
+    .card-number-box { padding: 16px 8px; }
+
+    .card-number-box .num {
+      font-size: 25px;         /* بزرگ‌تر از قبل */
+      letter-spacing: 0.5px;   /* کاهش فاصله برای جا شدن در یک خط */
+    }
+  }
+
+  @media (max-width: 360px) {
+    .card-number-box .num {
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="header">
+    <div class="icon">💳</div>
+    <h1>پرداخت کارت به کارت</h1>
+    <p>لطفاً مبلغ را به کارت زیر واریز کنید</p>
+  </div>
+
+  <div class="content">
+    <!-- مبلغ -->
+    <div class="amount-box">
+      <span>مبلغ قابل پرداخت</span>
+      <strong>۵۵۰٬۰۰۰ تومان</strong>
+    </div>
+
+    <!-- شماره کارت -->
+    <span class="label">شماره کارت جهت واریز</span>
+    <div class="card-number-box">
+      <div>
+        <div class="num" id="cardNum">5022-2910-6825-7650</div>
+        <span class="owner">به نام: کاوه عبدی</span>
+      </div>
+      <button class="copy-btn" id="copyBtn" onclick="copyCard()">📋 کپی شماره کارت</button>
+    </div>
+
+    <!-- مراحل -->
+    <div class="steps">
+      <h3>📌 راهنمای پرداخت</h3>
+      <div class="step"><span class="badge">۱</span><span>مبلغ را به شماره کارت بالا واریز کنید.</span></div>
+      <div class="step"><span class="badge">۲</span><span>از رسید پرداخت خود اسکرین‌شات بگیرید.</span></div>
+      <div class="step"><span class="badge">۳</span><span>رسید را برای ما ارسال کنید تا سفارش تأیید شود.</span></div>
+    </div>
+
+    <!-- دکمه ارسال رسید -->
+    <a href="https://kaveh705git.github.io/ersalfile" target="_blank" class="send-btn">
+      📤 ارسال رسید پرداخت
+    </a>
+
+    <p class="note">پس از ارسال رسید، حداکثر تا ۳۰ دقیقه سفارش شما تأیید خواهد شد.<br>از اعتماد شما سپاسگزاریم 🌹</p>
+  </div>
+</div>
+
+<div class="toast" id="toast">شماره کارت کپی شد ✅</div>
+
+<script>
+function copyCard() {
+  const num = document.getElementById('cardNum').innerText.replace(/-/g, '');
+  navigator.clipboard.writeText(num).then(() => {
+    const btn = document.getElementById('copyBtn');
+    const toast = document.getElementById('toast');
+    btn.innerText = '✅ کپی شد';
+    btn.classList.add('copied');
+    toast.classList.add('show');
+    setTimeout(() => {
+      btn.innerText = '📋 کپی شماره کارت';
+      btn.classList.remove('copied');
+      toast.classList.remove('show');
+    }, 2000);
+  });
+}
+</script>
+
+</body>
+</html>
