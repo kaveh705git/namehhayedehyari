@@ -4,6 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>طراحی نامه دهیاری - آماده چاپ</title>
+
+    <!-- 👇👇 کد نگهبان (بررسی لاگین و زمان) 👇👇 -->
+    <script>
+      (function() {
+        const AUTH_KEY = 'site_auth_expire';
+        const savedExpire = localStorage.getItem(AUTH_KEY);
+        
+        if (!savedExpire) {
+          window.location.href = 'index.html';
+          return;
+        }
+        
+        const expireTime = parseInt(savedExpire, 10);
+        if (isNaN(expireTime) || Date.now() > (expireTime + 86400000)) {
+          localStorage.removeItem(AUTH_KEY);
+          localStorage.removeItem('site_user_profile');
+          window.location.href = 'index.html';
+        }
+      })();
+    </script>
+    <!-- 👆👆 پایان کد نگهبان 👆👆 -->
     
     <!-- لینک استاندارد فونت وزیرمتن -->
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.0.0/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
@@ -66,6 +87,13 @@
             display: block;
         }
 
+        /* استایل فیلدهای قفل شده */
+        input[readonly] {
+            background-color: #e2e8f0 !important;
+            color: #475569 !important;
+            cursor: not-allowed !important;
+        }
+
         .row-group {
             display: flex;
             gap: 10px;
@@ -94,8 +122,6 @@
             display: flex;
             flex-direction: column;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            
-            /* کادر اصلی نامه */
             border: 2px solid #222;
         }
 
@@ -126,7 +152,6 @@
             width: 33%;
         }
 
-        /* --- پس‌زمینه و خط دور لوگو حذف شد --- */
         .header-center .logo {
             width: 70px;
             height: 70px;
@@ -198,10 +223,9 @@
         }
 
         /* ====================================================
-           تنظیمات نهایی چاپ (رفع کامل مشکل بالا و پایین)
+           تنظیمات نهایی چاپ
            ==================================================== */
         @media print {
-            /* صفر کردن حاشیه مرورگر */
             @page {
                 size: A4 portrait;
                 margin: 0;
@@ -214,7 +238,6 @@
                 display: block;
             }
 
-            /* مخفی کردن فرم سمت راست */
             .control-panel {
                 display: none !important;
             }
@@ -225,18 +248,12 @@
                 width: 100%;
             }
 
-            /* تنظیم کادر برای جا شدن دقیق در صفحه A4 بدون بیرون‌زدگی */
             .a4-paper {
                 box-shadow: none;
-                
-                /* کاهش ارتفاع به 280 برای ایجاد حاشیه امن در بالا و پایین */
                 height: 280mm; 
                 width: 210mm;
-                
-                /* قرار دادن کادر دقیقاً در وسط صفحه */
                 margin: 8mm auto; 
                 padding: 10mm 15mm; 
-                
                 border: 2px solid #222;
                 border-radius: 0;
                 overflow: hidden;
@@ -267,7 +284,7 @@
 
         <div class="form-group">
             <label>نام روستا:</label>
-            <input type="text" id="input-village" placeholder="مثلا: نموغه" oninput="updateLetter()">
+            <input type="text" id="input-village" placeholder="مثلا: تموغه" oninput="updateLetter()">
         </div>
 
         <div class="form-group">
@@ -278,7 +295,7 @@
         <div class="row-group">
             <div class="form-group">
                 <label>شماره نامه:</label>
-                <input type="text" id="input-number" placeholder="1234" oninput="updateLetter()">
+                <input type="text" id="input-number" placeholder="1234" oninput="this.value=toPersianDigits(this.value); updateLetter()">
             </div>
             <div class="form-group">
                 <label>تاریخ نامه:</label>
@@ -375,21 +392,31 @@
     </div>
 
     <script>
+        // تابع تبدیل اعداد به فارسی
+        function toPersianDigits(str) {
+            if (!str) return '';
+            const englishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+            return str.toString().replace(/[0-9]/g, function(w) {
+                return persianDigits[englishDigits.indexOf(w)];
+            });
+        }
+
         function populateDays() {
             const daySelect = document.getElementById('day');
             for (let i = 1; i <= 31; i++) {
                 const option = document.createElement('option');
-                option.value = i;
-                option.text = i;
+                option.value = toPersianDigits(i);
+                option.text = toPersianDigits(i);
                 daySelect.appendChild(option);
             }
-            daySelect.value = 1;
+            daySelect.value = toPersianDigits(1);
         }
 
         function updateDate() {
             const day = document.getElementById('day').value;
             const month = document.getElementById('month').value;
-            const year = document.getElementById('year').value;
+            const year = toPersianDigits(document.getElementById('year').value);
             document.getElementById('preview-date').innerText = `${day} ${month} ${year}`;
         }
 
@@ -406,7 +433,6 @@
 
             let fullDehyariName = village ? `دهیاری ${village}` : 'دهیاری';
 
-            // آپدیت فیلدهای جدید در سربرگ
             document.getElementById('preview-province').innerText = province || '..........';
             document.getElementById('preview-county').innerText = county || '..........';
             document.getElementById('preview-district').innerText = district || '..........';
@@ -427,6 +453,41 @@
             updateDate();
             updateLetter(); 
         }
+
+        // ==========================================
+        // 👇 کد پر کردن و قفل کردن خودکار فیلدها 👇
+        // ==========================================
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const savedProfileStr = localStorage.getItem('site_user_profile');
+                if (!savedProfileStr) return;
+
+                try {
+                    const profile = JSON.parse(savedProfileStr);
+                    if (!profile.villageName) return;
+
+                    function fillAndLock(id, value) {
+                        const el = document.getElementById(id);
+                        if (el && value) {
+                            el.value = value;
+                            el.dispatchEvent(new Event('input', { bubbles: true }));
+                            el.readOnly = true; // قفل کردن
+                        }
+                    }
+
+                    // پر کردن و قفل کردن فیلدهای ثابت
+                    fillAndLock('input-province', profile.ostan || 'کردستان'); 
+                    fillAndLock('input-county', profile.shahrestan || 'سقز');
+                    fillAndLock('input-district', profile.bakhsh || 'مرکزی');
+                    
+                    fillAndLock('input-village', profile.villageName);
+                    fillAndLock('input-dehyar-name', profile.employerName);
+
+                } catch (e) {
+                    console.error('خطا در خواندن اطلاعات:', e);
+                }
+            }, 500);
+        });
     </script>
 </body>
 </html>
