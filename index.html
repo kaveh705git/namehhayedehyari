@@ -164,19 +164,22 @@
     .header-date, #logoutBtn { flex: 1; text-align: center; justify-content: center; padding: 8px; }
   }
 
- .call-btn {
-  display: inline-block;
-  padding: 12px 24px;
-  background: #25D366;
-  color: #fff;
+/* استایل یکدست برای دکمه‌های لینک‌دار */
+a.btn {
+  display: block; /* تبدیل به بلوک برای گرفتن کل عرض */
+  text-align: center;
   text-decoration: none;
-  border-radius: 8px;
-  font-family: sans-serif;
-  font-size: 16px;
-  font-weight: bold;
+  box-sizing: border-box;
 }
-.call-btn:hover {
-  background: #1ebe5b;
+
+.btn-contact {
+  background: linear-gradient(135deg, #f59e0b, #d97706); /* رنگ نارنجی برای تماس */
+  color: #fff;
+}
+
+.btn-subscribe {
+  background: linear-gradient(135deg, #10b981, #059669); /* رنگ سبز برای اشتراک */
+  color: #fff;
 }
 </style>
 </head>
@@ -219,17 +222,18 @@
   <div class="modal">
     <h2>ورود به سایت</h2>
     <div class="error-msg" id="loginError"></div>
+    
     <label>رمز عبور</label>
     <input type="password" id="loginPassword" placeholder="رمز عبور را وارد کنید" onkeydown="if(event.key==='Enter') doLogin()">
     
+    <!-- دکمه‌ها (همه با عرض ۱۰۰٪ و زیر هم) -->
     <button class="btn" onclick="doLogin()">ورود</button>
     
     <button class="btn btn-secondary" onclick="openVideo()" style="margin-top:10px;">🎬 مشاهده ویدیو معرفی سایت</button>
-
-    <a href="tel:+989182716632" class="call-btn">📞 تماس با ما</a>
-
-    <!-- 👇 دکمه تهیه اشتراک (بدون بستن پنجره) 👇 -->
-    <a href="eshterak.html" class="btn" style="display:block; text-align:center; text-decoration:none; background: linear-gradient(135deg, #10b981, #059669); margin-top:10px;">💳 تهیه اشتراک - پشتیبانی</a>
+    
+    <a href="tel:09123456789" class="btn btn-contact" style="margin-top:10px;">📞 تماس با ما</a>
+    
+    <a href="payment.html" class="btn btn-subscribe" style="margin-top:10px;">💳 تهیه اشتراک - پشتیبانی</a>
   </div>
 </div>
 
