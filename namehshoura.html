@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طراحی نامه شورای اسلامی - آماده چاپ</title>
+
+    <!-- 👇👇 کد نگهبان (بررسی لاگین و زمان) 👇👇 -->
+    <script>
+      (function() {
+        const AUTH_KEY = 'site_auth_expire';
+        const savedExpire = localStorage.getItem(AUTH_KEY);
+        
+        if (!savedExpire) {
+          window.location.href = 'index.html';
+          return;
+        }
+        
+        const expireTime = parseInt(savedExpire, 10);
+        if (isNaN(expireTime) || Date.now() > (expireTime + 86400000)) {
+          localStorage.removeItem(AUTH_KEY);
+          localStorage.removeItem('site_user_profile');
+          window.location.href = 'index.html';
+        }
+      })();
+    </script>
+    <!-- 👆👆 پایان کد نگهبان 👆👆 -->
+
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
+        
+        :root {
+            --border-color: #ccc;
+            --bg-color: #f4f4f9;
+        }
+
+        body {
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-color);
+            display: flex;
+            gap: 20px;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* ---------------- پنل تنظیمات (سمت راست) ---------------- */
+        .control-panel {
+            width: 350px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .control-panel h2 {
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #555;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: inherit;
+            box-sizing: border-box;
+            display: block;
+        }
+
+        input[readonly] {
+            background-color: #e2e8f0 !important;
+            color: #475569 !important;
+            cursor: not-allowed !important;
+        }
+
+        .row-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .row-group .form-group {
+            flex: 1;
+        }
+
+        /* ---------------- پیش‌نمایش نامه (سمت چپ) ---------------- */
+        .preview-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-y: auto;
+        }
+
+        .a4-paper {
+            background: white;
+            width: 210mm;
+            height: 297mm;
+            padding: 15mm 20mm;
+            box-sizing: border-box;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border: 2px solid #222;
+        }
+
+        /* سربرگ */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid black;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        .header-right {
+            width: 33%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 13px;
+            line-height: 1.8;
+            font-weight: bold;
+        }
+
+        .header-center {
+            text-align: center;
+            width: 33%;
+        }
+
+        .header-center .logo {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            font-size: 10px;
+            color: #666;
+        }
+
+        .header-center .sub-text {
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .header-left {
+            text-align: left;
+            font-size: 13px;
+            width: 33%;
+        }
+
+        .header-left .info-line {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: flex-start;
+            gap: 5px;
+        }
+
+        /* متن نامه */
+        .letter-body {
+            flex: 1;
+            font-size: 14px;
+            line-height: 2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .subject {
+            text-align: right; 
+            font-weight: bold;
+            margin-bottom: 25px;
+            font-size: 15px;
+        }
+
+        .recipient {
+            text-align: right;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .content {
+            text-align: justify;
+            min-height: 100px;
+            white-space: pre-wrap; 
+            word-break: break-word; 
+            overflow-wrap: break-word;
+            padding: 0 5px;
+            line-height: 2.2;
+        }
+
+        /* بخش امضاها */
+        .signatures {
+            margin-top: auto;
+            padding-top: 30px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .signatures-title {
+            margin-bottom: 15px;
+        }
+
+        .signatures-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            direction: rtl;
+        }
+
+        .signature-item {
+            text-align: center;
+        }
+
+        .signature-item .sig-num {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+
+        .signature-item .sig-name {
+            display: block;
+            font-size: 11px;
+            font-weight: normal;
+            border-bottom: 1px dashed #999;
+            padding-bottom: 2px;
+            min-height: 18px;
+        }
+
+        /* ====================================================
+           تنظیمات نهایی چاپ
+           ==================================================== */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+
+            body {
+                background: white;
+                margin: 0;
+                padding: 0;
+                display: block;
+            }
+
+            .control-panel {
+                display: none !important;
+            }
+
+            .preview-container {
+                display: block;
+                overflow: visible;
+                width: 100%;
+            }
+
+            .a4-paper {
+                box-shadow: none;
+                height: 280mm; 
+                width: 210mm;
+                margin: 8mm auto; 
+                padding: 10mm 15mm; 
+                border: 2px solid #222;
+                border-radius: 0;
+                overflow: hidden;
+                page-break-inside: avoid;
+                page-break-after: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- پنل تنظیمات (سمت راست) -->
+    <div class="control-panel">
+        <h2>تنظیمات نامه</h2>
+
+        <div class="form-group">
+            <label>استان:</label>
+            <input type="text" id="input-province" value="کردستان" oninput="updateLetter()">
+        </div>
+        <div class="form-group">
+            <label>شهرستان:</label>
+            <input type="text" id="input-county" value="سقز" oninput="updateLetter()">
+        </div>
+        <div class="form-group">
+            <label>بخش:</label>
+            <input type="text" id="input-district" value="مرکزی" oninput="updateLetter()">
+        </div>
+
+        <div class="row-group">
+            <div class="form-group">
+                <label>شماره نامه:</label>
+                <input type="text" id="input-number" placeholder="1234" oninput="this.value=toPersianDigits(this.value); updateLetter()">
+            </div>
+            <div class="form-group">
+                <label>تاریخ نامه:</label>
+                <div style="display: flex; gap: 2px; direction: rtl;">
+                    <select id="day" onchange="updateDate()" style="width: 30%;"></select>
+                    <select id="month" onchange="updateDate()" style="width: 40%;">
+                        <option value="فروردین">فروردین</option>
+                        <option value="اردیبهشت">اردیبهشت</option>
+                        <option value="خرداد">خرداد</option>
+                        <option value="تیر">تیر</option>
+                        <option value="مرداد">مرداد</option>
+                        <option value="شهریور">شهریور</option>
+                        <option value="مهر">مهر</option>
+                        <option value="آبان">آبان</option>
+                        <option value="آذر">آذر</option>
+                        <option value="دی">دی</option>
+                        <option value="بهمن">بهمن</option>
+                        <option value="اسفند">اسفند</option>
+                    </select>
+                    <select id="year" onchange="updateDate()" style="width: 30%;">
+                        <option value="1404">1404</option>
+                        <option value="1405" selected>1405</option>
+                        <option value="1406">1406</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>موضوع نامه:</label>
+            <input type="text" id="input-subject" placeholder="موضوع نامه" oninput="updateLetter()">
+        </div>
+
+        <div class="form-group">
+            <label>عناوین دستور کار جلسه:</label>
+            <input type="text" id="input-recipient" placeholder="مثلا: بررسی مشکلات آب روستا" oninput="updateLetter()">
+        </div>
+
+        <div class="form-group">
+            <label>متن نامه:</label>
+            <textarea id="input-content" rows="6" placeholder="متن نامه..." oninput="updateLetter()"></textarea>
+        </div>
+
+        <hr style="margin: 20px 0; border: none; border-top: 2px solid #eee;">
+
+        <h2 style="margin-top: 0;">نام اعضای شورا</h2>
+        
+        <div class="form-group">
+            <label>عضو اول:</label>
+            <input type="text" id="input-member1" placeholder="نام عضو اول" oninput="updateLetter()">
+        </div>
+        <div class="form-group">
+            <label>عضو دوم:</label>
+            <input type="text" id="input-member2" placeholder="نام عضو دوم" oninput="updateLetter()">
+        </div>
+        <div class="form-group">
+            <label>عضو سوم:</label>
+            <input type="text" id="input-member3" placeholder="نام عضو سوم" oninput="updateLetter()">
+        </div>
+        <div class="form-group">
+            <label>عضو چهارم:</label>
+            <input type="text" id="input-member4" placeholder="نام عضو چهارم" oninput="updateLetter()">
+        </div>
+        <div class="form-group">
+            <label>عضو پنجم:</label>
+            <input type="text" id="input-member5" placeholder="نام عضو پنجم" oninput="updateLetter()">
+        </div>
+        
+        <button onclick="window.print()" style="width: 100%; padding: 10px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-family: inherit;">چاپ نامه / خروجی PDF</button>
+    </div>
+
+    <!-- پیش‌نمایش نامه (سمت چپ) -->
+    <div class="preview-container">
+        <div class="a4-paper">
+            <div class="header">
+                <div class="header-right">
+                    <div>وزارت کشور</div>
+                    <div>استانداری استان <span id="preview-province">کردستان</span></div>
+                    <div>فرمانداری ویژه شهرستان <span id="preview-county">سقز</span></div>
+                    <div>بخشداری بخش <span id="preview-district">مرکزی</span></div>
+                </div>
+                
+                <div class="header-center">
+                    <div class="logo">
+                        <img src="logo.png" alt="لوگو" style="max-width:100%; max-height:100%; object-fit:contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <span style="display:none; font-size:10px;">لوگو</span>
+                    </div>
+                    <span class="sub-text" id="preview-shora-logo">شورای اسلامی بخش مرکزی شهرستان سقز</span>
+                </div>
+                
+                <div class="header-left">
+                    <div class="info-line">
+                        <span>شماره:</span>
+                        <span id="preview-number">---------</span>
+                    </div>
+                    <div class="info-line">
+                        <span>تاریخ:</span>
+                        <span id="preview-date">---------</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="letter-body">
+                <div class="subject">
+                    موضوع: <span id="preview-subject"></span>
+                </div>
+                
+                <div class="recipient">
+                    عناوین دستور کار جلسه: <span id="preview-recipient">................</span>
+                </div>
+
+                <div class="content" id="preview-content"></div>
+
+                <div class="signatures">
+                    <div class="signatures-title" id="preview-shora-footer">اعضای شورای اسلامی بخش مرکزی سقز</div>
+                    <div class="signatures-grid">
+                        <div class="signature-item">
+                            <span class="sig-num">۱ -</span>
+                            <span class="sig-name" id="preview-member1">..................</span>
+                        </div>
+                        <div class="signature-item">
+                            <span class="sig-num">۲ -</span>
+                            <span class="sig-name" id="preview-member2">..................</span>
+                        </div>
+                        <div class="signature-item">
+                            <span class="sig-num">۳ -</span>
+                            <span class="sig-name" id="preview-member3">..................</span>
+                        </div>
+                        <div class="signature-item">
+                            <span class="sig-num">۴ -</span>
+                            <span class="sig-name" id="preview-member4">..................</span>
+                        </div>
+                        <div class="signature-item">
+                            <span class="sig-num">۵ -</span>
+                            <span class="sig-name" id="preview-member5">..................</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // تابع تبدیل اعداد به فارسی
+        function toPersianDigits(str) {
+            if (!str) return '';
+            const englishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+            return str.toString().replace(/[0-9]/g, function(w) {
+                return persianDigits[englishDigits.indexOf(w)];
+            });
+        }
+
+        function populateDays() {
+            const daySelect = document.getElementById('day');
+            for (let i = 1; i <= 31; i++) {
+                const option = document.createElement('option');
+                option.value = toPersianDigits(i);
+                option.text = toPersianDigits(i);
+                daySelect.appendChild(option);
+            }
+            daySelect.value = toPersianDigits(1);
+        }
+
+        function updateDate() {
+            const day = document.getElementById('day').value;
+            const month = document.getElementById('month').value;
+            const year = toPersianDigits(document.getElementById('year').value);
+            document.getElementById('preview-date').innerText = `${day} ${month} ${year}`;
+        }
+
+        function updateLetter() {
+            const province = document.getElementById('input-province').value.trim();
+            const county = document.getElementById('input-county').value.trim();
+            const district = document.getElementById('input-district').value.trim();
+            const number = document.getElementById('input-number').value;
+            const subject = document.getElementById('input-subject').value;
+            const recipient = document.getElementById('input-recipient').value;
+            const content = document.getElementById('input-content').value;
+
+            document.getElementById('preview-province').innerText = province || '..........';
+            document.getElementById('preview-county').innerText = county || '..........';
+            document.getElementById('preview-district').innerText = district || '..........';
+
+            // متن زیر آرم - وابسته به شهرستان
+            document.getElementById('preview-shora-logo').innerText = 
+                `شورای اسلامی بخش ${district || '..........'} شهرستان ${county || '..........'}`;
+            
+            // متن پایین صفحه (امضاها) - وابسته به شهرستان
+            document.getElementById('preview-shora-footer').innerText = 
+                `اعضای شورای اسلامی بخش ${district || '..........'} شهرستان ${county || '..........'}`;
+            
+            document.getElementById('preview-number').innerText = number || '---------';
+            document.getElementById('preview-subject').innerText = subject || '................';
+            document.getElementById('preview-recipient').innerText = recipient || '................';
+            document.getElementById('preview-content').innerText = content || 'متن نامه شما در اینجا نمایش داده می‌شود...';
+
+            // نام اعضای شورا
+            for (let i = 1; i <= 5; i++) {
+                const val = document.getElementById('input-member' + i).value;
+                document.getElementById('preview-member' + i).innerText = val || '..................';
+            }
+        }
+
+        window.onload = function() {
+            populateDays();
+            updateDate();
+            updateLetter(); 
+        }
+    </script>
+</body>
+</html>
