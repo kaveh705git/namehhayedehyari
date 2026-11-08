@@ -214,12 +214,13 @@
             line-height: 2.2;
         }
 
+        /* 👇 فوتر وسط‌چین شد 👇 */
         .footer {
             margin-top: 50px;
-            text-align: left;
+            text-align: center; /* تغییر از left به center */
             font-size: 13px;
             font-weight: bold;
-            padding-left: 20px;
+            /* padding-left: 20px; حذف شد تا کاملا متقارن شود */
         }
 
         /* ====================================================
@@ -386,7 +387,6 @@
 
                 <div class="content" id="preview-content"></div>
 
-                <!-- 👇 بخش فوتر اصلاح شده 👇 -->
                 <div class="footer">
                     با تشکر<br>
                     <span id="preview-dehyari-footer">دهیاری</span><br>
@@ -436,10 +436,7 @@
             const recipient = document.getElementById('input-recipient').value;
             const content = document.getElementById('input-content').value;
 
-            // تعیین نام کامل دهیاری (اگر روستا وارد شده باشد)
             let fullDehyariName = village ? `دهیاری ${village}` : 'دهیاری';
-            
-            // تعیین متن فوتر (دهیاری روستای ...)
             let footerDehyariText = village ? `دهیاری روستای ${village}` : 'دهیاری';
 
             document.getElementById('preview-province').innerText = province || '..........';
@@ -450,7 +447,6 @@
             document.getElementById('preview-dehyari-logo').innerText = fullDehyariName;
             document.getElementById('preview-dehyari').innerText = fullDehyariName;
             
-            // آپدیت فوتر
             document.getElementById('preview-dehyari-footer').innerText = footerDehyariText;
             document.getElementById('preview-dehyar-name').innerText = dehyarName || '..................';
             
@@ -483,11 +479,10 @@
                         if (el && value) {
                             el.value = value;
                             el.dispatchEvent(new Event('input', { bubbles: true }));
-                            el.readOnly = true; // قفل کردن
+                            el.readOnly = true; 
                         }
                     }
 
-                    // فقط نام روستا (دهیاری) و نام دهیار قفل می‌شوند
                     fillAndLock('input-village', profile.villageName);
                     fillAndLock('input-dehyar-name', profile.employerName);
 
