@@ -111,18 +111,18 @@
             overflow-y: auto;
         }
 
-        /* اصلاح استایل اصلی کاغذ A4 */
+        /* استایل کاغذ در حالت نمایش (Monitor) */
         .a4-paper {
             background: white;
             width: 210mm;
             height: 297mm;
             padding: 15mm 20mm;
-            box-sizing: border-box; /* بسیار مهم: پدینگ و کادر در عرض 210 میلی‌متر حساب می‌شوند */
+            box-sizing: border-box; 
             position: relative;
             display: flex;
             flex-direction: column;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            border: 1px solid #222; /* کادر ظریف‌تر و زیباتر */
+            border: 1px solid #222;
         }
 
         /* سربرگ */
@@ -222,13 +222,12 @@
         }
 
         /* ====================================================
-           تنظیمات نهایی و تضمینی چاپ در یک صفحه (بدون بریدگی)
+           تنظیمات نهایی چاپ (تضمینی برای تنظیمات Default چاپگر)
            ==================================================== */
         @media print {
-            /* صفر کردن کامل حاشیه صفحه */
             @page {
                 size: A4 portrait;
-                margin: 0;
+                margin: 0; /* صفر کردن حاشیه پیش‌فرض صفحه */
             }
 
             body {
@@ -248,17 +247,20 @@
                 width: 100%;
             }
 
-            /* تنظیم کادر برای چاپ دقیق در محدوده A4 */
+            /* 
+             * راه‌حل قطعی: کادر را کمی کوچک‌تر از صفحه A4 می‌کنیم 
+             * تا حتی با حاشیه‌های پیش‌فرض مرورگر (Default) هم بریده نشود.
+             */
             .a4-paper {
                 box-shadow: none;
-                width: 210mm;
-                height: 296mm; /* کمی کمتر از 297 برای جلوگیری از ایجاد صفحه دوم به خاطر یک پیکسل خطا */
-                margin: 0; /* حذف کامل مارجین برای چسبیدن به لبه‌ها */
-                padding: 15mm 20mm; /* همان پدینگ نمایشگر برای زیبایی */
-                border: 1px solid #222; /* کادر ظریف دور نامه */
+                width: 200mm; /* 1 سانتی‌متر از چپ و راست فاصله می‌گیرد */
+                height: 285mm; /* 6 میلی‌متر از بالا و پایین فاصله می‌گیرد */
+                margin: auto; /* کادر دقیقاً در مرکز صفحه قرار می‌گیرد */
+                padding: 15mm 20mm; 
+                border: 1.5px solid #222; /* کادر پررنگ و زیبا برای چاپ */
                 border-radius: 0;
                 overflow: hidden;
-                box-sizing: border-box; /* تضمین می‌کند کادر و پدینگ از 210 میلی‌متر بیرون نزنند */
+                box-sizing: border-box; 
                 page-break-inside: avoid;
                 page-break-after: avoid;
             }
