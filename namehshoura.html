@@ -254,12 +254,12 @@
         }
 
         /* ====================================================
-           تنظیمات نهایی چاپ
+           تنظیمات نهایی چاپ (اصلاح شده برای جلوگیری از بریدگی)
            ==================================================== */
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 0;
+                margin: 0; /* حاشیه پیش‌فرض مرورگر را صفر می‌کنیم */
             }
 
             body {
@@ -281,15 +281,17 @@
 
             .a4-paper {
                 box-shadow: none;
-                height: 280mm; 
-                width: 210mm;
-                margin: 8mm auto; 
+                /* عرض و ارتفاع کمی کمتر از A4 تا در چاپگرهای مختلف کادر کامل دیده شود */
+                width: 200mm; 
+                height: 287mm; 
+                margin: 3mm auto; /* فاصله از لبه کاغذ */
                 padding: 10mm 15mm; 
                 border: 2px solid #222;
                 border-radius: 0;
                 overflow: hidden;
                 page-break-inside: avoid;
                 page-break-after: avoid;
+                box-sizing: border-box; /* بسیار مهم: تا بوردر و پدینگ داخل ابعاد حساب شوند */
             }
         }
     </style>
