@@ -222,12 +222,12 @@
         }
 
         /* ====================================================
-           تنظیمات نهایی چاپ (رفع قطعی مشکل بریدگی از بالا)
+           تنظیمات نهایی و تضمینی چاپ (حل مشکل کادر بالا)
            ==================================================== */
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 0; /* صفر کردن حاشیه صفحه */
+                margin: 0; /* حذف حاشیه پیش‌فرض کاغذ */
             }
 
             body {
@@ -241,28 +241,52 @@
                 display: none !important;
             }
 
+            /* 
+             * این بخش بسیار مهم است: 
+             * ما یک کادر به اندازه دقیق A4 (210x297) می‌سازیم 
+             * و کادر نامه را با فاصله 12 میلی‌متری درون آن قرار می‌دهیم.
+             * این کار باعث می‌شود مرورگر حاشیه‌های پیش‌فرض خود را روی کادر ما اعمال نکند.
+             */
             .preview-container {
                 display: block;
                 overflow: visible;
-                width: 100%;
+                width: 210mm;
+                height: 297mm;
+                margin: 0 auto;
+                padding: 0;
+                box-sizing: border-box;
             }
 
-            /* 
-             * برای اینکه خط بالایی کادر دیده شود، ارتفاع را کمی کاهش داده‌ایم 
-             * تا در حاشیه نامرئی بالای صفحه (Default) قرار نگیرد.
-             */
             .a4-paper {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 12mm; /* فاصله امن از لبه‌های کاغذ */
+                border: none; /* حذف کادر دور از کانتینر اصلی */
+                box-sizing: border-box;
+                background: white;
                 box-shadow: none;
-                width: 200mm; /* فاصله از چپ و راست */
-                height: 278mm; /* کاهش ارتفاع برای حفظ فاصله از بالا و پایین */
-                margin: auto; /* قرار گرفتن دقیق در مرکز صفحه */
-                padding: 15mm 20mm; 
-                border: 1.5px solid #222; /* کادر پررنگ و زیبا */
-                border-radius: 0;
-                overflow: hidden;
-                box-sizing: border-box; 
-                page-break-inside: avoid;
-                page-break-after: avoid;
+            }
+
+            /* ساخت یک کادر داخلی برای خط کشیدن دور نامه */
+            .a4-paper::before {
+                content: "";
+                position: absolute;
+                top: 12mm;
+                bottom: 12mm;
+                left: 12mm;
+                right: 12mm;
+                border: 1.5px solid #000;
+                pointer-events: none;
+                z-index: 10;
+            }
+            
+            /* تنظیم پدینگ داخلی متن‌ها برای فاصله گرفتن از کادر جدید */
+            .header, .letter-body, .footer {
+                position: relative;
+                z-index: 11;
+                padding-left: 10mm;
+                padding-right: 10mm;
             }
         }
     </style>
