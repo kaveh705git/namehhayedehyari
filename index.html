@@ -111,7 +111,6 @@
 
   .video-modal { max-width: 800px; padding: 20px; }
 
-  /* استایل تایمر معکوس */
   .header-timer {
     background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3);
     padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap;
@@ -153,6 +152,7 @@
   
   <div class="cards">
     <a href="nameh.html" class="card"><div class="card-icon">✉️</div><h3>نامه دهیاری به ادارات</h3></a>
+    <a href="namehshoura.html" class="card"><div class="card-icon">✉️</div><h3>نامه شورای بخش</h3></a>
     <a href="contract.html" class="card"><div class="card-icon">📄</div><h3>قرارداد کار دهیاری</h3></a>
     <a href="status.html" class="card"><div class="card-icon">📋</div><h3>صورت وضعیت قرارداد</h3></a>
     <a href="council.html" class="card"><div class="card-icon">📑</div><h3>صورت جلسه شورا</h3></a>
@@ -195,6 +195,19 @@
 
 <script>
   // ============================================================
+  // ۰. غیرفعال کردن کلیک راست و دکمه‌های بازرسی (F12)
+  // ============================================================
+  document.addEventListener('contextmenu', event => event.preventDefault());
+  
+  document.onkeydown = function(e) {
+    if (e.keyCode == 123) { return false; } // F12
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { return false; } // Ctrl+Shift+I
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { return false; } // Ctrl+Shift+C
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { return false; } // Ctrl+Shift+J
+    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { return false; } // Ctrl+U (View Source)
+  };
+
+  // ============================================================
   // ۱. تنظیمات اتصال به Supabase
   // ============================================================
   const SUPABASE_URL = 'https://wwyqxkoeynddidazcyqu.supabase.co';
@@ -203,7 +216,7 @@
 
   const AUTH_KEY = 'site_auth_expire';
   const PROFILE_KEY = 'site_user_profile';
-  const SESSION_DURATION_HOURS = 0.1; // 👈 مدت اعتبار نشست (به ساعت)
+  const SESSION_DURATION_HOURS = 0.09; // 👈 مدت اعتبار نشست (به ساعت)
 
   // ============================================================
   // ۲. تقویم شمسی
@@ -309,7 +322,7 @@
         return;
       }
 
-      // بررسی انقضای اصلی رمز (مثلاً 2 روز)
+      // بررسی انقضای اصلی رمز
       const now = new Date();
       const expireTime = new Date(data.expires_at);
       if (now > expireTime) {
@@ -318,7 +331,7 @@
         return;
       }
 
-      // 👇 تعیین زمان نشست (Session) بر اساس ساعت مشخص شده 👇
+      // 👇 تعیین زمان نشست (Session) 5 ساعته 👇
       const sessionEndTime = Date.now() + (SESSION_DURATION_HOURS * 60 * 60 * 1000);
 
       const profile = {
@@ -330,7 +343,6 @@
       };
       
       localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
-      // ذخیره زمان اتمام نشست (نه تاریخ انقضای اصلی رمز)
       localStorage.setItem(AUTH_KEY, sessionEndTime);
       
       err.style.color = '#1e8e4e';
@@ -339,7 +351,7 @@
         document.getElementById('loginOverlay').classList.remove('active');
         document.getElementById('logoutBtn').style.display = 'block';
         document.getElementById('header-village-name').innerText = `( دهیاری ${data.village_name} )`;
-        checkAuthStatus(); // شروع فوری تایمر
+        checkAuthStatus(); 
       }, 500);
 
     } catch (e) {
@@ -380,7 +392,7 @@
   // ============================================================
   document.getElementById('shamsiDate').textContent = '📅 ' + getShamsiDate();
   checkAuthStatus();
-  setInterval(checkAuthStatus, 1000); // هر یک ثانیه چک می‌کند تا تایمر دقیق باشد
+  setInterval(checkAuthStatus, 1000);
 </script>
 </body>
 </html>
