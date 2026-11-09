@@ -40,63 +40,23 @@
     gap: 15px;
   }
   
-  .logo {
-    width: 56px; height: 56px;
-    border-radius: 50%;
-    background: transparent; 
-    object-fit: contain; 
-    border: none; 
-    flex-shrink: 0;
-  }
-  .logo-fallback {
-    width: 52px; height: 52px; border-radius: 50%;
-    background: rgba(255,255,255,0.2); 
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px; color: #fff; font-weight: bold;
-    flex-shrink: 0;
-  }
-  #siteTitle {
-    font-size: 20px;
-    font-weight: 700;
-    user-select: none;
-    white-space: nowrap;
-  }
+  .logo { width: 56px; height: 56px; border-radius: 50%; background: transparent; object-fit: contain; border: none; flex-shrink: 0; }
+  .logo-fallback { width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 24px; color: #fff; font-weight: bold; flex-shrink: 0; }
+  #siteTitle { font-size: 20px; font-weight: 700; user-select: none; white-space: nowrap; }
   
-  .header-actions {
-    margin-right: auto;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+  .header-actions { margin-right: auto; display: flex; align-items: center; gap: 10px; }
   .header-date {
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    color: #fff;
-    white-space: nowrap;
+    background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap;
   }
   #logoutBtn {
-    background: rgba(255, 255, 255, 0.2);
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    display: none;
-    white-space: nowrap;
-    transition: background 0.2s;
+    background: rgba(255, 255, 255, 0.2); color: #fff; border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 6px 14px; border-radius: 8px; font-family: inherit; font-size: 13px; font-weight: 600;
+    cursor: pointer; display: none; white-space: nowrap; transition: background 0.2s;
   }
   #logoutBtn:hover { background: rgba(255,255,255,0.3); }
 
-  main {
-    flex: 1; max-width: 1100px; width: 100%; margin: 0 auto; padding: 40px 20px;
-  }
+  main { flex: 1; max-width: 1100px; width: 100%; margin: 0 auto; padding: 40px 20px; }
   .hero-title { text-align: center; color: var(--primary-dark); margin-bottom: 10px; font-size: 24px; }
   .hero-sub { text-align: center; color: #5a7292; margin-bottom: 40px; font-size: 14px; }
   .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
@@ -151,16 +111,21 @@
 
   .video-modal { max-width: 800px; padding: 20px; }
 
+  /* استایل تایمر معکوس */
+  .header-timer {
+    background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap;
+    display: none;
+  }
+
   @media (max-width: 600px) {
     .header-inner { flex-direction: column; gap: 12px; }
     #siteTitle { font-size: 18px; }
     .header-actions { margin-right: 0; width: 100%; justify-content: center; flex-wrap: wrap; }
-    .header-date, #logoutBtn { flex: 1; text-align: center; justify-content: center; padding: 8px; }
+    .header-date, #logoutBtn, .header-timer { flex: 1; text-align: center; justify-content: center; padding: 8px; }
   }
 
-  a.btn {
-    display: block; text-align: center; text-decoration: none; box-sizing: border-box;
-  }
+  a.btn { display: block; text-align: center; text-decoration: none; box-sizing: border-box; }
   .btn-contact { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; }
   .btn-subscribe { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
 </style>
@@ -175,6 +140,7 @@
     <h1 id="siteTitle" class="site-title">نامه‌های دهیاری <span id="header-village-name" style="font-size: 0.8em; font-weight: normal; opacity: 0.9;"></span></h1>
     
     <div class="header-actions">
+      <div class="header-timer" id="headerTimer">⏳ ۵:۰۰:۰۰</div>
       <div class="header-date" id="shamsiDate">📅 در حال بارگذاری...</div>
       <button id="logoutBtn" onclick="logout()">🚪 خروج</button>
     </div>
@@ -187,7 +153,6 @@
   
   <div class="cards">
     <a href="nameh.html" class="card"><div class="card-icon">✉️</div><h3>نامه دهیاری به ادارات</h3></a>
-    <a href="namehshoura.html" class="card"><div class="card-icon">✉️</div><h3>نامه شورای بخش</h3></a>
     <a href="contract.html" class="card"><div class="card-icon">📄</div><h3>قرارداد کار دهیاری</h3></a>
     <a href="status.html" class="card"><div class="card-icon">📋</div><h3>صورت وضعیت قرارداد</h3></a>
     <a href="council.html" class="card"><div class="card-icon">📑</div><h3>صورت جلسه شورا</h3></a>
@@ -238,6 +203,7 @@
 
   const AUTH_KEY = 'site_auth_expire';
   const PROFILE_KEY = 'site_user_profile';
+  const SESSION_DURATION_HOURS = 5; // 👈 مدت اعتبار نشست (به ساعت)
 
   // ============================================================
   // ۲. تقویم شمسی
@@ -262,33 +228,53 @@
   }
 
   // ============================================================
-  // ۳. بررسی وضعیت ورود
+  // ۳. بررسی وضعیت ورود و مدیریت زمان
   // ============================================================
+  let sessionInterval = null;
+
   function checkAuthStatus() {
     const savedExpire = localStorage.getItem(AUTH_KEY);
     const logoutBtn = document.getElementById('logoutBtn');
     const loginOverlay = document.getElementById('loginOverlay');
+    const timerEl = document.getElementById('headerTimer');
 
     if (!savedExpire) {
       loginOverlay.classList.add('active');
       if (logoutBtn) logoutBtn.style.display = 'none';
+      if (timerEl) timerEl.style.display = 'none';
+      if (sessionInterval) clearInterval(sessionInterval);
       return;
     }
     
     const expireTime = parseInt(savedExpire, 10);
-    if (isNaN(expireTime) || Date.now() >= expireTime) {
+    const now = Date.now();
+    
+    if (isNaN(expireTime) || now >= expireTime) {
       localStorage.removeItem(AUTH_KEY);
       localStorage.removeItem(PROFILE_KEY);
       loginOverlay.classList.add('active');
       document.getElementById('loginError').style.color = '#c0394f';
-      document.getElementById('loginError').textContent = '⏳ زمان دسترسی شما به پایان رسیده است.';
+      document.getElementById('loginError').textContent = '⏳ زمان نشست شما به پایان رسیده است. لطفاً دوباره وارد شوید.';
       if (logoutBtn) logoutBtn.style.display = 'none';
+      if (timerEl) timerEl.style.display = 'none';
+      if (sessionInterval) clearInterval(sessionInterval);
       return;
     }
     
     loginOverlay.classList.remove('active');
     if (logoutBtn) logoutBtn.style.display = 'block';
     
+    // نمایش تایمر معکوس
+    if (timerEl) {
+      timerEl.style.display = 'block';
+      const diff = expireTime - now;
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      timerEl.innerText = `⏳ ${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+    
+    // نمایش نام دهیاری
     const savedProfileStr = localStorage.getItem(PROFILE_KEY);
     if (savedProfileStr) {
         try {
@@ -311,7 +297,6 @@
     err.textContent = 'در حال بررسی...';
 
     try {
-      // جستجوی رمز در جدول Supabase
       const { data, error } = await supabaseClient
         .from('access_codes')
         .select('*')
@@ -324,17 +309,18 @@
         return;
       }
 
-      // بررسی تاریخ انقضا
+      // بررسی انقضای اصلی رمز (مثلاً 2 روز)
       const now = new Date();
       const expireTime = new Date(data.expires_at);
-      
       if (now > expireTime) {
         err.style.color = '#c0394f';
         err.textContent = '❌ این رمز منقضی شده است.';
         return;
       }
 
-      // 👇 ذخیره اطلاعات جدید در حافظه مرورگر (شامل اسامی شورا) 👇
+      // 👇 تعیین زمان نشست (Session) بر اساس ساعت مشخص شده 👇
+      const sessionEndTime = Date.now() + (SESSION_DURATION_HOURS * 60 * 60 * 1000);
+
       const profile = {
         villageName: data.village_name,
         employerName: data.employer_name,
@@ -344,7 +330,8 @@
       };
       
       localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
-      localStorage.setItem(AUTH_KEY, expireTime.getTime());
+      // ذخیره زمان اتمام نشست (نه تاریخ انقضای اصلی رمز)
+      localStorage.setItem(AUTH_KEY, sessionEndTime);
       
       err.style.color = '#1e8e4e';
       err.textContent = '✅ ورود موفق!';
@@ -352,11 +339,12 @@
         document.getElementById('loginOverlay').classList.remove('active');
         document.getElementById('logoutBtn').style.display = 'block';
         document.getElementById('header-village-name').innerText = `( دهیاری ${data.village_name} )`;
+        checkAuthStatus(); // شروع فوری تایمر
       }, 500);
 
     } catch (e) {
       err.style.color = '#c0394f';
-      err.textContent = '❌ خطا در ارتباط با سرور. اینترنت خود را بررسی کنید.';
+      err.textContent = '❌ خطا در ارتباط با سرور.';
       console.error(e);
     }
   }
@@ -392,7 +380,7 @@
   // ============================================================
   document.getElementById('shamsiDate').textContent = '📅 ' + getShamsiDate();
   checkAuthStatus();
-  setInterval(checkAuthStatus, 5000);
+  setInterval(checkAuthStatus, 1000); // هر یک ثانیه چک می‌کند تا تایمر دقیق باشد
 </script>
 </body>
 </html>
