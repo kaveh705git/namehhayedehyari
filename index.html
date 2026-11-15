@@ -40,13 +40,47 @@
     gap: 15px;
   }
 
- @keyframes spinCoin {
-    0% { transform: rotateY(0deg); }
-    100% { transform: rotateY(360deg); }
-}
-  .logo { width: 56px; height: 56px; border-radius: 50%; background: transparent; object-fit: contain; border: none; flex-shrink: 0; cursor: pointer; animation: spinCoin 4s linear infinite; 
-    transform-style: preserve-3d;
-    backface-visibility: hidden;}
+  /* ========================================= */
+  /* تنظیمات چرخش لوگو (بدون تغییر شکل ظاهری) */
+  /* ========================================= */
+  @keyframes spinCoin {
+      0% { transform: rotateY(0deg); }
+      100% { transform: rotateY(360deg); }
+  }
+
+  .logo-container {
+      width: 56px;
+      height: 56px;
+      perspective: 1000px; 
+      flex-shrink: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
+
+  .logo {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: spinCoin 4s linear infinite;
+  }
+
+  .logo img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: contain;
+      background: transparent;
+      /* این خط باعث می‌شود پشت عکس در حین چرخش دیده شود و ناپدید نشود */
+      backface-visibility: visible; 
+  }
+
+  .logo img.back {
+      transform: rotateY(180deg);
+  }
+
   .logo-fallback { width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 24px; color: #fff; font-weight: bold; flex-shrink: 0; }
   #siteTitle { font-size: 20px; font-weight: 700; user-select: none; white-space: nowrap; }
   
@@ -128,6 +162,10 @@
     #siteTitle { font-size: 18px; }
     .header-actions { margin-right: 0; width: 100%; justify-content: center; flex-wrap: wrap; }
     .header-date, #logoutBtn, .header-timer { flex: 1; text-align: center; justify-content: center; padding: 8px; }
+    
+    /* تنظیمات موبایل برای لوگو */
+    .logo-container { width: 48px; height: 48px; }
+    .logo { animation: spinCoin 3s linear infinite; }
   }
 
   a.btn { display: block; text-align: center; text-decoration: none; box-sizing: border-box; }
@@ -139,8 +177,16 @@
 
 <header>
   <div class="header-inner">
-    <img src="logo.png" alt="لوگو" class="logo" id="secretLogo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    
+  
+        <!-- 👇 کد جدید لوگو با چرخش سکه‌ای (بدون تکرار عکس) 👇 -->
+    <div class="logo-container" id="secretLogo">
+        <div class="logo">
+            <img src="logo.png" alt="لوگو" onerror="this.style.display='none'; document.getElementById('secretFallback').style.display='flex';">
+        </div>
+    </div>
     <div class="logo-fallback" id="secretFallback" style="display:none;">🏛</div>
+    <!-- 👆 پایان کد لوگو 👆 -->
     
     <h1 id="siteTitle" class="site-title">نامه‌های دهیاری <span id="header-village-name" style="font-size: 0.8em; font-weight: normal; opacity: 0.9;"></span></h1>
     
@@ -181,7 +227,7 @@
     <input type="password" id="loginPassword" placeholder="رمز عبور را وارد کنید" onkeydown="if(event.key==='Enter') doLogin()">
     
     <button class="btn" onclick="doLogin()">ورود</button>
-   <button class="btn btn-secondary" onclick="enterDemoMode()" style="margin-top:10px; background: #8b5cf6; color: white;">👁️ مشاهده دمو (بدون رمز)</button>
+    <button class="btn btn-secondary" onclick="enterDemoMode()" style="margin-top:10px; background: #8b5cf6; color: white;">👁️ مشاهده دمو (بدون رمز)</button>
     <button class="btn btn-secondary" onclick="openVideo()" style="margin-top:10px;">🎬 مشاهده ویدیو معرفی سایت</button>
     <a href="tel:09182716632" class="btn btn-contact" style="margin-top:10px;">📞 تماس با پشتیبانی</a>
     <a href="eshterak.html" class="btn btn-subscribe" style="margin-top:10px;">💳 تهیه اشتراک </a>
@@ -338,7 +384,7 @@
         return;
       }
 
-      // 👇 تعیین زمان نشست (Session) 5 ساعته 👇
+      // تعیین زمان نشست (Session) 
       const sessionEndTime = Date.now() + (SESSION_DURATION_HOURS * 60 * 60 * 1000);
 
       const profile = {
@@ -401,37 +447,31 @@
   checkAuthStatus();
   setInterval(checkAuthStatus, 1000);
 
- // ==========================================
-// تابع ورود به حالت دمو
-// ==========================================
-function enterDemoMode() {
-    // پاک کردن هرگونه رمز قبلی
-    localStorage.removeItem('site_auth_expire');
-    
-    // ساختن یک پروفایل تستی
-    const demoProfile = {
-        villageName: "دهیاری نمونه (دمو)",
-        employerName: "کاربر مهمان",
-        councilChairman: "رئیس شورا",
-        councilVice: "نایب رئیس",
-        councilSecretary: "منشی"
-    };
-    
-    // ذخیره پروفایل در حافظه
-    localStorage.setItem('site_user_profile', JSON.stringify(demoProfile));
-    
-    // ساختن یک تاریخ انقضای کوتاه (مثلاً ۱ ساعت)
-    const demoExpire = Date.now() + (1 * 60 * 60 * 1000);
-    localStorage.setItem('site_auth_expire', demoExpire);
-    
-    // بستن پنجره ورود و نمایش دکمه خروج
-    document.getElementById('loginOverlay').classList.remove('active');
-    document.getElementById('logoutBtn').style.display = 'block';
-    document.getElementById('header-village-name').innerText = `( دهیاری ${demoProfile.villageName} )`;
-    
-    // نمایش یک پیام خوش‌آمدگویی
-    alert('شما در حالت مشاهده (دمو) هستید. تغییرات شما ذخیره نخواهد شد و امکان چاپ وجود ندارد.');
-}
+  // ==========================================
+  // تابع ورود به حالت دمو
+  // ==========================================
+  function enterDemoMode() {
+      localStorage.removeItem('site_auth_expire');
+      
+      const demoProfile = {
+          villageName: "دهیاری نمونه (دمو)",
+          employerName: "کاربر مهمان",
+          councilChairman: "رئیس شورا",
+          councilVice: "نایب رئیس",
+          councilSecretary: "منشی"
+      };
+      
+      localStorage.setItem('site_user_profile', JSON.stringify(demoProfile));
+      
+      const demoExpire = Date.now() + (1 * 60 * 60 * 1000);
+      localStorage.setItem('site_auth_expire', demoExpire);
+      
+      document.getElementById('loginOverlay').classList.remove('active');
+      document.getElementById('logoutBtn').style.display = 'block';
+      document.getElementById('header-village-name').innerText = `( دهیاری ${demoProfile.villageName} )`;
+      
+      alert('شما در حالت مشاهده (دمو) هستید. تغییرات شما ذخیره نخواهد شد و امکان چاپ وجود ندارد.');
+  }
 </script>
 </body>
 </html>
