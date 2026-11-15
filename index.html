@@ -178,6 +178,8 @@
     <button class="btn btn-secondary" onclick="openVideo()" style="margin-top:10px;">🎬 مشاهده ویدیو معرفی سایت</button>
     <a href="tel:09182716632" class="btn btn-contact" style="margin-top:10px;">📞 تماس با پشتیبانی</a>
     <a href="eshterak.html" class="btn btn-subscribe" style="margin-top:10px;">💳 تهیه اشتراک </a>
+   <!-- 👇 دکمه مشاهده دمو 👇 -->
+<button class="btn btn-secondary" onclick="enterDemoMode()" style="margin-top:10px; background: #8b5cf6; color: white;">👁️ مشاهده دمو (بدون رمز)</button>
   </div>
 </div>
 
@@ -393,6 +395,38 @@
   document.getElementById('shamsiDate').textContent = '📅 ' + getShamsiDate();
   checkAuthStatus();
   setInterval(checkAuthStatus, 1000);
+
+ // ==========================================
+// تابع ورود به حالت دمو
+// ==========================================
+function enterDemoMode() {
+    // پاک کردن هرگونه رمز قبلی
+    localStorage.removeItem('site_auth_expire');
+    
+    // ساختن یک پروفایل تستی
+    const demoProfile = {
+        villageName: "دهیاری نمونه (دمو)",
+        employerName: "کاربر مهمان",
+        councilChairman: "رئیس شورا",
+        councilVice: "نایب رئیس",
+        councilSecretary: "منشی"
+    };
+    
+    // ذخیره پروفایل در حافظه
+    localStorage.setItem('site_user_profile', JSON.stringify(demoProfile));
+    
+    // ساختن یک تاریخ انقضای کوتاه (مثلاً ۱ ساعت)
+    const demoExpire = Date.now() + (1 * 60 * 60 * 1000);
+    localStorage.setItem('site_auth_expire', demoExpire);
+    
+    // بستن پنجره ورود و نمایش دکمه خروج
+    document.getElementById('loginOverlay').classList.remove('active');
+    document.getElementById('logoutBtn').style.display = 'block';
+    document.getElementById('header-village-name').innerText = `( دهیاری ${demoProfile.villageName} )`;
+    
+    // نمایش یک پیام خوش‌آمدگویی
+    alert('شما در حالت مشاهده (دمو) هستید. تغییرات شما ذخیره نخواهد شد و امکان چاپ وجود ندارد.');
+}
 </script>
 </body>
 </html>
