@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دریافت رمز عبور - نامه‌های دهیاری</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+  body {
+    background: linear-gradient(135deg, #e8f1fc 0%, #f0f6ff 100%);
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .card {
+    background: #fff; border-radius: 20px; padding: 40px 30px; width: 100%; max-width: 450px;
+    box-shadow: 0 20px 60px rgba(30, 95, 168, 0.15); text-align: center;
+    border-top: 5px solid var(--primary);
+  }
+  .icon { font-size: 50px; margin-bottom: 20px; }
+  h2 { color: #1e5fa8; margin-bottom: 15px; font-size: 22px; }
+  p { color: #5a7292; font-size: 14px; line-height: 1.8; margin-bottom: 25px; }
+  
+  .password-box {
+    background: #f0f6ff; border: 2px dashed #3b82d6; border-radius: 12px;
+    padding: 20px; font-size: 24px; font-weight: bold; color: #143f70;
+    letter-spacing: 2px; margin-bottom: 20px; display: none;
+  }
+  .btn {
+    background: linear-gradient(135deg, #3b82d6, #1e5fa8); color: #fff;
+    border: none; padding: 12px 30px; border-radius: 10px; font-family: inherit;
+    font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; width: 100%;
+    display: block; text-decoration: none; margin-top: 10px;
+  }
+  .btn:hover { filter: brightness(1.1); }
+  .btn-copy { background: #10b981; }
+  .loading { display: none; color: #e67e22; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="icon" id="statusIcon">⏳</div>
+  <h2 id="statusTitle">در حال بررسی پرداخت...</h2>
+  <p id="statusText">لطفاً صبر کنید. در حال دریافت اطلاعات از سرور.</p>
+  
+  <div class="password-box" id="passwordBox"></div>
+  
+  <button class="btn btn-copy" id="copyBtn" onclick="copyPassword()" style="display:none;">📋 کپی کردن رمز</button>
+  <a href="index.html" class="btn" id="loginBtn" style="display:none;">ورود به سایت</a>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://wwyqxkoeynddidazcyqu.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_aLuEZf5O2PqDk8DPlQNWDA_GboMVOUN';
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // خواندن توکن از آدرس (مثلاً delivery.html?token=abc123)
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get('token');
+
+  async function fetchPassword() {
+    if (!token) {
+      document.getElementById('statusIcon').innerText = '❌';
+      document.getElementById('statusTitle').innerText = 'لینک نامعتبر است';
+      document.getElementById('statusText').innerText = 'لینک پرداخت شما معتبر نیست. لطفاً با پشتیبانی تماس بگیرید.';
+      return;
+    }
+
+    try {
+      const { data, error } = await supabaseClient
+        .from('payment_links')
+        .select('*')
+        .eq('token', token)
+        .single();
+
+      if (error || !data) {
+        document.getElementById('statusIcon').innerText = '❌';
+        document.getElementById('statusTitle').innerText = 'لینک پیدا نشد';
+        document.getElementById('statusText').innerText = 'این لینک در سیستم ثبت نشده است.';
+        return;
+      }
+
+      if (data.password) {
+        // رمز تنظیم شده است
+        document.getElementById('statusIcon').innerText = '🎉';
+        document.getElementById('statusTitle').innerText = 'پرداخت با موفقیت انجام شد!';
+        document.getElementById('statusText').innerText = 'رمز عبور اختصاصی شما آماده است:';
+        document.getElementById('passwordBox').innerText = data.password;
+        document.getElementById('passwordBox').style.display = 'block';
+        document.getElementById('copyBtn').style.display = 'block';
+        document.getElementById('loginBtn').style.display = 'block';
+      } else {
+        // هنوز رمز تنظیم نشده است (مدیر باید رمز را ثبت کند)
+        document.getElementById('statusIcon').innerText = '⏳';
+        document.getElementById('statusTitle').innerText = 'در حال تایید پرداخت';
+        document.getElementById('statusText').innerText = 'ما در حال بررسی پرداخت شما هستیم. این صفحه هر ۱۰ ثانیه به‌روزرسانی می‌شود. لطفاً صفحه را باز نگه دارید.';
+        setTimeout(fetchPassword, 10000); // هر ۱۰ ثانیه دوباره چک می‌کند
+      }
+
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function copyPassword() {
+    const pass = document.getElementById('passwordBox').innerText;
+    navigator.clipboard.writeText(pass).then(() => {
+      alert('رمز عبور کپی شد!');
+    });
+  }
+
+  fetchPassword();
+</script>
+</body>
+</html>
