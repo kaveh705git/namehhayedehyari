@@ -54,9 +54,15 @@
   }
   .plan-card.selected .check-icon { display: flex; }
 
-  /* ===== استایل فرم ===== */
-  .form-group { margin-bottom: 15px; }
-  .form-group label { display: block; font-size: 14px; font-weight: 600; color: #334155; margin-bottom: 5px; }
+  /* ===== استایل فرم (دو ستونه) ===== */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* دو ستون مساوی */
+    gap: 15px 20px;
+  }
+
+  .form-group { display: flex; flex-direction: column; }
+  .form-group label { font-size: 14px; font-weight: 600; color: #334155; margin-bottom: 5px; }
   .form-group input {
     width: 100%; padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 8px;
     font-family: inherit; font-size: 14px; transition: border 0.2s;
@@ -66,17 +72,15 @@
   .btn {
     background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none;
     padding: 15px; border-radius: 10px; font-family: inherit; font-size: 16px; font-weight: bold;
-    cursor: pointer; width: 100%; margin-top: 20px; transition: all 0.2s;
+    cursor: pointer; width: 100%; margin-top: 25px; transition: all 0.2s;
   }
   .btn:hover { filter: brightness(1.1); }
   .btn:disabled { background: #ccc; cursor: not-allowed; }
 
-  /* ===== ریسپانسیو برای موبایل ===== */
-  @media (max-width: 600px) {
-    .container { padding: 20px; }
-    h1 { font-size: 20px; }
-    .plans-grid { grid-template-columns: 1fr; } /* تک ستونه در موبایل */
-    .plan-card { padding: 15px; }
+  /* ===== ریسپانسیو ===== */
+  @media (max-width: 768px) {
+    .plans-grid { grid-template-columns: 1fr; } /* پلن‌ها تک ستونه در موبایل */
+    .form-grid { grid-template-columns: 1fr; } /* فرم تک ستونه در موبایل */
   }
 </style>
 </head>
@@ -90,44 +94,36 @@
 
   <!-- پلن‌ها -->
   <div class="plans-grid">
-    <!-- پلن ۱ ماهه -->
     <div class="plan-card" onclick="selectPlan(this, 'یک ماهه')">
       <div class="check-icon">✓</div>
       <h3>یک ماهه</h3>
       <div class="price">۵۰۰,۰۰۰ تومان</div>
-      <div class="plan-features">
-        <span>🎁 یک گیگ فیلترشکن ماهانه</span>
-      </div>
+      <div class="plan-features"><span>🎁 گیگ فیلترشکن ماهانه</span></div>
     </div>
 
-    <!-- پلن ۳ ماهه -->
     <div class="plan-card" onclick="selectPlan(this, 'سه ماهه')">
       <div class="check-icon">✓</div>
       <h3>سه ماهه</h3>
       <div class="price">۱,۳۵۰,۰۰۰ تومان</div>
-      <div class="plan-features">
-        <span>🎁 یک گیگ فیلترشکن ماهانه</span>
-      </div>
+      <div class="plan-features"><span>🎁 گیگ فیلترشکن ماهانه</span></div>
     </div>
 
-    <!-- پلن ۶ ماهه -->
     <div class="plan-card" onclick="selectPlan(this, 'شش ماهه')">
       <div class="check-icon">✓</div>
       <h3>شش ماهه</h3>
       <div class="price">۲,۵۰۰,۰۰۰ تومان</div>
       <div class="plan-features">
-        <span>🎁  یک گیگ فیلترشکن ماهانه</span>
+        <span>🎁 گیگ فیلترشکن ماهانه</span>
         <span class="feature-blue">🎁 ثبت فاکتور در مالیات</span>
       </div>
     </div>
 
-    <!-- پلن ۱۲ ماهه -->
     <div class="plan-card" onclick="selectPlan(this, 'دوازده ماهه')">
       <div class="check-icon">✓</div>
       <h3>دوازده ماهه</h3>
       <div class="price">۴,۰۰۰,۰۰۰ تومان</div>
       <div class="plan-features">
-        <span>🎁  یک گیگ فیلترشکن ماهانه</span>
+        <span>🎁 گیگ فیلترشکن ماهانه</span>
         <span class="feature-blue">🎁 ثبت فاکتور در مالیات</span>
       </div>
     </div>
@@ -137,35 +133,38 @@
   <div class="section-title">اطلاعات دهیاری</div>
   <form id="subForm" onsubmit="submitRequest(event)">
     
-    <div class="form-group">
-      <label>نام و نام خانوادگی دهیار</label>
-      <input type="text" id="dehyarName" required placeholder="مثلاً: کاوه عبدی">
-    </div>
+    <div class="form-grid">
+      <!-- ستون راست (از نظر چیدمان ظاهری، در RTL ستون اول سمت راست است) -->
+      <div class="form-group">
+        <label>نام و نام خانوادگی دهیار</label>
+        <input type="text" id="dehyarName" required placeholder="مثلاً: کاوه عبدی">
+      </div>
 
-    <!-- 👇 فیلد شماره تماس اضافه شد 👇 -->
-    <div class="form-group">
-      <label>شماره تماس دهیار</label>
-      <input type="tel" id="dehyarPhone" required placeholder="مثلاً: 09123456789">
-    </div>
+      <div class="form-group">
+        <label>نام روستا</label>
+        <input type="text" id="villageName" required placeholder="مثلاً: تموغه">
+      </div>
 
-    <div class="form-group">
-      <label>نام روستا</label>
-      <input type="text" id="villageName" required placeholder="مثلاً: تموغه">
-    </div>
+      <div class="form-group">
+        <label>شماره تماس دهیار</label>
+        <input type="tel" id="dehyarPhone" required placeholder="مثلاً: ۰۹۱۲۳۴۵۶۷۸۹" oninput="convertToPersian(this)">
+      </div>
 
-    <div class="form-group">
-      <label>نام و نام خانوادگی رئیس شورا</label>
-      <input type="text" id="chairman" required placeholder="نام رئیس شورا">
-    </div>
+      <!-- ستون چپ -->
+      <div class="form-group">
+        <label>نام و نام خانوادگی رئیس شورا</label>
+        <input type="text" id="chairman" required placeholder="نام رئیس شورا">
+      </div>
 
-    <div class="form-group">
-      <label>نام و نام خانوادگی نایب رئیس شورا</label>
-      <input type="text" id="vice" required placeholder="نام نایب رئیس">
-    </div>
+      <div class="form-group">
+        <label>نام و نام خانوادگی نایب رئیس شورا</label>
+        <input type="text" id="vice" required placeholder="نام نایب رئیس">
+      </div>
 
-    <div class="form-group">
-      <label>نام و نام خانوادگی منشی شورا</label>
-      <input type="text" id="secretary" required placeholder="نام منشی">
+      <div class="form-group">
+        <label>نام و نام خانوادگی منشی شورا</label>
+        <input type="text" id="secretary" required placeholder="نام منشی">
+      </div>
     </div>
     
     <button type="submit" class="btn" id="submitBtn">ثبت درخواست و دریافت لینک پرداخت</button>
@@ -178,6 +177,15 @@
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   let selectedPlan = "";
+
+  // تابع تبدیل اعداد به فارسی
+  function convertToPersian(input) {
+    const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    let val = input.value;
+    input.value = val.replace(/[0-9]/g, function(w) {
+      return persianDigits[+w];
+    });
+  }
 
   function selectPlan(element, planName) {
     document.querySelectorAll('.plan-card').forEach(card => card.classList.remove('selected'));
@@ -200,7 +208,7 @@
     const data = {
       plan_name: selectedPlan,
       dehyar_name: document.getElementById('dehyarName').value.trim(),
-      dehyar_phone: document.getElementById('dehyarPhone').value.trim(), // 👈 شماره تماس
+      dehyar_phone: document.getElementById('dehyarPhone').value.trim(), 
       village_name: document.getElementById('villageName').value.trim(),
       council_chairman: document.getElementById('chairman').value.trim(),
       council_vice: document.getElementById('vice').value.trim(),
@@ -214,7 +222,6 @@
 
       alert('✅ درخواست شما با موفقیت ثبت شد.\nلطفاً منتظر بمانید تا لینک پرداخت برای شما ارسال شود.');
       
-      // پاک کردن فرم
       document.getElementById('subForm').reset();
       document.querySelectorAll('.plan-card').forEach(card => card.classList.remove('selected'));
       selectedPlan = "";
