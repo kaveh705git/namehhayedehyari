@@ -7,93 +7,143 @@
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- 👇👇 کد نگهبان (بررسی لاگین) 👇👇 -->
-<script>
-  (function() {
-    // این صفحه برای خرید است، پس نیازی نیست کاربر از قبل لاگین کرده باشد.
-    // کد نگهبان اینجا فقط برای این است که اگر کاربر به طور ناخواسته با لینک اشتباه وارد شد، مدیریت شود.
-    // در حال حاضر این صفحه برای همه باز است.
-  })();
-</script>
-<!-- 👆👆 پایان کد نگهبان 👆👆 -->
-
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Vazirmatn', Tahoma, sans-serif; }
   
   body {
     background: linear-gradient(135deg, #f0f6ff 0%, #e8f1fc 100%);
-    min-height: 100vh; padding: 20px; display: flex; justify-content: center;
+    min-height: 100vh; 
+    padding: 40px 20px; 
+    display: flex; 
+    justify-content: center;
+    align-items: flex-start;
   }
 
   .container {
-    background: #fff; border-radius: 20px; padding: 30px; width: 100%; max-width: 800px;
-    box-shadow: 0 10px 40px rgba(30, 95, 168, 0.1); height: fit-content;
+    background: #fff; 
+    border-radius: 24px; 
+    padding: 50px 60px; 
+    width: 100%; 
+    max-width: 1100px; /* 👈 عریض‌تر شد */
+    box-shadow: 0 15px 50px rgba(30, 95, 168, 0.15);
+    height: fit-content;
   }
 
-  h1 { color: #1e5fa8; text-align: center; margin-bottom: 10px; font-size: 24px; }
-  .subtitle { text-align: center; color: #5a7292; font-size: 14px; margin-bottom: 30px; }
-  .section-title { font-size: 16px; font-weight: bold; color: #334155; margin-bottom: 15px; text-align: right; }
+  h1 { 
+    color: #1e5fa8; 
+    text-align: center; 
+    margin-bottom: 15px; 
+    font-size: 32px; /* 👈 درشت‌تر */
+    font-weight: 800;
+  }
+  
+  .subtitle { 
+    text-align: center; 
+    color: #5a7292; 
+    font-size: 18px; /* 👈 درشت‌تر */
+    margin-bottom: 40px; 
+  }
+  
+  .section-title { 
+    font-size: 22px; /* 👈 درشت‌تر */
+    font-weight: 700; 
+    color: #1e3a5f; 
+    margin-bottom: 25px; 
+    text-align: right;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 10px;
+  }
 
   /* ===== استایل پلن‌ها ===== */
   .plans-grid { 
     display: grid; 
     grid-template-columns: repeat(2, 1fr); 
-    gap: 15px; 
-    margin-bottom: 30px; 
+    gap: 25px; 
+    margin-bottom: 50px; 
   }
   
   .plan-card {
-    border: 2px solid #e2e8f0; border-radius: 12px; padding: 20px; cursor: pointer; 
-    transition: all 0.2s; text-align: center; position: relative; background: #fff;
+    border: 2px solid #e2e8f0; 
+    border-radius: 16px; 
+    padding: 30px; /* 👈 بزرگ‌تر شد */
+    cursor: pointer; 
+    transition: all 0.2s; 
+    text-align: center; 
+    position: relative; 
+    background: #fff;
   }
-  .plan-card:hover { border-color: #3b82d6; transform: translateY(-2px); }
-  .plan-card.selected { border-color: #1e5fa8; background: #f0f6ff; box-shadow: 0 4px 15px rgba(30, 95, 168, 0.15); }
+  .plan-card:hover { border-color: #3b82d6; transform: translateY(-4px); box-shadow: 0 10px 25px rgba(30, 95, 168, 0.1); }
+  .plan-card.selected { border-color: #1e5fa8; background: #f0f6ff; box-shadow: 0 8px 25px rgba(30, 95, 168, 0.2); }
   
-  .plan-card h3 { color: #1e5fa8; font-size: 16px; margin-bottom: 10px; }
-  .plan-card .price { font-size: 18px; font-weight: bold; color: #111; margin-bottom: 10px; }
+  .plan-card h3 { color: #1e5fa8; font-size: 22px; margin-bottom: 15px; font-weight: 700; }
+  .plan-card .price { font-size: 26px; font-weight: 800; color: #111; margin-bottom: 15px; }
   
-  .plan-features { display: flex; flex-direction: column; gap: 5px; }
+  .plan-features { display: flex; flex-direction: column; gap: 8px; align-items: center; }
   .plan-features span {
-    display: inline-block; background: #e6f4ea; color: #1e8e4e; padding: 3px 8px; 
-    border-radius: 5px; font-size: 11px; font-weight: bold;
+    display: inline-block; background: #e6f4ea; color: #1e8e4e; padding: 6px 12px; 
+    border-radius: 8px; font-size: 14px; font-weight: bold;
   }
   .plan-features .feature-blue { background: #e0f2fe; color: #0369a1; }
   
   .check-icon {
-    display: none; position: absolute; top: -10px; right: -10px; width: 26px; height: 26px;
-    background: #3b82d6; color: white; border-radius: 50%; justify-content: center; align-items: center; font-size: 14px;
+    display: none; position: absolute; top: -15px; right: -15px; width: 36px; height: 36px;
+    background: #3b82d6; color: white; border-radius: 50%; justify-content: center; align-items: center; font-size: 20px;
+    border: 3px solid #fff;
   }
   .plan-card.selected .check-icon { display: flex; }
 
-  /* ===== استایل فرم (دو ستونه) ===== */
+  /* ===== استایل فرم ===== */
   .form-row {
     display: flex;
-    gap: 15px;
-    margin-bottom: 15px;
+    gap: 25px;
+    margin-bottom: 20px;
   }
   .form-group { flex: 1; }
-  .form-group label { display: block; font-size: 14px; font-weight: 600; color: #334155; margin-bottom: 5px; }
+  .form-group label { display: block; font-size: 16px; font-weight: 600; color: #334155; margin-bottom: 8px; } /* 👈 درشت‌تر */
   .form-group input {
-    width: 100%; padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 8px;
-    font-family: inherit; font-size: 14px; transition: border 0.2s;
+    width: 100%; 
+    padding: 14px 20px; /* 👈 بزرگ‌تر */
+    border: 2px solid #cbd5e1; 
+    border-radius: 10px;
+    font-family: inherit; 
+    font-size: 16px; /* 👈 درشت‌تر */
+    transition: border 0.2s;
   }
-  .form-group input:focus { outline: none; border-color: #3b82d6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+  .form-group input:focus { outline: none; border-color: #3b82d6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15); }
   
   .btn {
-    background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none;
-    padding: 15px; border-radius: 10px; font-family: inherit; font-size: 16px; font-weight: bold;
-    cursor: pointer; width: 100%; margin-top: 20px; transition: all 0.2s;
+    background: linear-gradient(135deg, #10b981, #059669); 
+    color: #fff; 
+    border: none;
+    padding: 18px; /* 👈 دکمه بزرگ‌تر */
+    border-radius: 12px; 
+    font-family: inherit; 
+    font-size: 18px; /* 👈 درشت‌تر */
+    font-weight: bold;
+    cursor: pointer; 
+    width: 100%; 
+    margin-top: 30px; 
+    transition: all 0.2s;
   }
-  .btn:hover { filter: brightness(1.1); }
-  .btn:disabled { background: #ccc; cursor: not-allowed; }
+  .btn:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); }
+  .btn:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
 
   /* ===== ریسپانسیو برای موبایل ===== */
-  @media (max-width: 600px) {
-    .container { padding: 20px; }
-    h1 { font-size: 20px; }
-    .plans-grid { grid-template-columns: 1fr; }
-    .plan-card { padding: 15px; }
+  @media (max-width: 768px) {
+    .container { padding: 30px 20px; }
+    h1 { font-size: 24px; }
+    .subtitle { font-size: 14px; margin-bottom: 30px; }
+    .section-title { font-size: 18px; }
+    
+    .plans-grid { grid-template-columns: 1fr; gap: 15px; margin-bottom: 30px; }
+    .plan-card { padding: 20px; }
+    .plan-card h3 { font-size: 18px; }
+    .plan-card .price { font-size: 20px; }
+    
     .form-row { flex-direction: column; gap: 15px; margin-bottom: 15px; }
+    .form-group label { font-size: 14px; }
+    .form-group input { padding: 12px 15px; font-size: 14px; }
+    .btn { padding: 15px; font-size: 16px; margin-top: 20px; }
   }
 </style>
 </head>
@@ -105,19 +155,24 @@
 
   <div class="section-title">انتخاب نوع اشتراک</div>
 
+  <!-- پلن‌ها -->
   <div class="plans-grid">
     <div class="plan-card selected" onclick="selectPlan(this, 'یک ماهه')">
       <div class="check-icon">✓</div>
       <h3>یک ماهه</h3>
       <div class="price">۵۰۰,۰۰۰ تومان</div>
-      <div class="plan-features"><span>🎁 یک گیگ فیلترشکن ماهانه</span></div>
+      <div class="plan-features">
+        <span>🎁 یک گیگ فیلترشکن ماهانه</span>
+      </div>
     </div>
 
     <div class="plan-card" onclick="selectPlan(this, 'سه ماهه')">
       <div class="check-icon">✓</div>
       <h3>سه ماهه</h3>
       <div class="price">۱,۳۵۰,۰۰۰ تومان</div>
-      <div class="plan-features"><span>🎁 یک گیگ فیلترشکن ماهانه</span></div>
+      <div class="plan-features">
+        <span>🎁 یک گیگ فیلترشکن ماهانه</span>
+      </div>
     </div>
 
     <div class="plan-card" onclick="selectPlan(this, 'شش ماهه')">
@@ -141,8 +196,10 @@
     </div>
   </div>
 
+  <!-- فرم اطلاعات -->
   <div class="section-title">اطلاعات دهیاری</div>
   <form id="subForm" onsubmit="submitRequest(event)">
+    
     <div class="form-row">
       <div class="form-group">
         <label>نام روستا</label>
@@ -181,9 +238,7 @@
 </div>
 
 <script>
-  // ============================================================
-  // ۰. غیرفعال کردن کلیک راست و دکمه‌های بازرسی (F12)
-  // ============================================================
+  // غیرفعال کردن کلیک راست و F12
   document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
   document.addEventListener('keydown', function(e) {
       if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); return false; }
