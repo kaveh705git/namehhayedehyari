@@ -14,7 +14,11 @@
   .info-row { display: flex; justify-content: space-between; font-size: 16px; margin-bottom: 15px; font-weight: bold; }
   .info-row:last-child { margin-bottom: 0; }
   .card-number { font-size: 22px; color: #143f70; letter-spacing: 2px; direction: ltr; margin-top: 10px; }
-  .btn { background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 15px; border-radius: 10px; font-family: inherit; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; text-decoration: none; display: block; }
+  
+  /* 👇 استایل جدید برای نام صاحب کارت 👇 */
+  .card-owner { font-size: 14px; color: #5a7292; margin-top: 5px; font-weight: bold; }
+  
+  .btn { background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 15px; border-radius: 10px; font-family: inherit; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; text-decoration: none; display: block; margin-top: 20px; }
   .btn:hover { filter: brightness(1.1); }
   .note { font-size: 13px; color: #c0394f; margin-top: 15px; }
 </style>
@@ -38,6 +42,8 @@
   <div class="info-box">
     <span style="font-size: 14px; color: #555;">شماره کارت جهت واریز:</span>
     <div class="card-number" id="cardNumber"></div>
+    <!-- 👇 نام صاحب کارت اضافه شد 👇 -->
+    <div class="card-owner" id="cardOwnerName"></div>
   </div>
 
   <a href="#" id="goToDeliveryBtn" class="btn">✅ پرداخت کردم، دریافت رمز</a>
@@ -45,9 +51,10 @@
 </div>
 
 <script>
-  // 👇 شماره کارت خود را اینجا وارد کنید 👇
-  const MY_CARD_NUMBER = "5022-2910-9825-7650";
+  // 👇 شماره کارت و نام خود را اینجا وارد کنید 👇
+  const MY_CARD_NUMBER = "6037-9911-1234-5678";
   const MY_NAME = "به نام: کاوه عبدی"; // نام شما
+  
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get('token');
   const plan = urlParams.get('plan');
@@ -56,6 +63,9 @@
   document.getElementById('planName').innerText = plan;
   document.getElementById('planPrice').innerText = price + " تومان";
   document.getElementById('cardNumber').innerText = MY_CARD_NUMBER;
+  
+  // نمایش نام صاحب کارت
+  document.getElementById('cardOwnerName').innerText = MY_NAME;
 
   // دکمه انتقال به صفحه دریافت رمز
   document.getElementById('goToDeliveryBtn').href = `delivery.html?token=${token}`;
