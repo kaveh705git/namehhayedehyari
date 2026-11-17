@@ -215,10 +215,19 @@
     btn.disabled = true;
     btn.innerText = 'در حال ثبت...';
 
+    // 👇 ساخت یک توکن یکتا برای این مشتری 👇
+    const generatedToken = 'dehyari-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+
+    // تعیین مبلغ بر اساس پلن
+    let planPrice = "۵۰۰,۰۰۰";
+    if (selectedPlan === "سه ماهه") planPrice = "۱,۳۵۰,۰۰۰";
+    if (selectedPlan === "شش ماهه") planPrice = "۲,۵۰۰,۰۰۰";
+    if (selectedPlan === "دوازده ماهه") planPrice = "۴,۰۰۰,۰۰۰";
+
     const data = {
       plan_name: selectedPlan,
       dehyar_name: document.getElementById('dehyarName').value.trim(),
-      dehyar_phone: document.getElementById('dehyarPhone').value.trim(),
+      dehyar_phone: document.getElementById('dehyarPhone').value.trim(), 
       village_name: document.getElementById('villageName').value.trim(),
       council_chairman: document.getElementById('chairman').value.trim(),
       council_vice: document.getElementById('vice').value.trim(),
@@ -226,23 +235,22 @@
     };
 
     try {
-      const { error } = await supabaseClient.from('subscription_requests').insert([data]);
-      
-      if (error) throw error;
+      // ۱. ذخیره درخواست در جدول subscription_requests
+      const { error: subError } = await supabaseClient.from('subscription_requests').insert([data]);
+      if (subError) throw subError;
 
-      alert('✅ درخواست شما با موفقیت ثبت شد.\nلطفاً منتظر بمانید تا لینک پرداخت برای شما ارسال شود.');
-      
-      // پاک کردن فرم
-      document.getElementById('subForm').reset();
-      document.querySelectorAll('.plan-card').forEach(card => card.classList.remove('selected'));
-      // برگرداندن حالت انتخاب به پلن اول
-      document.querySelector('.plan-card').classList.add('selected');
-      selectedPlan = "یک ماهه";
-      
+      // ۲. ساخت یک لینک پرداخت خالی با توکن تولید شده در جدول payment_links
+      const { error: linkError } = await supabaseClient.from('payment_links').insert([
+        { token: generatedToken, password: null }
+      ]);
+      if (linkError) throw linkError;
+
+      // ۳. هدایت کاربر به صفحه پرداخت
+      window.location.href = `payment.html?token=${generatedToken}&plan=${encodeURIComponent(selectedPlan)}&price=${encodeURIComponent(planPrice)}`;
+
     } catch (err) {
       console.error(err);
       alert('❌ خطا در ثبت درخواست. لطفاً دوباره تلاش کنید.');
-    } finally {
       btn.disabled = false;
       btn.innerText = 'ثبت درخواست و دریافت لینک پرداخت';
     }
