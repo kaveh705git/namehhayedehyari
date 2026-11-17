@@ -91,6 +91,13 @@
         document.getElementById('passwordBox').style.display = 'block';
         document.getElementById('copyBtn').style.display = 'block';
         document.getElementById('loginBtn').style.display = 'block';
+               if (data.is_used === false) {
+            await supabaseClient
+                .from('payment_links')
+                .update({ is_used: true })
+                .eq('token', token);
+        }
+        // 👆 پایان بخش جدید 👆
       } else {
         // هنوز رمز تنظیم نشده است (مدیر باید رمز را ثبت کند)
         document.getElementById('statusIcon').innerText = '⏳';
