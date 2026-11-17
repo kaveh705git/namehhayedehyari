@@ -14,10 +14,7 @@
   .info-row { display: flex; justify-content: space-between; font-size: 16px; margin-bottom: 15px; font-weight: bold; }
   .info-row:last-child { margin-bottom: 0; }
   .card-number { font-size: 22px; color: #143f70; letter-spacing: 2px; direction: ltr; margin-top: 10px; }
-  
-  /* 👇 استایل جدید برای نام صاحب کارت 👇 */
   .card-owner { font-size: 14px; color: #5a7292; margin-top: 5px; font-weight: bold; }
-  
   .btn { background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 15px; border-radius: 10px; font-family: inherit; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; text-decoration: none; display: block; margin-top: 20px; }
   .btn:hover { filter: brightness(1.1); }
   .note { font-size: 13px; color: #c0394f; margin-top: 15px; }
@@ -42,7 +39,6 @@
   <div class="info-box">
     <span style="font-size: 14px; color: #555;">شماره کارت جهت واریز:</span>
     <div class="card-number" id="cardNumber"></div>
-    <!-- 👇 نام صاحب کارت اضافه شد 👇 -->
     <div class="card-owner" id="cardOwnerName"></div>
   </div>
 
@@ -51,24 +47,41 @@
 </div>
 
 <script>
+  // ============================================================
+  // ۰. غیرفعال کردن کلیک راست و دکمه‌های بازرسی (F12)
+  // ============================================================
+  document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+  document.addEventListener('keydown', function(e) {
+      if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); return false; }
+      if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) { e.preventDefault(); return false; }
+      if (e.ctrlKey && (e.key === 'U' || e.keyCode === 85)) { e.preventDefault(); return false; }
+  });
+
+  // ============================================================
+  // ۱. تنظیمات صفحه پرداخت
+  // ============================================================
   // 👇 شماره کارت و نام خود را اینجا وارد کنید 👇
-  const MY_CARD_NUMBER = "6037-9911-1234-5678";
-  const MY_NAME = "به نام: کاوه عبدی"; // نام شما
+  const MY_CARD_NUMBER = "5022-2910-9825-7650";
+  const MY_NAME = "به نام: کاوه عبدی"; 
   
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get('token');
   const plan = urlParams.get('plan');
   const price = urlParams.get('price');
 
-  document.getElementById('planName').innerText = plan;
-  document.getElementById('planPrice').innerText = price + " تومان";
-  document.getElementById('cardNumber').innerText = MY_CARD_NUMBER;
-  
-  // نمایش نام صاحب کارت
-  document.getElementById('cardOwnerName').innerText = MY_NAME;
+  // 👇 بررسی اعتبار توکن (کد نگهبان مخصوص این صفحه) 👇
+  if (!token) {
+      alert('❌ لینک پرداخت نامعتبر است. لطفاً دوباره از صفحه اشتراک اقدام کنید.');
+      window.location.href = 'eshterak.html';
+  } else {
+      document.getElementById('planName').innerText = plan;
+      document.getElementById('planPrice').innerText = price + " تومان";
+      document.getElementById('cardNumber').innerText = MY_CARD_NUMBER;
+      document.getElementById('cardOwnerName').innerText = MY_NAME;
 
-  // دکمه انتقال به صفحه دریافت رمز
-  document.getElementById('goToDeliveryBtn').href = `delivery.html?token=${token}`;
+      // دکمه انتقال به صفحه دریافت رمز
+      document.getElementById('goToDeliveryBtn').href = `delivery.html?token=${token}`;
+  }
 </script>
 </body>
 </html>
