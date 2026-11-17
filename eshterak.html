@@ -6,6 +6,17 @@
 <title>تهیه اشتراک - نامه‌های دهیاری</title>
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- 👇👇 کد نگهبان (بررسی لاگین) 👇👇 -->
+<script>
+  (function() {
+    // این صفحه برای خرید است، پس نیازی نیست کاربر از قبل لاگین کرده باشد.
+    // کد نگهبان اینجا فقط برای این است که اگر کاربر به طور ناخواسته با لینک اشتباه وارد شد، مدیریت شود.
+    // در حال حاضر این صفحه برای همه باز است.
+  })();
+</script>
+<!-- 👆👆 پایان کد نگهبان 👆👆 -->
+
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Vazirmatn', Tahoma, sans-serif; }
   
@@ -48,7 +59,6 @@
   }
   .plan-features .feature-blue { background: #e0f2fe; color: #0369a1; }
   
-  /* اصلاح آیکون تیک */
   .check-icon {
     display: none; position: absolute; top: -10px; right: -10px; width: 26px; height: 26px;
     background: #3b82d6; color: white; border-radius: 50%; justify-content: center; align-items: center; font-size: 14px;
@@ -81,10 +91,8 @@
   @media (max-width: 600px) {
     .container { padding: 20px; }
     h1 { font-size: 20px; }
-    .plans-grid { grid-template-columns: 1fr; } /* تک ستونه در موبایل */
+    .plans-grid { grid-template-columns: 1fr; }
     .plan-card { padding: 15px; }
-    
-    /* در موبایل فرم‌ها تک ستونه شوند */
     .form-row { flex-direction: column; gap: 15px; margin-bottom: 15px; }
   }
 </style>
@@ -97,29 +105,21 @@
 
   <div class="section-title">انتخاب نوع اشتراک</div>
 
-  <!-- پلن‌ها -->
   <div class="plans-grid">
-    <!-- پلن ۱ ماهه (به صورت پیش‌فرض انتخاب شده) -->
     <div class="plan-card selected" onclick="selectPlan(this, 'یک ماهه')">
       <div class="check-icon">✓</div>
       <h3>یک ماهه</h3>
       <div class="price">۵۰۰,۰۰۰ تومان</div>
-      <div class="plan-features">
-        <span>🎁 یک گیگ فیلترشکن ماهانه</span>
-      </div>
+      <div class="plan-features"><span>🎁 یک گیگ فیلترشکن ماهانه</span></div>
     </div>
 
-    <!-- پلن ۳ ماهه -->
     <div class="plan-card" onclick="selectPlan(this, 'سه ماهه')">
       <div class="check-icon">✓</div>
       <h3>سه ماهه</h3>
       <div class="price">۱,۳۵۰,۰۰۰ تومان</div>
-      <div class="plan-features">
-        <span>🎁 یک گیگ فیلترشکن ماهانه</span>
-      </div>
+      <div class="plan-features"><span>🎁 یک گیگ فیلترشکن ماهانه</span></div>
     </div>
 
-    <!-- پلن ۶ ماهه -->
     <div class="plan-card" onclick="selectPlan(this, 'شش ماهه')">
       <div class="check-icon">✓</div>
       <h3>شش ماهه</h3>
@@ -130,7 +130,6 @@
       </div>
     </div>
 
-    <!-- پلن ۱۲ ماهه -->
     <div class="plan-card" onclick="selectPlan(this, 'دوازده ماهه')">
       <div class="check-icon">✓</div>
       <h3>دوازده ماهه</h3>
@@ -142,11 +141,8 @@
     </div>
   </div>
 
-  <!-- فرم اطلاعات -->
   <div class="section-title">اطلاعات دهیاری</div>
   <form id="subForm" onsubmit="submitRequest(event)">
-    
-    <!-- ردیف اول: راست (روستا) - چپ (رئیس شورا) -->
     <div class="form-row">
       <div class="form-group">
         <label>نام روستا</label>
@@ -158,7 +154,6 @@
       </div>
     </div>
 
-    <!-- ردیف دوم: راست (دهیار) - چپ (نایب رئیس) -->
     <div class="form-row">
       <div class="form-group">
         <label>نام و نام خانوادگی دهیار</label>
@@ -170,7 +165,6 @@
       </div>
     </div>
 
-    <!-- ردیف سوم: راست (شماره تماس) - چپ (منشی) -->
     <div class="form-row">
       <div class="form-group">
         <label>شماره تماس دهیار</label>
@@ -187,19 +181,25 @@
 </div>
 
 <script>
+  // ============================================================
+  // ۰. غیرفعال کردن کلیک راست و دکمه‌های بازرسی (F12)
+  // ============================================================
+  document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+  document.addEventListener('keydown', function(e) {
+      if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); return false; }
+      if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) { e.preventDefault(); return false; }
+      if (e.ctrlKey && (e.key === 'U' || e.keyCode === 85)) { e.preventDefault(); return false; }
+  });
+
   const SUPABASE_URL = 'https://wwyqxkoeynddidazcyqu.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_aLuEZf5O2PqDk8DPlQNWDA_GboMVOUN';
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // مقداردهی اولیه به پلن انتخاب شده (چون پلن اول به صورت پیش‌فرض انتخاب شده است)
   let selectedPlan = "یک ماهه";
 
   function selectPlan(element, planName) {
-    // حذف کلاس selected از همه
     document.querySelectorAll('.plan-card').forEach(card => card.classList.remove('selected'));
-    // اضافه کردن کلاس به کارت کلیک شده
     element.classList.add('selected');
-    // ذخیره نام پلن
     selectedPlan = planName;
   }
 
@@ -215,10 +215,8 @@
     btn.disabled = true;
     btn.innerText = 'در حال ثبت...';
 
-    // 👇 ساخت یک توکن یکتا برای این مشتری 👇
     const generatedToken = 'dehyari-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
 
-    // تعیین مبلغ بر اساس پلن
     let planPrice = "۵۰۰,۰۰۰";
     if (selectedPlan === "سه ماهه") planPrice = "۱,۳۵۰,۰۰۰";
     if (selectedPlan === "شش ماهه") planPrice = "۲,۵۰۰,۰۰۰";
@@ -235,17 +233,14 @@
     };
 
     try {
-      // ۱. ذخیره درخواست در جدول subscription_requests
       const { error: subError } = await supabaseClient.from('subscription_requests').insert([data]);
       if (subError) throw subError;
 
-      // ۲. ساخت یک لینک پرداخت خالی با توکن تولید شده در جدول payment_links
       const { error: linkError } = await supabaseClient.from('payment_links').insert([
         { token: generatedToken, password: null }
       ]);
       if (linkError) throw linkError;
 
-      // ۳. هدایت کاربر به صفحه پرداخت
       window.location.href = `payment.html?token=${generatedToken}&plan=${encodeURIComponent(selectedPlan)}&price=${encodeURIComponent(planPrice)}`;
 
     } catch (err) {
