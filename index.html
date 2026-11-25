@@ -254,17 +254,46 @@
 
 <script>
   // ============================================================
-  // ۰. غیرفعال کردن کلیک راست و دکمه‌های بازرسی (F12)
+  // قفل کردن دکمه‌های میانبر (F12, Ctrl+Shift+I, Ctrl+P و ...)
   // ============================================================
-  document.addEventListener('contextmenu', event => event.preventDefault());
+  document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+
+  document.addEventListener('keydown', function(e) {
+      // قفل F12
+      if (e.key === 'F12' || e.keyCode === 123) { 
+          e.preventDefault(); 
+          return false; 
+      }
+      
+      // قفل ابزارهای بازرسی
+      if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) { 
+          e.preventDefault(); 
+          return false; 
+      }
+      
+      // قفل دکمه U (مشاهده سورس)
+      if (e.ctrlKey && (e.key === 'U' || e.keyCode === 85)) { 
+          e.preventDefault(); 
+          return false; 
+      }
+
+      // 👇 قفل ترکیب Ctrl + P 👇
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P' || e.keyCode === 80)) { 
+          e.preventDefault(); 
+          alert('⛔ چاپ صفحه از این طریق مجاز نیست. لطفاً از دکمه‌های داخل فرم استفاده کنید.');
+          return false; 
+      }
+  });
+
+  // 👇 ترفند جلوگیری از چاپ محتوا با منوی مرورگر 👇
+  window.addEventListener('beforeprint', function() {
+      alert('⛔ برای چاپ، لطفاً از دکمه‌های تعبیه شده در سایت استفاده کنید.');
+      document.body.style.opacity = '0.1'; // محو کردن صفحه
+  });
   
-  document.onkeydown = function(e) {
-    if (e.keyCode == 123) { return false; } // F12
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { return false; } // Ctrl+Shift+I
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { return false; } // Ctrl+Shift+C
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { return false; } // Ctrl+Shift+J
-    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { return false; } // Ctrl+U (View Source)
-  };
+  window.addEventListener('afterprint', function() {
+      document.body.style.opacity = '1'; // برگرداندن صفحه به حالت عادی
+  });
 
   // ============================================================
   // ۱. تنظیمات اتصال به Supabase
